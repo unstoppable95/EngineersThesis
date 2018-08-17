@@ -6,7 +6,7 @@ Ze strony https://www.apachefriends.org/pl/download.html należy pobrać serwer 
 b)	Uruchomienie  
 Kiedy serwer jest już zainstalowany, należy go otworzyć i uruchomić moduł Apache i MySQL (podświetlą się wtedy na zielono). Aby sprawdzić czy serwer został poprawnie uruchomiony i działa należy w przeglądarce wejść pod adres http://localhost/  
   
-MySQL
+MySQL  
 2.	Utworzenie bazy danych  
 a)	Utworzenie nowej bazy danych  
 Aby utworzyć bazę danych, kiedy serwer jest już uruchomiony należy wejść na stronę http://localhost/phpmyadmin/ i po lewej stronie zaznaczyć dodanie nowej bazy danych.  

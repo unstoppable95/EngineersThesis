@@ -3,6 +3,9 @@
 <title>Pierwszy skrypt php</title>
 </head>
 <body>
+
+<button onclick="myFunction()">Try it</button>
+
  <?php
 $servername = "localhost";
 $username = "root";
@@ -24,7 +27,8 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<br>" ."name: " . $row["name"]. "<br>" ;
+        //echo "<br>" ."name: " . $row["name"]. "<br>" ;
+		$zmiennaName = $row["name"];
     }
 } else {
     echo "0 results";
@@ -116,7 +120,8 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
-        echo "<br>" ."name after changes: " . $row["name"]. "<br>" ;
+       // echo "<br>" ."name after changes: " . $row["name"]. "<br>" ;
+		$zmiennaName2 = $row["name"];
     }
 } else {
     echo "<br>"."0 results";
@@ -127,7 +132,15 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
+<script>
+function myFunction() {
+    var btn = document.createElement("BUTTON");
+	//$("#result").load( "index.php" );
+	//document.write($("#result").load( "index.php" ));
+	document.write('<?php echo $zmiennaName . ", name after change:  " . $zmiennaName2; ?>');
 
+}
+</script>
 
 </body>
 </html>

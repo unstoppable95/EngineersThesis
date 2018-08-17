@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 16 Sie 2018, 10:52
+-- Czas generowania: 17 Sie 2018, 13:20
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -45,16 +45,9 @@ CREATE TABLE `child` (
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `surname` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `date_of_birth` date NOT NULL,
-  `parent_id` int(11) NOT NULL,
-  `class_id` int(11) NOT NULL
+  `parent_id` int(11) DEFAULT NULL,
+  `class_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `child`
---
-
-INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
-(1, 'Piotr', 'Pawlaczyk', '2018-08-16', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -63,16 +56,9 @@ INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `cla
 --
 
 CREATE TABLE `class` (
-  `id` int(11) NOT NULL,
-  `name` varchar(50) COLLATE utf8_polish_ci NOT NULL
+  `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `class`
---
-
-INSERT INTO `class` (`id`, `name`) VALUES
-(1, 'Mat-Fiz');
 
 -- --------------------------------------------------------
 
@@ -84,7 +70,8 @@ CREATE TABLE `class_acount` (
   `id` int(11) NOT NULL,
   `balance` int(11) DEFAULT NULL,
   `expenses` int(11) DEFAULT NULL,
-  `excpected_budget` int(11) DEFAULT NULL
+  `excpected_budget` int(11) DEFAULT NULL,
+  `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
@@ -113,13 +100,6 @@ CREATE TABLE `parent` (
   `email` varchar(100) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
---
--- Zrzut danych tabeli `parent`
---
-
-INSERT INTO `parent` (`id`, `name`, `surname`, `email`) VALUES
-(1, 'Kasia', 'Joźwiak', 'kasaiasasa@wp.pl');
-
 -- --------------------------------------------------------
 
 --
@@ -127,7 +107,6 @@ INSERT INTO `parent` (`id`, `name`, `surname`, `email`) VALUES
 --
 
 CREATE TABLE `participation` (
-  `id` int(11) NOT NULL,
   `event_id` int(11) NOT NULL,
   `child_id` int(11) NOT NULL,
   `amount_paid` int(11) NOT NULL
@@ -154,19 +133,29 @@ CREATE TABLE `payment` (
 -- Indeksy dla tabeli `account`
 --
 ALTER TABLE `account`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `account_child_FK` (`child_id`);
 
 --
 -- Indeksy dla tabeli `child`
 --
 ALTER TABLE `child`
-  ADD PRIMARY KEY (`id`,`parent_id`);
+  ADD PRIMARY KEY (`id`) USING BTREE,
+  ADD KEY `child_class_FK` (`class_id`),
+  ADD KEY `child_parent_FK` (`parent_id`);
+
+--
+-- Indeksy dla tabeli `class`
+--
+ALTER TABLE `class`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeksy dla tabeli `class_acount`
 --
 ALTER TABLE `class_acount`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `class_account_class_FK` (`class_id`);
 
 --
 -- Indeksy dla tabeli `event`
@@ -184,13 +173,15 @@ ALTER TABLE `parent`
 -- Indeksy dla tabeli `participation`
 --
 ALTER TABLE `participation`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`event_id`,`child_id`) USING BTREE,
+  ADD KEY `participation_child_FK` (`child_id`);
 
 --
 -- Indeksy dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_account_FK` (`account_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -206,6 +197,12 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT dla tabeli `class`
+--
+ALTER TABLE `class`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
@@ -227,16 +224,46 @@ ALTER TABLE `parent`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT dla tabeli `participation`
---
-ALTER TABLE `participation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Ograniczenia dla zrzutów tabel
+--
+
+--
+-- Ograniczenia dla tabeli `account`
+--
+ALTER TABLE `account`
+  ADD CONSTRAINT `account_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `child`
+--
+ALTER TABLE `child`
+  ADD CONSTRAINT `child_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `child_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`ID`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `class_acount`
+--
+ALTER TABLE `class_acount`
+  ADD CONSTRAINT `class_account_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `participation`
+--
+ALTER TABLE `participation`
+  ADD CONSTRAINT `participation_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `participation_event_FK` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `payment`
+--
+ALTER TABLE `payment`
+  ADD CONSTRAINT `payment_account_FK` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

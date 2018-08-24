@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 22 Sie 2018, 14:28
+-- Czas generowania: 24 Sie 2018, 10:06
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -139,17 +139,17 @@ CREATE TABLE `payment` (
 --
 
 CREATE TABLE `username` (
-  `login` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `password` varchar(50) COLLATE utf8_polish_ci NOT NULL
+  `login` varchar(100) COLLATE utf8_polish_ci NOT NULL,
+  `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
+  `type` varchar(1) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `username`
 --
 
-INSERT INTO `username` (`login`, `password`) VALUES
-('kasia', 'piter123'),
-('piter', 'kasia123');
+INSERT INTO `username` (`login`, `password`, `type`) VALUES
+('admin', 'admin', 'a');
 
 --
 -- Indeksy dla zrzutów tabel
@@ -193,7 +193,8 @@ ALTER TABLE `event`
 -- Indeksy dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parent_username_FK` (`email`);
 
 --
 -- Indeksy dla tabeli `participation`
@@ -283,6 +284,12 @@ ALTER TABLE `child`
 --
 ALTER TABLE `class_acount`
   ADD CONSTRAINT `class_account_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `parent`
+--
+ALTER TABLE `parent`
+  ADD CONSTRAINT `parent_username_FK` FOREIGN KEY (`email`) REFERENCES `username` (`login`) ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `participation`

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 24 Sie 2018, 10:06
+-- Czas generowania: 24 Sie 2018, 10:50
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -149,7 +149,9 @@ CREATE TABLE `username` (
 --
 
 INSERT INTO `username` (`login`, `password`, `type`) VALUES
-('admin', 'admin', 'a');
+('admin', 'admin', 'a'),
+('kasia', 'kasia', 't'),
+('piter', 'piter', 'p');
 
 --
 -- Indeksy dla zrzutów tabel

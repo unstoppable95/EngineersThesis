@@ -32,7 +32,8 @@
 		<input type="submit" value="Zaloguj się" />
 	
 	</form>
-
+	
+	
 	<?php
 	if(isset($_SESSION['error'])) 
 	{

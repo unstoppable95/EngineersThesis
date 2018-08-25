@@ -3,7 +3,17 @@
 	session_start();
 	if((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn']==true))
 	{
-		header('Location: menu.php');
+		
+		if ($_SESSION['type'] =="a"){
+					header('Location: menu_admin.php')
+				;}
+		if ($_SESSION['type'] =="p"){
+					header('Location: menu_parent.php');
+				}
+		if ($_SESSION['type'] =="t"){
+					header('Location: menu_treasurer.php');
+				}
+				
 		//opuszczenie pliku
 		exit();
 	}
@@ -30,15 +40,20 @@
 		Hasło: <br /> <input type="password" name="password" /> <br /><br />
 		<input type="submit" value="Zaloguj się" />
 		</p>
-		</div>
-	</div>
-	</form>
-
-	<?php
+		<?php
 	if(isset($_SESSION['error'])) 
 	{
 		echo $_SESSION['error'];
 	}
 	?>
+		</div>
+	
+	
+	</div>
+	
+	</form>
+	
+	
+	
 </body>
 </html>

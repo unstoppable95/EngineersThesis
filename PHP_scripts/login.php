@@ -46,9 +46,25 @@
 				unset($_SESSION['error']);
 				$result->free_result();
 				
+				$typeUser="select type from username where login='$login' and password='$password'";
+				$typeDB = ($conn->query($typeUser))->fetch_assoc();
+				
+				$_SESSION['type']=$typeDB['type'];
+				
 				//przekierowanie do innego pliku jak OK logowanie post -formulatrze get- w adresie byloby widac
-				header('Location: menu.php');
-				//wyslanie user poprzez globalna tablice $_SESSION
+				//header('Location: menu.php');
+	
+				if ($typeDB['type'] =="a"){
+					header('Location: menu_admin.php')
+				;}
+				if ($typeDB['type'] =="p"){
+					header('Location: menu_parent.php');
+				}
+				if ($typeDB['type']=="t"){
+				header('Location: menu_treasurer.php');
+				}
+				
+				
 			}
 			else
 			{

@@ -7,13 +7,16 @@
 		header('Location: index.php');
 		exit();
 	}
-	
+	require_once "admin_helper.php";
 
 ?>
+
+
 
 <html>
 <head>
 <title>MENU </title>
+
 </head>
 <body>
 
@@ -25,8 +28,24 @@
 	
 	
 	<section>
+	<h1><u>Zmiana hasła</u></h1>
 	<form action="admin_helper.php" method="post">
-	<p>Zmien haslo dostępu : <input type="newpassword" name="newpassword" /><input type="submit" value=" Zatwierdz" /></p>
+	<p>Nowe hasło dostępu : <input type="password" name="newPassword" />
+	<input type="submit" name="changePassword" value=" Zatwierdz"/>
+		</p>
+	</form>
+	</section>
+	
+	<section>
+	<h1><u>Dodaj klasę i skarbnika</u></h1>
+	<form action="admin_helper.php" method="post">
+	<p>Nazwa klasy : <input  name="className" /></br>
+	Skarbnik</br>
+	Imię :  <input  name="name" />     </br>
+	Nazwisko :  <input  name="surname" />     </br>
+	Email :  <input  name="email" />     </br>
+	<input type="submit" name="addClassTreasurer" value=" Zatwierdz"/>
+	</p>
 	</form>
 	</section>
 	

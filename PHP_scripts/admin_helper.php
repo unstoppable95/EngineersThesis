@@ -1,50 +1,79 @@
 <?php
-	//pozwala koszystac z sesji
-	//session_start();
+	//TODO zabezpieczenie przy wykonywaniu sql
+	require_once "menu_admin.php";
+
+	if ((isset($_POST['changePassword'])) )
+	{
+		changePassword();
+	}
 	
-	//jezeli nie ma w poscie loginu lub hasla
-	if ((!isset($_POST['newpassword'])) )
+	if ((isset($_POST['addClassTreasurer'])) )
+	{
+		addClassTreasurer();
+	}
+	
+	function changePassword(){
+	
+	if (empty($_POST['newPassword'])||$_POST['newPassword']=='0')
 	{
 		header('Location: menu_admin.php');
 		exit();
 	}
-	
-	//dodanie pliku z connectem, require lepsze od include bo zwraca errory i zatrzymuje skrypt
-	//once sprawdza czy juz byl dodany w pliku, jak jest to juz nie dokleja :D
-	require_once "menu_admin.php";
-		require_once "connection.php";
-	//doIT();
-	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
-	//function doIT(){
-	$conn = @new mysqli($servername, $username, $password, $dbName);
+	require_once "connection.php";
+	$conn = new mysqli( $servername,  $username,  $password, $dbName);
 	
 	if ($conn->connect_errno!=0){
 		echo "Blad: ".$conn->connect_errno;// " Opis bledu: ".$conn->connect_error;
 	}
 	else { //polaczenie spoko :) 
-			$newPassword=$_POST['newpassword'];
+			$newPassword=$_POST['newPassword'];
 			$newPassword= htmlentities($newPassword, ENT_QUOTES, "UTF-8");
-			
 			$login =$_SESSION['user'];
 			$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-			//zabezpieczenie przed sql injection
-			//zabezpieczenie przed sql injection
-			echo "<br>" ."login: " . $login. "<br>" ;
-		echo "<br>" ."haslo: " . $newPassword. "<br>" ;
-		//$result = $conn->query(sprintf("update username set password='%s' where login='%s'",
-		//mysqli_real_escape_string($conn,$newPassword),
-		//mysqli_real_escape_string($conn,$login)));
+
+			$sql="UPDATE username SET password='$newPassword' WHERE login='$login'";
 		
-		$sql="UPDATE username SET password='$newPassword' WHERE login='$login'";
-		if ($conn->query($sql) === TRUE) {
+			if ($conn->query($sql) === TRUE) {
 			echo "Record updated successfully";
 } else {
     echo "Error updating record: " . $conn->error;
 }
-		
+		}
+			$conn->close();
 	}
-		
-		$conn->close();
-
+		function addClassTreasurer(){
+	//session_start();
+	if ( empty($_POST['className'])||$_POST['className']=='0' || empty($_POST['name'])||$_POST['name']=='0' || empty($_POST['surname'])||$_POST['surname']=='0' || empty($_POST['email'])||$_POST['email']=='0' )
+	{
+		header('Location: menu_admin.php');
+		exit();
+	}
+		require_once "connection.php";
+		$conn = new mysqli( $servername,  $username,  $password, $dbName);
+	
+	if ($conn->connect_errno!=0){
+		echo "Blad: ".$conn->connect_errno;// " Opis bledu: ".$conn->connect_error;
+	}
+	else { //polaczenie spoko :) 
+			
+			$className=$_POST['className'];
+			$className= htmlentities($className, ENT_QUOTES, "UTF-8");
+			$name=$_POST['name'];
+			$name= htmlentities($name, ENT_QUOTES, "UTF-8");
+			$surname=$_POST['surname'];
+			$surname= htmlentities($surname, ENT_QUOTES, "UTF-8");
+			$email=$_POST['email'];
+			$email= htmlentities($email, ENT_QUOTES, "UTF-8");
+			
+				$sql="INSERT INTO class (name) values ('$className')";
+				$sql2 =  "INSERT INTO parent (name,surname,email) values( '$name', '$surname' , '$email')";
+			if ($conn->query($sql) === TRUE && $conn->query($sql2) === TRUE) {
+			echo "Record created successfully";
+		} else {
+		echo "Error updating record: " . $conn->error;
+		}
+		}
+			$conn->close();
+	}
 	
 ?>

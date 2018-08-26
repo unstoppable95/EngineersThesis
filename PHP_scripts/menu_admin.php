@@ -1,27 +1,39 @@
+<html>
+<head>
+<title>MENU </title>
 <?php
 	session_start();
 	
-	
+
 	if (!isset($_SESSION['loggedIn']))
 	{
 		header('Location: index.php');
 		exit();
 	}
 	require_once "admin_helper.php";
-
+	
+	if (isset($_SESSION['funChange']))
+	{
+		echo '<script language="javascript">';
+		echo 'alert("Hasło zostało zmienione! ")';
+		echo '</script>';
+		$_SESSION['funChange']=null;
+	}
+	
+			
+	if (isset($_SESSION['funAddClass']))
+	{
+		echo '<script language="javascript">';
+		echo 'alert("Klasa i skarbnik dodani pomyślnie !")';
+		echo '</script>';
+		$_SESSION['funAddClass']=null;
+	}
 ?>
-
-
-
-<html>
-<head>
-<title>MENU </title>
-
 </head>
 <body>
 
 		<?php
-	echo "<p>Witaj zalogowales sie poprawnie jako : ".$_SESSION['user'] //.'! [ <a href="logout.php">Wyloguj się!</a> ]</p>';
+		echo "<p>Witaj zalogowales sie poprawnie jako : ".$_SESSION['user'] //.'! [ <a href="logout.php">Wyloguj się!</a> ]</p>';
 		?>
 		<br><br>
 	<a href="logout.php"><button> Wyloguj się</button></a>
@@ -50,5 +62,21 @@
 	</section>
 	
 	
-</body
+	
+	<section>
+	<h1><u>Klasy </u></h1>
+	<form action="admin_helper.php" method="post">
+	INFO :
+	<textarea cols="50" rows="3" wrap="on"><?php 
+	if (isset($_SESSION['funDisplay_1]']))
+	{
+		echo $_SESSION['funDisplay'];
+	}
+	?></textarea>
+	<input type="submit" name="showClasses" value=" Pokaz"/>
+	</p>
+	</form>
+	</section>
+	
+</body>
 </html>

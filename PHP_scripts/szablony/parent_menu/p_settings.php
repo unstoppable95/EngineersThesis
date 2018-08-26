@@ -1,32 +1,32 @@
 <html> 
 <head> 
-	<title>add student </title>
+	<title>settings </title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
+	<link rel="stylesheet" type="text/css" href="p_style.css" title="Arkusz stylów CSS">
 </head>
 
 <body>
 
 <div class="menu">
-	<a href="index.php" >Strona główna</a>
-  <a href="addStudent.php">Dodaj ucznia do klasy</a>
-  <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
-  <a href="addOnceEvent.php">Dodaj event jednorazowy</a>
-  <a href="settings.php" class="active">Ustawienia</a>
-  <a href="#" onclick=javascript:logOut()>Wyloguj</a> <!-- Przekierowanie do funkcji wyloguj -->
+	<a href="../p_index.php" >Strona główna</a>
+  <a href="p_choiceChild.php">Wybór dziecka</a>
+  <a href="p_history.php">Historia wpłat</a>
+  <a href="p_classAccount.php">Konto klasowe</a>
+  <a href="p_settings.php" class="active">Ustawienia</a>
+  <a href="#">Wyloguj </a> <!-- Przekierowanie do funkcji wyloguj -->
 </div>
 
 <div class="lewa_strona">
 	<h1> Ustawienia </h1>
-	<h2> Informacja o klasie </h2>
-	<h4> Lista uczniów </h4>
+	<h2> Informacja o dzieciach </h2>
+	<h4> Lista dzieci </h4>
 	... <br>
-	Lista uczniow<br>
+	Lista dzieci<br>
 	...<br>
 	...<br>
-	<h4> Dane skarbnika </h4>
+	<h4> Dane rodzica </h4>
 	
-	<form name="treasuet_data">
+	<form name="parent_data">
 	<table>
 		<tr><td>Imię: </td><td>....</td></tr> 
 		<tr><td>Nazwisko: </td><td>....</td></tr> 

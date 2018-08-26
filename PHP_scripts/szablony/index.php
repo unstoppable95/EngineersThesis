@@ -1,5 +1,5 @@
 <?php
-	require_once "connection.php";
+	require_once "treasuer_menu/connection.php";
 	
 	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 	$conn = @new mysqli($servername, $username, $password, $dbName);
@@ -19,17 +19,17 @@
 <head> 
 	<title>skarbnik </title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
+	<link rel="stylesheet" type="text/css" href="treasuer_menu/style.css" title="Arkusz stylów CSS">
 </head>
 
 <body>
 
 <div class="menu">
 	<a href="#" class="active">Strona główna</a>
-  <a href="addStudent.php">Dodaj ucznia do klasy</a>
-  <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
-  <a href="addOnceEvent.php">Dodaj event jednorazowy</a>
-  <a href="settings.php">Ustawienia</a>
+  <a href="treasuer_menu/addStudent.php">Dodaj ucznia do klasy</a>
+  <a href="treasuer_menu/addCyclicEvent.php">Dodaj event cykliczny</a>
+  <a href="treasuer_menu/addOnceEvent.php">Dodaj event jednorazowy</a>
+  <a href="treasuer_menu/settings.php">Ustawienia</a>
   <a href="#" onclick=javascript:logOut()>Wyloguj</a> <!-- Przekierowanie do funkcji wyloguj -->
 </div>
 

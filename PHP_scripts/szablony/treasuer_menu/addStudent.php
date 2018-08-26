@@ -10,7 +10,7 @@
 
 <!-- php include('menu.php'); ?>    -->
 <div class="menu">
-	<a href="index.php" >Strona główna</a>
+	<a href="../index.php" >Strona główna</a>
   <a href="addStudent.php" class="active">Dodaj ucznia do klasy</a>
   <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="addOnceEvent.php">Dodaj event jednorazowy</a>

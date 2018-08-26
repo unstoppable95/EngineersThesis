@@ -27,22 +27,10 @@
 <div class="menu">
 	<a href="#" class="active">Strona główna</a>
   <a href="addStudent.php">Dodaj ucznia do klasy</a>
-  <a href="#">Dodaj event cykliczny</a>
-  <a href="#">Dodaj event jednorazowy</a>
-   <!-- Mozna zostawic te 2 na górze albo jedno to na dole z takim podmenu  -->
-  <a class="has-sub-menu">
-            Dodaj event</a><div class="show-sub-menu" tabindex="0"><span class="icon-angle-circled-down"></span></div>
-            <ul class="sub-menu">
-                <a href="#">Cykliczny</a>
-                <a href="#">Jednorazowy</a>
-            </ul>
-        </a>
-  
-  
+  <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
+  <a href="addOnceEvent.php">Dodaj event jednorazowy</a>
   <a href="settings.php">Ustawienia</a>
   <a href="#" onclick=javascript:logOut()>Wyloguj</a> <!-- Przekierowanie do funkcji wyloguj -->
-
-
 </div>
 
 
@@ -66,7 +54,6 @@
 			<th>Nazwa</th>
 			<th>Cena</th>
 			<th>Data</th>
-			<th>Wplacono w sumie</th>
 			<th> </th>
 			<th> </th>
 			
@@ -84,7 +71,6 @@
 				echo "<td>".$event['name']."</td>";
 				echo "<td>".$event['price']."</td>";
 				echo "<td>".$event['date']."</td>";
-				echo "<td>"."Wplacono"."</td>";
 				echo "<td><input type='button' class='btn_details' value='Szczegoly' /></td>";
 				echo "<td><input type='button' class='btn_delate' value='Usun' /></td>";
 				echo "</tr>";

@@ -8,12 +8,12 @@
 <body>
 
 <div class="menu">
-	<a href="../index.php" >Strona główna</a>
+	<a href="../menu_treasurer.php" >Strona główna</a>
   <a href="addStudent.php" >Dodaj ucznia do klasy</a>
   <a href="addCyclicEvent.php" class="active">Dodaj event cykliczny</a>
   <a href="addOnceEvent.php" >Dodaj event jednorazowy</a>
   <a href="settings.php" >Ustawienia</a>
-  <a href="#" onclick=javascript:logOut()>Wyloguj</a> <!-- Przekierowanie do funkcji wyloguj -->
+  <a href="../logout.php"> Wyloguj się</a>
 </div> 
 
 <div class="lewa_strona">

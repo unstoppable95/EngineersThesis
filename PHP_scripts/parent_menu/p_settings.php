@@ -8,12 +8,12 @@
 <body>
 
 <div class="menu">
-	<a href="../p_index.php" >Strona główna</a>
+	<a href="../menu_parent.php" >Strona główna</a>
   <a href="p_choiceChild.php">Wybór dziecka</a>
   <a href="p_history.php">Historia wpłat</a>
   <a href="p_classAccount.php">Konto klasowe</a>
   <a href="p_settings.php" class="active">Ustawienia</a>
-  <a href="#">Wyloguj </a> <!-- Przekierowanie do funkcji wyloguj -->
+<a href="../logout.php"> Wyloguj się</a>
 </div>
 
 <div class="lewa_strona">

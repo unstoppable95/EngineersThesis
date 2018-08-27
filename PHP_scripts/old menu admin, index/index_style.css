@@ -1,10 +1,5 @@
 * { font-family: Tahoma }
-/*p {font-size: 5vh}*/
-
-body {
-	font-family: Verdana;
-	background-color: #ccccff;
-}
+p {font-size: 5vh}
 
 .container{
 	

@@ -1,0 +1,31 @@
+body {
+	font-family: Verdana;
+	background-color: #ffffcc;
+}
+.lewa_strona {
+	float: left;
+	width: 85vh;
+}
+
+.menu {
+	float: right;
+    width: 200px;/*200px; /* Set a width if you like */
+}
+
+.menu a {
+    background-color: #ffff99; /* Grey background color */
+    color: black; /* Black text color */
+    display: block; /* Make the links appear below each other */
+    padding: 12px; /* Add some padding */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.menu a:hover {
+    background-color: #ffcc66; /* Dark grey background on mouse-over */
+}
+
+.menu a.active {
+    background-color: #ffcc00; /* Add a green color to the "active/current" link */
+    color: white;
+}
+

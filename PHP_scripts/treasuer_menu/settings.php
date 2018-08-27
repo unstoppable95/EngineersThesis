@@ -1,10 +1,23 @@
+
+
+
 <html> 
 <head> 
 	<title>add student </title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
 </head>
+<?php
+session_start();
 
+if (!isset($_SESSION['loggedIn']))
+	{
+		header('Location: ../index.php');
+		exit();
+	}
+	require_once "../treasurer_helper.php";
+
+?>
 <body>
 
 <div class="menu">
@@ -36,11 +49,12 @@
 	<br>
 	<h2> Zmien hasło </h2>
 	
-	<form name="change_password">
+	<form action="../treasurer_helper.php" method="post">
 	<table>
-		<tr><td>Stare haslo: </td><td><input type="password" name="old_passwd"/></td></tr> 
-		<tr><td>Nowe hasło: </td><td><input type="password" name="new password" /></td></tr> 
-		<tr><td colspan="2"><input type="button" class="btn_commit" value="Zatwierdz"/></td></tr>
+		<tr><td>Nowe hasło: </td><td><input type="password" name="newPassword" /></td></tr> 
+		<tr><td colspan="2"><input type="submit"  name="changePassword" value="Zatwierdz"/></td></tr>
+		
+		
 	<table>
 	</form>
 

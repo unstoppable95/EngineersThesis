@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 24 Sie 2018, 10:50
+-- Czas generowania: 27 Sie 2018, 10:19
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -50,11 +50,16 @@ CREATE TABLE `child` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
--- Zrzut danych tabeli `child`
+-- Wyzwalacze `child`
 --
-
-INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
-(1, 'Piotr', 'Pawlaczyk', '2018-04-09', NULL, NULL);
+DELIMITER $$
+CREATE TRIGGER `addChildAccount` AFTER INSERT ON `child` FOR EACH ROW insert into account (child_id,balance ) values (NEW.id,0)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `delAccountChild` AFTER DELETE ON `child` FOR EACH ROW delete from account where child_id=OLD.id
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -66,6 +71,18 @@ CREATE TABLE `class` (
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Wyzwalacze `class`
+--
+DELIMITER $$
+CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_acount (balance,expenses, 	excpected_budget,class_id) values(0,0,0,NEW.id)
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `delClassAccount` AFTER DELETE ON `class` FOR EACH ROW delete from class_acount where class_id=OLD.id
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -106,6 +123,18 @@ CREATE TABLE `parent` (
   `surname` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `email` varchar(100) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Wyzwalacze `parent`
+--
+DELIMITER $$
+CREATE TRIGGER `addParentUsername` AFTER INSERT ON `parent` FOR EACH ROW insert into username (login,password,type) values (NEW.email,"12345","p")
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `delParentUsername` AFTER DELETE ON `parent` FOR EACH ROW delete from username where login=OLD.email
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -226,25 +255,25 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
 --
 ALTER TABLE `class`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_acount`
 --
 ALTER TABLE `class_acount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -256,7 +285,7 @@ ALTER TABLE `event`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
@@ -286,12 +315,6 @@ ALTER TABLE `child`
 --
 ALTER TABLE `class_acount`
   ADD CONSTRAINT `class_account_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ograniczenia dla tabeli `parent`
---
-ALTER TABLE `parent`
-  ADD CONSTRAINT `parent_username_FK` FOREIGN KEY (`email`) REFERENCES `username` (`login`) ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `participation`

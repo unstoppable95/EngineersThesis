@@ -1,5 +1,4 @@
 <?php
-
 	session_start();
 	if((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn']==true))
 	{
@@ -14,7 +13,6 @@
 					header('Location: menu_treasurer.php');
 				}
 				
-		//opuszczenie pliku
 		exit();
 	}
 ?>
@@ -24,10 +22,6 @@
 <title>PANEL LOGOWANIA</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
-
-
-
-
 </head>
 <body>
 
@@ -47,13 +41,7 @@
 	}
 	?>
 		</div>
-	
-	
 	</div>
-	
 	</form>
-	
-	
-	
 </body>
 </html>

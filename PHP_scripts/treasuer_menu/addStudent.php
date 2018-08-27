@@ -5,10 +5,20 @@
 	<script src="check.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
 </head>
+<?php
+session_start();
 
+if (!isset($_SESSION['loggedIn']))
+	{
+		header('Location: ../index.php');
+		exit();
+	}
+	require_once "../treasurer_helper.php";
+
+?>
 <body>
 
-<!-- php include('menu.php'); ?>    -->
+
 <div class="menu">
 	<a href="../menu_treasurer.php" >Strona główna</a>
   <a href="addStudent.php" class="active">Dodaj ucznia do klasy</a>
@@ -21,18 +31,18 @@
 <div class="lewa_strona">
 	<h1> Dodaj ucznia do klasy ...Ia... </h1> 
 	<h3> Dane ucznia </h3>
-	<form name="student_data">
+	<form action="../treasurer_helper.php" method="post">
 	<table>
-		<tr><td>Imię: </td><td><input type="text" name="student_name"/></td></tr> 
-		<tr><td>Nazwisko: </td><td><input type="text" name="student_surname" /></td></tr> 
-		<tr><td>Data urodzenia: </td><td><input type="date" name="student_birthdata" /> </td></tr> 
+		<tr><td>Imię: </td><td><input type="text" name="childName"/></td></tr> 
+		<tr><td>Nazwisko: </td><td><input type="text" name="childSurname" /></td></tr> 
+		<tr><td>Data urodzenia: </td><td><input type="date" name="childBirthdate" /> </td></tr> 
 		<tr><td> </td><td> </td></tr> 
 		<tr><td><h3> Dane rodzica </h3></td></tr> 
-		<tr><td>Imię: </td><td><input type="text" name="parent_name" /></td></tr>  
-		<tr><td>Nazwisko: </td><td><input type="text" name="parent_surname" /></td></tr> 
-		<tr><td>Mail: </td><td><input type="text" name="parent_mail" /></td></tr> 
+		<tr><td>Imię: </td><td><input type="text" name="parentName" /></td></tr>  
+		<tr><td>Nazwisko: </td><td><input type="text" name="parentSurname" /></td></tr> 
+		<tr><td>Mail: </td><td><input type="text" name="parentEmail" /></td></tr> 
 	
-		<tr><td colspan="2"><input type="button" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/></td></tr>
+		<tr><td colspan="2"><input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/></td></tr>
 	<table>
 	</form>
 

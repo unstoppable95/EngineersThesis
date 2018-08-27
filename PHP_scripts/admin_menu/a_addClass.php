@@ -18,9 +18,10 @@
 	if (isset($_SESSION['funAddClass']))
 	{
 		echo '<script language="javascript">';
-		echo 'alert("Klasa i skarbnik dodani pomyślnie !")';
+		echo 'alert("Dodano klasę i skarbnika! ")';
 		echo '</script>';
-		$_SESSION['funAddClass']=null;
+		$_SESSION['funAddClass']=null;	
+		
 	}
 ?>
 	

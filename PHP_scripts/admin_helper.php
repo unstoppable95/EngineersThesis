@@ -41,7 +41,7 @@ function changePassword()
     }
     $conn->close();
 	
-    header('Location: menu_admin.php');
+    header('Location: admin_menu/a_settings.php');
     
 }
 //----------------------------------------------------------------
@@ -70,17 +70,22 @@ function addClassTreasurer()
         
         
         if ($conn->query(sprintf("INSERT INTO class (name) values ('%s')", mysqli_real_escape_string($conn, $className))) && $conn->query(sprintf("INSERT INTO parent (name,surname,email) values( '%s', '%s' , '%s')", mysqli_real_escape_string($conn, $name), mysqli_real_escape_string($conn, $surname), mysqli_real_escape_string($conn, $email)))) {
-            echo "Record updated successfully";
+            //(adresat, temat, wiadomość[, nagłówki[, parametry]]
+			mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
+			echo "Record updated successfully";
 			$_SESSION['funAddClass']=true;
+			
+			
         } else {
             echo "Error updating record: " . $conn->error;
         }
         
         
     }
+	
     $conn->close();
-    
-    header('Location: menu_admin.php');
+
+    header('Location: admin_menu/a_addClass.php');
     
 }
 //-------------

@@ -23,11 +23,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
 </head>
-<<<<<<< HEAD
-=======
 
-
->>>>>>> ebf742a382b37077b1ac61a68637ae3dfe6cf0ab
 <body>
 	<form action="login.php" method="post">
 	<div class="container">
@@ -47,9 +43,6 @@
 		</div>
 	</div>
 	</form>
-<<<<<<< HEAD
-=======
-	
->>>>>>> ebf742a382b37077b1ac61a68637ae3dfe6cf0ab
+
 </body>
 </html>

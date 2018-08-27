@@ -8,7 +8,7 @@
 <body>
 
 <div class="menu">
-<a href="../menu_parent.php" >Strona główna</a>>
+<a href="../menu_parent.php" >Strona główna</a>
   <a href="p_choiceChild.php"  class="active">Wybór dziecka</a>
   <a href="p_history.php" >Historia wpłat</a>
   <a href="p_classAccount.php">Konto klasowe</a>

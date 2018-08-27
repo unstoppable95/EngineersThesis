@@ -41,7 +41,7 @@ function changePassword()
     }
     $conn->close();
 	
-    header('Location: admin_menu/a_settings.php');
+    header('Location: logout.php');
     
 }
 //----------------------------------------------------------------
@@ -69,7 +69,7 @@ function addClassTreasurer()
         $email     = htmlentities($email, ENT_QUOTES, "UTF-8");
         
         
-        if ($conn->query(sprintf("INSERT INTO class (name) values ('%s')", mysqli_real_escape_string($conn, $className))) && $conn->query(sprintf("INSERT INTO parent (name,surname,email) values( '%s', '%s' , '%s')", mysqli_real_escape_string($conn, $name), mysqli_real_escape_string($conn, $surname), mysqli_real_escape_string($conn, $email)))) {
+        if ($conn->query(sprintf("INSERT INTO class (name) values ('%s')", mysqli_real_escape_string($conn, $className))) && $conn->query(sprintf("INSERT INTO parent (name,surname,email,type) values( '%s', '%s' , '%s','t')", mysqli_real_escape_string($conn, $name), mysqli_real_escape_string($conn, $surname), mysqli_real_escape_string($conn, $email)))) {
             //(adresat, temat, wiadomość[, nagłówki[, parametry]]
 			mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
 			echo "Record updated successfully";

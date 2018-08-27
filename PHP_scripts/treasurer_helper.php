@@ -48,7 +48,7 @@ function changePassword()
 		}
 
 	$conn->close();
-	header('Location: treasuer_menu/settings.php');
+	header('Location: logout.php');
 	}
 
 // -----------------------------------
@@ -128,7 +128,7 @@ function addChildParent()
 			$isUser = $result->num_rows;
 			if ($isUser <= 0)
 				{ //RODZICA NIE MA W SYSTEMIE
-				if ($result = $conn->query(sprintf("insert into parent (name,surname,email) values ('%s' , '%s' ,'%s')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail))))
+				if ($result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail))))
 					{
 					echo "Record inserted successfully";
 					}

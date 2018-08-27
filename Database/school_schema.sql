@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 27 Sie 2018, 10:19
+-- Czas generowania: 27 Sie 2018, 15:39
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -108,7 +108,7 @@ CREATE TABLE `event` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `price` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
@@ -121,14 +121,15 @@ CREATE TABLE `parent` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `surname` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `email` varchar(100) COLLATE utf8_polish_ci NOT NULL
+  `email` varchar(100) COLLATE utf8_polish_ci NOT NULL,
+  `type` varchar(1) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Wyzwalacze `parent`
 --
 DELIMITER $$
-CREATE TRIGGER `addParentUsername` AFTER INSERT ON `parent` FOR EACH ROW insert into username (login,password,type) values (NEW.email,"12345","p")
+CREATE TRIGGER `addParentUsername` AFTER INSERT ON `parent` FOR EACH ROW insert into username (login,password,type) values (NEW.email,"12345",NEW.type)
 $$
 DELIMITER ;
 DELIMITER $$
@@ -255,43 +256,43 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
 --
 ALTER TABLE `class`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_acount`
 --
 ALTER TABLE `class_acount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- Ograniczenia dla zrzutów tabel

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 27 Sie 2018, 15:39
+-- Czas generowania: 28 Sie 2018, 13:19
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -68,8 +68,9 @@ DELIMITER ;
 --
 
 CREATE TABLE `class` (
+  `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `id` int(11) NOT NULL
+  `parent_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
@@ -206,7 +207,8 @@ ALTER TABLE `child`
 -- Indeksy dla tabeli `class`
 --
 ALTER TABLE `class`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `class_parent_FK` (`parent_id`);
 
 --
 -- Indeksy dla tabeli `class_acount`
@@ -310,6 +312,12 @@ ALTER TABLE `account`
 ALTER TABLE `child`
   ADD CONSTRAINT `child_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `child_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `class`
+--
+ALTER TABLE `class`
+  ADD CONSTRAINT `class_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `class_acount`

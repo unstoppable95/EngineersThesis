@@ -68,20 +68,63 @@ function addClassTreasurer()
         $email     = $_POST['email'];
         $email     = htmlentities($email, ENT_QUOTES, "UTF-8");
         
-        
-        if ($conn->query(sprintf("INSERT INTO class (name) values ('%s')", mysqli_real_escape_string($conn, $className))) && $conn->query(sprintf("INSERT INTO parent (name,surname,email,type) values( '%s', '%s' , '%s','t')", mysqli_real_escape_string($conn, $name), mysqli_real_escape_string($conn, $surname), mysqli_real_escape_string($conn, $email)))) {
-            //(adresat, temat, wiadomość[, nagłówki[, parametry]]
-			mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
-			echo "Record updated successfully";
-			$_SESSION['funAddClass']=true;
+   
+		
+			if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $email))))
+			{
+			$isUser = $result->num_rows;
+			if ($isUser <= 0)
+				{ //SKARBNIKA NIE MA W SYSTEMIE
+				if ($result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','t')", mysqli_real_escape_string($conn, $name) , mysqli_real_escape_string($conn, $surname) , mysqli_real_escape_string($conn, $email))))
+					{
+					echo "Record inserted successfully";
+					}
+				  else
+					{
+					echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
+					}
+				mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
+				// szukamy id nowego rodzica
+
+				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $email))))
+					{
+					$details = $result->fetch_assoc();
+					$parentIDdb = $details['id'];
+					if ($result = $conn->query(sprintf("insert into class (name,parent_id) values ('%s' ,'$parentIDdb')", mysqli_real_escape_string($conn, $className))))
+						{
+						echo "Record inserted successfully";
+						}
+					  else
+						{
+						echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
+						}
+					}
+				}
+			else {
+				//skarbnik ma juz konto w systemie
+					$details = $result->fetch_assoc();
+					$parentIDdb = $details['id'];
+					if ($result = $conn->query(sprintf("insert into class (name,parent_id) values ('%s' ,'$parentIDdb')", mysqli_real_escape_string($conn, $className))) && $result = $conn->query(sprintf("update parent set type='t' where id='$parentIDdb'"))&& $result = $conn->query(sprintf("update username set type='t' where login='$email'")) )
+						{
+						echo "Record inserted successfully";
+						}
+					  else
+						{
+						echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
+						}
+					
+				
+				
+				
+			}
+		
 			
 			
-        } else {
-            echo "Error updating record: " . $conn->error;
-        }
-        
-        
-    }
+			
+			}
+	
+	
+	}
 	
     $conn->close();
 

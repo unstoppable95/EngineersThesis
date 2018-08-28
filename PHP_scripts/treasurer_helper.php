@@ -136,7 +136,7 @@ function addChildParent()
 					{
 					echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
 					}
-				mail($parentEmail, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
+				mail($parentEmail, "Haslo pierwszego logowania rodzica" , "Twoje hasło pierwszego logowanie to: 12345");
 				// szukamy id nowego rodzica
 
 				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))

@@ -29,7 +29,7 @@ if (!isset($_SESSION['loggedIn']))
 		header('Location: ../index.php');
 		exit();
 	}
-	require_once "../treasurer_helper.php";
+	
 
 ?>
 <body>

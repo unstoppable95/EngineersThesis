@@ -21,7 +21,17 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="treasuer_menu/style.css" title="Arkusz stylów CSS">
 </head>
+<?php
+session_start();
 
+if (!isset($_SESSION['loggedIn']))
+	{
+		header('Location: ../index.php');
+		exit();
+	}
+	require_once "../treasurer_helper.php";
+
+?>
 <body>
 
 <div class="menu">

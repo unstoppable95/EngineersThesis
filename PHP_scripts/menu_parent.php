@@ -4,7 +4,17 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="parent_menu/p_style.css" title="Arkusz stylów CSS">
 </head>
+<?php
+session_start();
 
+if (!isset($_SESSION['loggedIn']))
+	{
+		header('Location: ../index.php');
+		exit();
+	}
+	
+
+?>
 <body>
 
 <div class="menu">

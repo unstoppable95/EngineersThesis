@@ -55,11 +55,13 @@ function changePassword()
 	
 	
 	function fetch(){
-	$connect = mysqli_connect("localhost", "root", "", "school_schema");  
- $output = '';  
- $sql = "SELECT * FROM event";  
- $result = mysqli_query($connect, $sql);  
- 
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		$result=$connect->query(sprintf("SELECT * from event"));
+		
+		
  $output .= '  
       <div class="table-responsive">  
            <table class="table table-bordered">  
@@ -83,25 +85,17 @@ function changePassword()
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
                      <td class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
                      <td class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn btn-xs btn-danger btn_delete">Wypisz</button></td>  
-					  <td><button type="button" name="details_btn" data-id3="'.$row["id"].'" class="btn btn-xs btn-danger btn_details">Szczegóły</button></td>
+					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>  
+					  <td><button type="button" name="details_btn" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
                 </tr>  
            ';  
       }  
-     /* $output .= '  
-           <tr>  
-                <td></td>  
-                <td id="name" contenteditable></td>  
-                <td id="price" contenteditable></td>  
-				<td id="date" contenteditable></td>  
-                <td><button type="button" name="btn_add" id="btn_add" class="btn btn-xs btn-success">+</button></td>  
-           </tr>  
-      ';*/  
+ 
  }  
  else  
  {  
       $output .= '<tr>  
-                          <td colspan="4">Data not Found</td>  
+                          <td colspan="4">Nie znaleziono wydarzeń</td>  
                      </tr>';  
  }  
  
@@ -112,12 +106,13 @@ function changePassword()
 }
 
 function deleteFromDB(){
- $connect = mysqli_connect("localhost", "root", "", "school_schema"); 
-$sql = "DELETE FROM event WHERE id = '".$_POST["id"]."'";  
-if(mysqli_query($connect, $sql))  
- {  
-      echo 'Pomyslnie wypisano dziecko';  
- } 	
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
+			 echo 'Pomyslnie wypisano dziecko';  
+		}
+
 }
 
 

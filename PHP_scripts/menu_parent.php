@@ -3,7 +3,14 @@
 	<title>Rodzic-panel głowny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="parent_menu/p_style.css" title="Arkusz stylów CSS">
+
+	
+	<script src="js/jquery-2.2.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+      
 </head>
+
 <?php
 session_start();
 
@@ -38,11 +45,8 @@ if (!isset($_SESSION['loggedIn']))
 	<div class="naglowek" >
 		<h1> Konto rodzica </h1>
 		<h3> Bierzące płatności ...imie wybranego dziecka ... </h3>
-		...<br>
-		...<br>
-		Tu tabelka z platnosciami dziecka ... <br>
-		...<br> 
-		...<br>
+		
+		<div id="live_data"></div>
 		
 		<h3> Stan konta dziecka </h3>
 		
@@ -61,3 +65,43 @@ if (!isset($_SESSION['loggedIn']))
 
 </body>
 </html>
+
+
+<script>
+$(document).ready(function(){
+	function fetch_data()
+	{
+		$.ajax({
+			url:"parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch'},
+			success:function(data){
+				$('#live_data').html(data);
+			}
+		});
+		
+	}
+	fetch_data();
+	
+	//delete
+$(document).on('click','.btn_delete',function(){
+	var id=$(this).data("id3");
+	if(confirm("Czy jestes pewny, ze chcesz wypisac dziecko z tego wydarzenia?"))  
+           {
+	$.ajax({
+		url:"parent_helper.php",
+		method:"POST",
+		data:{function2call: 'delete', id:id},
+		dataType:"text",
+		success:function(data){
+			alert(data);
+			fetch_data();
+			
+                     }  
+                });  
+           }  
+      });  
+ }); 
+  
+
+</script>

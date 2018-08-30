@@ -1,14 +1,28 @@
 <html> 
 <head> 
-	<title>add cyclic event </title>
+	<title>Rodzic-konto klasowe</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="p_style.css" title="Arkusz stylów CSS">
 </head>
+<?php
+session_start();
 
+if (!isset($_SESSION['loggedIn']))
+	{
+		header('Location: ../index.php');
+		exit();
+	}
+?>
 <body>
 
 <div class="menu">
 <a href="../menu_parent.php" >Strona główna</a>
+  <?php
+		if ($_SESSION['type'] =="t"){
+					$myVar='<a href="../menu_treasurer.php">Panel skarbnika</a>';
+					echo $myVar;
+				}
+  ?>
   <a href="p_choiceChild.php">Wybór dziecka</a>
   <a href="p_history.php">Historia wpłat</a>
   <a href="p_classAccount.php" class="active">Konto klasowe</a>

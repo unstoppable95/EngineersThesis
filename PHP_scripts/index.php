@@ -1,3 +1,9 @@
+<html>
+<head>
+<title>System skarbnik klasowy-panel logowania</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
+
 <?php
 	session_start();
 	if((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn']==true))
@@ -6,22 +12,16 @@
 		if ($_SESSION['type'] =="a"){
 					header('Location: menu_admin.php')
 				;}
-		if ($_SESSION['type'] =="p"){
+		if ($_SESSION['type'] =="p" || $_SESSION['treasurerAsParent']==true){
 					header('Location: menu_parent.php');
 				}
-		if ($_SESSION['type'] =="t"){
+		if ($_SESSION['type'] =="t" && $_SESSION['treasurerAsParent']==false){
 					header('Location: menu_treasurer.php');
 				}
 				
 		exit();
 	}
 ?>
-
-<html>
-<head>
-<title>PANEL LOGOWANIA</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
 </head>
 
 <body>

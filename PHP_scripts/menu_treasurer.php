@@ -13,11 +13,9 @@
 	}
 ?>
 
-
-
 <html> 
 <head> 
-	<title>skarbnik </title>
+	<title>Skarbnik-panel główny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="treasuer_menu/style.css" title="Arkusz stylów CSS">
 </head>
@@ -29,22 +27,19 @@ if (!isset($_SESSION['loggedIn']))
 		header('Location: ../index.php');
 		exit();
 	}
-	
-
+$_SESSION['treasurerAsParent']=false;
 ?>
 <body>
 
 <div class="menu">
 	<a href="#" class="active">Strona główna</a>
+	<a href="menu_parent.php">Moje dzieci</a>
   <a href="treasuer_menu/addStudent.php">Dodaj ucznia do klasy</a>
   <a href="treasuer_menu/addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="treasuer_menu/addOnceEvent.php">Dodaj event jednorazowy</a>
   <a href="treasuer_menu/settings.php">Ustawienia</a>
 	<a href="logout.php"> Wyloguj się</a>
 </div>
-
-
-
 
 <div class="lewa_strona">
 	<div class="naglowek" >

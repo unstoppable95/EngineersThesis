@@ -5,8 +5,6 @@ if ((isset($_POST['changePassword'])))
 	changePassword();
 	}
 
-
-
 function changePassword()
 	{
 	session_start();
@@ -21,10 +19,10 @@ function changePassword()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 		{
-		echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
+		echo "Blad: " . $conn->connect_errno; 
 		}
 	  else
-		{ //polaczenie spoko :)
+		{ 
 		$newPassword = $_POST['newPassword'];
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
@@ -42,9 +40,5 @@ function changePassword()
 	$conn->close();
 	header('Location: logout.php');
 	}
-
-// -----------------------------------
-
-
 
 ?>

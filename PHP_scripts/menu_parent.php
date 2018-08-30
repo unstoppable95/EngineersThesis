@@ -1,6 +1,6 @@
 <html> 
 <head> 
-	<title>rodzic </title>
+	<title>Rodzic-panel głowny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="parent_menu/p_style.css" title="Arkusz stylów CSS">
 </head>
@@ -13,14 +13,20 @@ if (!isset($_SESSION['loggedIn']))
 		exit();
 	}
 	
-
 ?>
 <body>
 
 <div class="menu">
 	<a href="#" class="active">Strona główna</a>
+	  <?php
+		if ($_SESSION['type'] =="t"){
+					$myVar='<a href="menu_treasurer.php">Panel skarbnika</a>';
+					$_SESSION['treasurerAsParent']=true;
+					echo $myVar;
+				}
+  ?>
   <a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>
-  <a href="parent_menu/p_history.php">Historia wpłat</a>
+	<a href="menu_treasurer.php">Historia wpłat</a>
   <a href="parent_menu/p_classAccount.php">Konto klasowe</a>
   <a href="parent_menu/p_settings.php">Ustawienia</a>
   <a href="logout.php"> Wyloguj się</a>

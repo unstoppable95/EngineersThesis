@@ -29,10 +29,10 @@ function changePassword()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 		{
-		echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
+		echo "Blad: " . $conn->connect_errno; 
 		}
 	  else
-		{ //polaczenie spoko :)
+		{ 
 		$newPassword = $_POST['newPassword'];
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
@@ -67,10 +67,10 @@ function addEvent()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 		{
-		echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
+		echo "Blad: " . $conn->connect_errno; 
 		}
 	  else
-		{ //polaczenie spoko :)
+		{ 
 		$eventName = $_POST['eventName'];
 		$eventName = htmlentities($eventName, ENT_QUOTES, "UTF-8");
 		$eventPrice = $_POST['eventPrice'];
@@ -107,10 +107,10 @@ function addChildParent()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 		{
-		echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
+		echo "Blad: " . $conn->connect_errno; 
 		}
 	  else
-		{ //polaczenie spoko :)
+		{ 
 		$childName = $_POST['childName'];
 		$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
 		$childSurname = $_POST['childSurname'];

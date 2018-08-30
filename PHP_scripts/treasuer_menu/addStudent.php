@@ -1,6 +1,6 @@
 <html> 
 <head> 
-	<title>add student </title>
+	<title>Skarbnik-dodawania ucznia i rodzica</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<script src="check.js"></script>
 	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
@@ -13,14 +13,13 @@ if (!isset($_SESSION['loggedIn']))
 		header('Location: ../index.php');
 		exit();
 	}
-	require_once "../treasurer_helper.php";
 
 ?>
 <body>
 
-
 <div class="menu">
 	<a href="../menu_treasurer.php" >Strona główna</a>
+	<a href="menu_parent.php">Moje dzieci</a>
   <a href="addStudent.php" class="active">Dodaj ucznia do klasy</a>
   <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="addOnceEvent.php">Dodaj event jednorazowy</a>

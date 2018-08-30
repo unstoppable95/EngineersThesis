@@ -24,8 +24,8 @@ function changePassword()
     $conn = new mysqli($servername, $username, $password, $dbName);
     
     if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
-    } else { //polaczenie spoko :) 
+        echo "Blad: " . $conn->connect_errno; 
+    } else { 
         $newPassword = $_POST['newPassword'];
         $newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
         $login       = $_SESSION['user'];
@@ -56,8 +56,8 @@ function addClassTreasurer()
     $conn = new mysqli($servername, $username, $password, $dbName);
     
     if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
-    } else { //polaczenie spoko :) 
+        echo "Blad: " . $conn->connect_errno;
+    } else { 
         
         $className = $_POST['className'];
         $className = htmlentities($className, ENT_QUOTES, "UTF-8");
@@ -67,9 +67,7 @@ function addClassTreasurer()
         $surname   = htmlentities($surname, ENT_QUOTES, "UTF-8");
         $email     = $_POST['email'];
         $email     = htmlentities($email, ENT_QUOTES, "UTF-8");
-        
-   
-		
+        	
 			if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $email))))
 			{
 			$isUser = $result->num_rows;
@@ -112,17 +110,10 @@ function addClassTreasurer()
 						{
 						echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
 						}
-					
-				
-				
-				
+									
 			}
-		
-			
-			
-			
+								
 			}
-	
 	
 	}
 	
@@ -140,8 +131,8 @@ function displayClass()
     $conn = new mysqli($servername, $username, $password, $dbName);
     
     if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
-    } else { //polaczenie spoko :) 
+        echo "Blad: " . $conn->connect_errno;
+    } else { 
         $result=$conn->query("select * from class");
         if ( $result){
             echo "Record updated successfully";
@@ -153,9 +144,7 @@ function displayClass()
 			$_SESSION['funDisplay']=$text;
 			$_SESSION['funDisplay_1]']=true;
 	}
-			
-			
-			
+						
          else {
             echo "Error updating record: " . $conn->error;
         }        
@@ -165,7 +154,5 @@ function displayClass()
    header('Location: menu_admin.php');
     
 }
-
-
 
 ?> 

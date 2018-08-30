@@ -33,7 +33,7 @@ if (!isset($_SESSION['loggedIn']))
 				}
   ?>
   <a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>
-	<a href="menu_treasurer.php">Historia wpłat</a>
+	<a href="parent_menu/p_history.php">Historia wpłat</a>
   <a href="parent_menu/p_classAccount.php">Konto klasowe</a>
   <a href="parent_menu/p_settings.php">Ustawienia</a>
   <a href="logout.php"> Wyloguj się</a>

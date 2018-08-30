@@ -18,7 +18,7 @@ if (!isset($_SESSION['loggedIn']))
 
 <div class="menu">
 	<a href="../menu_treasurer.php" >Strona główna</a>
-	<a href="menu_parent.php">Moje dzieci</a>
+	<a href="../menu_parent.php">Moje dzieci</a>
   <a href="addStudent.php">Dodaj ucznia do klasy</a>
   <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="addOnceEvent.php">Dodaj event jednorazowy</a>

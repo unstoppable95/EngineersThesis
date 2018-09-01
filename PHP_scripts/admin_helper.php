@@ -13,6 +13,16 @@ if ((isset($_POST['showClasses']))) {
 }
 
 
+		if ((isset($_POST['function2call'])))
+	{
+		$function2call = $_POST['function2call'];	
+		switch($function2call) {
+        case 'fetch' : fetch();break;
+        case 'delete' : deleteFromDB(); break;
+	}
+
+	}
+
 function changePassword()
 {
     session_start();
@@ -153,6 +163,66 @@ function displayClass()
     
    header('Location: menu_admin.php');
     
+}
+
+//---------------------------------------
+//--------------------------
+
+	function fetch(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		$result=$connect->query(sprintf("SELECT * from class"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="10%">Id</th>  
+                     <th width="40%">Nazwa</th> 
+					 <th width="40%">Usuń klasę</th>
+					 <th width="10%">Szczegóły</th>
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+           $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
+					  <td><button type="button" name="details_btn" data-toggle="modal" data-target="#myModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
+                </tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze żadnych klas</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+ 
+}
+
+function deleteFromDB(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		if($res=$connect->query(sprintf("DELETE FROM class WHERE id = '".$_POST["id"]."'"))){
+			 echo 'Pomyslnie usunięto klasę';  
+		}
+
 }
 
 ?> 

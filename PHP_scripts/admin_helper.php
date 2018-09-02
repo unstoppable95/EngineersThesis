@@ -55,6 +55,18 @@ function changePassword()
     
 }
 //----------------------------------------------------------------
+
+function randomPassword() {
+    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $pass = array(); //remember to declare $pass as an array
+    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    for ($i = 0; $i < 8; $i++) {
+        $n = rand(0, $alphaLength);
+        $pass[] = $alphabet[$n];
+    }
+    return implode($pass); //turn the array into a string
+}
+//-----------------------------
 function addClassTreasurer()
 {
     session_start();
@@ -91,9 +103,12 @@ function addClassTreasurer()
 					{
 					echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
 					}
-				mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: 12345");
+				$passwd=randomPassword();
+				mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: $passwd");
+				
+				//dodanie do username
+				$conn->query(sprintf("insert into username (login,password,type,first_login) values ('%s' , '$passwd' ,'t',TRUE)", mysqli_real_escape_string($conn, $email)));
 				// szukamy id nowego rodzica
-
 				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $email))))
 					{
 					$details = $result->fetch_assoc();

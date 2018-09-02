@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 28 Sie 2018, 13:19
+-- Czas generowania: 02 Wrz 2018, 13:14
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -130,10 +130,6 @@ CREATE TABLE `parent` (
 -- Wyzwalacze `parent`
 --
 DELIMITER $$
-CREATE TRIGGER `addParentUsername` AFTER INSERT ON `parent` FOR EACH ROW insert into username (login,password,type) values (NEW.email,"12345",NEW.type)
-$$
-DELIMITER ;
-DELIMITER $$
 CREATE TRIGGER `delParentUsername` AFTER DELETE ON `parent` FOR EACH ROW delete from username where login=OLD.email
 $$
 DELIMITER ;
@@ -172,17 +168,18 @@ CREATE TABLE `payment` (
 CREATE TABLE `username` (
   `login` varchar(100) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `type` varchar(1) COLLATE utf8_polish_ci NOT NULL
+  `type` varchar(1) COLLATE utf8_polish_ci NOT NULL,
+  `first_login` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `username`
 --
 
-INSERT INTO `username` (`login`, `password`, `type`) VALUES
-('admin', 'admin', 'a'),
-('kasia', 'kasia', 't'),
-('piter', 'piter', 'p');
+INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
+('admin', 'admin', 'a', 0),
+('kasia', 'kasia', 't', 0),
+('piter', 'piter', 'p', 0);
 
 --
 -- Indeksy dla zrzutów tabel

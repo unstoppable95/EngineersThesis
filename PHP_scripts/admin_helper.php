@@ -19,6 +19,7 @@ if ((isset($_POST['showClasses']))) {
 		switch($function2call) {
         case 'fetch' : fetch();break;
         case 'delete' : deleteFromDB(); break;
+		case 'details' : showDetails(); break;
 	}
 
 	}
@@ -211,7 +212,7 @@ function displayClass()
                      <td>'.$row["id"].'</td>  
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
 					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
-					  <td><button type="button" name="details_btn" data-toggle="modal" data-target="#myModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#userModal" id="details_btn" name="details_btn" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td> 
                 </tr>  
            ';  
       }  
@@ -238,6 +239,65 @@ function deleteFromDB(){
 			 echo 'Pomyslnie usunięto klasę';  
 		}
 
+}
+
+
+
+function showDetails(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		$result=$connect->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '".$_POST["id"]."')"));
+		$className =$connect->query(sprintf("SELECT name FROM class WHERE id = '".$_POST["id"]."'"));
+		$studentsList=$connect->query(sprintf("SELECT * FROM child WHERE class_id = '".$_POST["id"]."'"));
+
+		$res=mysqli_fetch_array($result);
+        $output .= '<h2>Szczegóły klasy: '.mysqli_fetch_array($className)["name"].'</h2>
+		   <h3>Dane skarbnika</h3>
+		   Imię: '.$res["name"].' <br>
+		   Nazwisko: '.$res["surname"].' <br>
+		   Email: '.$res["email"].' <br>
+		   <h3>Lista uczniów</h3>
+		   ';
+		   
+		   
+		   
+		   $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="10%">Id</th>  
+                     <th width="40%">Imię</th> 
+					 <th width="40%">Nazwisko</th>
+					 <th width="10%">Data urodzenia</th>
+                </tr>'; 
+			
+ if(mysqli_num_rows($result) > 0)  
+ {  
+
+      while($row = mysqli_fetch_array($studentsList))  
+      {  
+		
+		   $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'">'.$row["name"].'</td>  
+					 <td class="name" data-id1="'.$row["id"].'">'.$row["surname"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'">'.$row["date_of_birth"].'</td>
+                </tr>  
+           ';  
+      }  
+ }  
+ else  
+ {  
+      $output .= 'Nie znaleziono danych';  
+ }  
+  
+   $output .= '</table>  
+      </div>';
+ echo $output;  
+ 
 }
 
 ?> 

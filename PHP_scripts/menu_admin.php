@@ -93,6 +93,34 @@
 </div>
 
 
+<!--MODAL CHANGE TR -->
+<div id="changeTrModal" class="modal fade">
+ <div class="modal-dialog">
+  <form method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+    <h2>Zmiana skarbnika</h2>
+	<h3>Podaj dane nowego skarbnika</h3>
+	<form action="admin_helper.php" method="post">
+	<table>
+		<tr><td>Imię: </td><td><input type="text" name="trName"/></td></tr> 
+		<tr><td>Nazwisko: </td><td><input type="text" name="trSurname"/></td></tr>
+		<tr><td>Email: </td><td><input type="text" name="trMail"/></td></tr>
+	
+		<tr><td colspan="2"><input type="submit" name="changeTreasuer" class="btn_commitChange" value="Zatwierdź"/></td></tr>
+	<table>
+	</form>
+
+   <!--
+    <div class="modal-footer">
+     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div> -->
+   </div>
+  </form>
+ </div>
+</div>
+
+
 	
 </body>
 </html>
@@ -132,8 +160,8 @@ $(document).on('click','.btn_delete',function(){
                 });  
            }  
       });  
-	  
-	  
+
+
 	$(document).on('click','.btn_details',function(){
 	var id=$(this).data("id3");
 	

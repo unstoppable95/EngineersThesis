@@ -24,6 +24,9 @@ if ((isset($_POST['showClasses']))) {
 
 	}
 
+
+	
+	
 function changePassword()
 {
     session_start();
@@ -197,9 +200,10 @@ function displayClass()
            <table class="table table-bordered">  
                 <tr>  
                      <th width="10%">Id</th>  
-                     <th width="40%">Nazwa</th> 
-					 <th width="40%">Usuń klasę</th>
+                     <th width="25%">Nazwa</th> 
+					 <th width="25%">Usuń klasę</th>
 					 <th width="10%">Szczegóły</th>
+					 <th width="30%">Zmień skarbnika</th>
                 </tr>'; 
 				
 				
@@ -213,7 +217,8 @@ function displayClass()
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
 					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
 					<td><button type="button" data-toggle="modal" data-target="#userModal" id="details_btn" name="details_btn" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td> 
-                </tr>  
+                <td><button type="button" data-toggle="modal" data-target="#changeTrModal" id="trChange_btn" name="trChange_btn" data-id3="'.$row["id"].'" class="btn_trChange">Zmień skarbnika</button></td>
+				</tr>  
            ';  
       }  
  

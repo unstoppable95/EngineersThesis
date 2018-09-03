@@ -3,6 +3,11 @@
 	<title>Rodzic-ustawienia</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="p_style.css" title="Arkusz stylów CSS">
+	
+		<script src="../js/jquery-2.2.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+	
 </head>
 <?php
 session_start();
@@ -32,20 +37,13 @@ if (!isset($_SESSION['loggedIn']))
 
 <div class="lewa_strona">
 	<h1> Ustawienia </h1>
-	<h2> Informacja o dzieciach </h2>
-	<h4> Lista dzieci </h4>
-	... <br>
-	Lista dzieci<br>
-	...<br>
-	...<br>
+	<h2> Informacja </h2>
+	
 	<h4> Dane rodzica </h4>
 	
 	<form name="parent_data">
-	<table>
-		<tr><td>Imię: </td><td>....</td></tr> 
-		<tr><td>Nazwisko: </td><td>....</td></tr> 
-		<tr><td>Email: </td><td>....</td></tr> 
-	<table>
+	
+	<div id="parent_data"></div>
 	</form>
 	<br>
 	<h2> Zmien hasło </h2>
@@ -70,3 +68,27 @@ if (!isset($_SESSION['loggedIn']))
 
 </body>
 </html>
+
+
+
+<script>
+$(document).ready(function(){
+function fetch_parent_data()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'parent_data'},
+			success:function(data){
+				$('#parent_data').html(data);
+			}
+		});
+		
+	}
+	fetch_parent_data();  
+	  
+	  
+ }); 
+  
+
+</script>

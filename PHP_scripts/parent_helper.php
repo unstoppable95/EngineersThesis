@@ -12,15 +12,23 @@ if ((isset($_POST['changePassword'])))
 		switch($function2call) {
         case 'fetch' : fetch();break;
         case 'delete' : deleteFromDB(); break;
+		case 'fetch_child_list': fetch_child_list(); break;
+		case 'choose' : choose(); break;
+		case 'parent_data' : fetch_parent_data(); break;
+		case 'fetch_balance' : fetch_balance(); break;
 	}
 
 	}
+	
+	
 	
 if ((isset($_POST['RequiredNewPasswordAccept'])))
 	{
 	changePassword();
 	}
 	
+
+
 
 function changePassword()
 	{
@@ -60,7 +68,7 @@ function changePassword()
 	
 	
 	
-	function fetch(){
+function fetch(){
 		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
@@ -119,6 +127,106 @@ function deleteFromDB(){
 			 echo 'Pomyslnie wypisano dziecko';  
 		}
 
+}
+
+
+
+//---------------------------------------
+//--------------------------
+
+function fetch_child_list(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = ''; 
+		
+		$x= $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
+		$res=mysqli_fetch_array($x);
+		$_SESSION['userID'] = $res["id"];
+		$result=$connect->query(sprintf("SELECT * from child WHERE parent_id = ".$_SESSION['userID']));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="5%">Id</th>  
+                     <th width="20%">Imię</th> 
+					 <th width="30%">Nazwisko</th>
+					 <th width="30%">Data urodzenia</th>
+					 <th width="15%">Wybierz</th>
+                </tr>'; 
+				
+				
+ if($result && mysqli_num_rows($result) > 0 )  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+           $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
+					  <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
+					 <td><button type="button" name="chooose_btn" data-id3="'.$row["id"].'" class="btn_choose">Wybierz</button></td>  
+				</tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie posiadasz w szkole żadnych dzieci</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+ 
+}
+
+function fetch_parent_data(){
+	session_start();
+	
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		$result=$connect->query(sprintf("SELECT * FROM parent WHERE id =".$_SESSION['userID']));
+		$res=mysqli_fetch_array($result);
+		
+        $output .= '<table>
+		<tr><td>Imię: </td><td>'.$res["name"].'</td></tr> 
+		<tr><td>Nazwisko: </td><td>'.$res["surname"].'</td></tr> 
+		<tr><td>Email: </td><td>'.$res["email"].'</td></tr> 
+	<table>
+		   ';
+ echo $output;  
+}
+
+function choose(){
+	$_SESSION['choosenChild']=$_POST["id"];
+	$ale="Wybrales dziecko o id: ".$_SESSION['choosenChild'];
+	echo $ale;
+	
+}
+
+function fetch_balance(){
+	session_start();
+	
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		/*
+		$result=$connect->query(sprintf("SELECT * FROM parent WHERE id =".$_SESSION['userID']));
+		$res=mysqli_fetch_array($result);
+		*/
+        $output .= 'JEST FUNKCJA DO DANYCH, zmienic tylko zapytanie (fetch_balance)
+		   ';
+ echo $output;  
+	
 }
 
 

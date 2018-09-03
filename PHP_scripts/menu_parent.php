@@ -99,12 +99,11 @@ require_once "connection.php";
 		
 		<div id="live_data"></div>
 		
-		<h3> Stan konta dziecka </h3>
+		<h3> Stan konta </h3>
 		
 		<form>
 		<table>
-			<tr><td>Konto składek klasowych:  </td><td>...kwota...</td></tr> 
-			<tr><td>Konto wydarzeń:  </td><td>...kwota...</td></tr> 
+			<tr><td>Stan konta dziecka:  </td><td><div id="accont_balance"></div></td></tr> 
 		</table>
 		</form>
 		
@@ -157,6 +156,22 @@ $(document).ready(function(){
 		
 	}
 	fetch_data();
+	
+	
+		function fetch_balance()
+	{
+		$.ajax({
+			url:"parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_balance'},
+			success:function(data){
+				$('#accont_balance').html(data);
+			}
+		});
+		
+	}
+	fetch_balance();
+	
 	
 	//delete
 $(document).on('click','.btn_delete',function(){

@@ -37,7 +37,7 @@ if (!isset($_SESSION['loggedIn']))
 	
 	<form>
 		<table>
-			<tr><td>Konto konta klasowego dziecka:  </td><td>...kwota...</td></tr> 
+			<tr><td>Ilość pieniędzy wpłaconych na konto klasowe dziecka:  </td><td>...kwota...</td></tr> 
 			<tr><td>Suma pieniędzy na koncie klasowym całej klasy:  </td><td>...kwota...</td></tr> 
 		</table>
 	</form>

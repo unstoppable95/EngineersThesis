@@ -14,7 +14,44 @@ if ((isset($_POST['addChildParent'])))
 	{
 	addChildParent();
 	}
+	
+	if ((isset($_POST['function2call'])))
+	{
+		$function2call = $_POST['function2call'];	
+		switch($function2call) {
+        case 'check' : check();break;
+		}
+    
+	}	
+	
+	
+function check(){
+		session_start();
+		//require_once "connection.php";
+		//$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		//$result=$connect->query(sprintf("SELECT * from class"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="10%">Id</th>  
+                     <th width="40%">Nazwa</th> 
+					 <th width="40%">Usuń klasę</th>
+					 <th width="10%">Szczegóły</th>
+                </tr>'; 
+				
+				
 
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+ 
+}
+//------------------------
 function changePassword()
 	{
 	session_start();
@@ -152,6 +189,9 @@ function addChildParent()
 		$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");	
 			
 		}
+		//id klasy zalgodowanego skarbnika
+		$classID1=$conn->query(sprintf("SELECT id FROM class where parent_id=(SELECT id FROM parent WHERE email = '".$_SESSION['user']."' )"));
+		$classID=mysqli_fetch_array($classID1)["id"];
 		
 		
 		if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
@@ -179,7 +219,7 @@ function addChildParent()
 					{
 					$details = $result->fetch_assoc();
 					$parentIDdb = $details['id'];
-					if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id) values ('%s' , '%s' ,'%s','$parentIDdb')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
+					if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
 						{
 						echo "Record inserted successfully";
 						}
@@ -196,7 +236,7 @@ function addChildParent()
 
 				$details = $result->fetch_assoc();
 				$parentIDdb = $details['id'];
-				if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id) values ('%s' , '%s' ,'%s','$parentIDdb')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
+				if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
 					{
 					echo "Record inserted successfully";
 					}

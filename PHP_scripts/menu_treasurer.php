@@ -6,9 +6,9 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="treasuer_menu/style.css" title="Arkusz stylów CSS">
 	<script src="js/jquery-2.2.4.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
-
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
 
 	
 	<style>
@@ -62,12 +62,12 @@ $_SESSION['treasurerAsParent']=false;
 	$result=$conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
 	$isUser = $result->num_rows;
 	if ($isUser <= 0){
-		echo "To nie jest pierwsze logowanie";
+	
 		$_SESSION['firstLog']=null;
 	}
 	else{
 		$_SESSION['firstLog']=true;
-		echo "Piersze lgoowanie";
+		
 	}
 ?>
 <body>
@@ -117,16 +117,18 @@ $_SESSION['treasurerAsParent']=false;
 </div>
 
 <!--MODAL DETAILS -->
-<div id="userModal" class="modal fade in">
- <div class="modal-dialog modal fade in">
-  <form method="post" id="user_form" enctype="multipart/form-data">
+<div id="userModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
     
-	<div id="class_list"></div>
-   
-    <div class="modal-footer">
-     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>
+		<h2>ZMIEŃ HASŁO </h2>
+		<p>
+		
+		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
+		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
+		</p>
+			
    </div>
   </form>
  </div>
@@ -135,44 +137,13 @@ $_SESSION['treasurerAsParent']=false;
 </html>
 
 
-
-
 <script>
-
-
 $(document).ready(function(){
 
 	var zmienna='<?php echo $_SESSION['firstLog'];?>';
 	
-	if (zmienna){
-	
-	/*function check_first_login()
-	{
-		
-    $(window).on('load',function(){
-        $('#userModal').modal('show');
-    });
-
-
-		$.ajax({
-			url:"treasurer_helper.php",
-			method:"POST",
-			data:{function2call:'check'},
-			success:function(data){
-				$('#class_list').html(data);
-			}
-		});
-		
-	}
-	check_first_login(); */
-	
-	$('body').append('<button>Login</button>');
-	
-	}
-
-	  
-	  
+	if (zmienna){	
+	$('#userModal').modal('show');
+		}	  
  }); 
-  
-
-</script>
+  </script>

@@ -6,10 +6,33 @@
 
 	
 	<script src="js/jquery-2.2.4.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-      
-</head>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  
+	<style>
+/* Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+</style>
 
 <?php
 session_start();
@@ -19,8 +42,36 @@ if (!isset($_SESSION['loggedIn']))
 		header('Location: ../index.php');
 		exit();
 	}
+require_once "connection.php";
 	
-?>
+	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
+	$conn = @new mysqli($servername, $username, $password, $dbName);
+	
+	if ($conn->connect_errno!=0){
+		echo "Blad: ".$conn->connect_errno;// " Opis bledu: ".$conn->connect_error;
+	}
+	else {
+				$sql="SELECT * FROM event";
+				$results=$conn->query($sql);
+	}
+	
+	$result=$conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
+	$isUser = $result->num_rows;
+	if ($isUser <= 0){
+	
+		$_SESSION['firstLog']=null;
+	}
+	else{
+		$_SESSION['firstLog']=true;
+		
+	}
+
+
+	
+?>  
+</head>
+
+
 <body>
 
 <div class="menu">
@@ -62,13 +113,37 @@ if (!isset($_SESSION['loggedIn']))
 	
 </div>
 
-
+<!--MODAL DETAILS -->
+<div id="userModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h2>ZMIEŃ HASŁO </h2>
+		<p>
+		
+		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
+		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
+		</p>
+			
+   </div>
+  </form>
+ </div>
+</div>
 </body>
 </html>
 
 
 <script>
 $(document).ready(function(){
+	
+	var zmienna='<?php echo $_SESSION['firstLog'];?>';
+	
+	if (zmienna){	
+	$('#userModal').modal('show');
+		}
+	
+	
 	function fetch_data()
 	{
 		$.ajax({

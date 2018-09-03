@@ -15,42 +15,13 @@ if ((isset($_POST['addChildParent'])))
 	addChildParent();
 	}
 	
-	if ((isset($_POST['function2call'])))
+if ((isset($_POST['RequiredNewPasswordAccept'])))
 	{
-		$function2call = $_POST['function2call'];	
-		switch($function2call) {
-        case 'check' : check();break;
-		}
-    
+	changePassword();
 	}	
 	
 	
-function check(){
-		session_start();
-		//require_once "connection.php";
-		//$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		//$result=$connect->query(sprintf("SELECT * from class"));
-		
-		
- $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
-                <tr>  
-                     <th width="10%">Id</th>  
-                     <th width="40%">Nazwa</th> 
-					 <th width="40%">Usuń klasę</th>
-					 <th width="10%">Szczegóły</th>
-                </tr>'; 
-				
-				
 
- 
- $output .= '</table>  
-      </div>';  
- echo $output;  
- 
-}
 //------------------------
 function changePassword()
 	{
@@ -74,7 +45,7 @@ function changePassword()
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		if ($result = $conn->query(sprintf("UPDATE username SET password='%s' WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login))))
+		if ($result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login))))
 			{
 			echo "Record updated successfully";
 			}

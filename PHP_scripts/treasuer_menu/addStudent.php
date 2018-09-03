@@ -28,7 +28,7 @@ if (!isset($_SESSION['loggedIn']))
 </div> 
 
 <div class="lewa_strona">
-	<h1> Dodaj ucznia do klasy ...Ia... </h1> 
+	<h1> Dodaj ucznia do klasy</h1> 
 	<h3> Dane ucznia </h3>
 	<form action="../treasurer_helper.php" method="post">
 	<table>

@@ -3,6 +3,12 @@
 	<title>Skarbnik-ustawienia</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
+	
+	
+	<script src="../js/jquery-2.2.4.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+	
 </head>
 <?php
 session_start();
@@ -30,19 +36,13 @@ if (!isset($_SESSION['loggedIn']))
 	<h1> Ustawienia </h1>
 	<h2> Informacja o klasie </h2>
 	<h4> Lista uczniów </h4>
-	... <br>
-	Lista uczniow<br>
-	...<br>
-	...<br>
-	<h4> Dane skarbnika </h4>
 	
-	<form name="treasuet_data">
-	<table>
-		<tr><td>Imię: </td><td>....</td></tr> 
-		<tr><td>Nazwisko: </td><td>....</td></tr> 
-		<tr><td>Email: </td><td>....</td></tr> 
-	<table>
-	</form>
+	<div id="students_list"></div>
+	
+	<h4> Dane skarbnika </h4>
+
+	<div id="treasuer_data"></div>
+
 	<br>
 	<h2> Zmien hasło </h2>
 	
@@ -58,12 +58,43 @@ if (!isset($_SESSION['loggedIn']))
 
 </div>
 
-
-
-
-
-
-
-
 </body>
 </html>
+
+
+<script>
+$(document).ready(function(){
+function fetch_students_list()
+	{
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call:'students_list'},
+			success:function(data){
+				$('#students_list').html(data);
+			}
+		});
+		
+	}
+	fetch_students_list();  
+	
+	
+	function fetch_treasuer_data()
+	{
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call:'treasuer_data'},
+			success:function(data){
+				$('#treasuer_data').html(data);
+			}
+		});
+		
+	}
+	fetch_treasuer_data();  
+	  
+	  
+ }); 
+  
+
+</script>

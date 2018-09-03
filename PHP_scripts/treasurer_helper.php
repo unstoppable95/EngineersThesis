@@ -20,7 +20,164 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	changePassword();
 	}	
 	
+	if ((isset($_POST['function2call'])))
+	{
+		$function2call = $_POST['function2call'];	
+		switch($function2call) {
+        case 'students_list' : fetch_students_list();break;
+        case 'treasuer_data' : fetch_treasurer_data(); break;
+		case 'fetch_event_list': fetch_event_list(); break;
+		case 'fetch_class_name': fetch_class_name(); break;
+	}
+
+	}
+
+function fetch_class_name(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		
+		$result=$connect->query(sprintf("SELECT name FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')"));
+		$res=mysqli_fetch_array($result);
+
+		$output = "<h1> Konto klasy ".$res['name']."</h1>";
+		echo $output;
+}
+
+function fetch_event_list(){
+	session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		//$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
+		//$id = mysqli_fetch_array($tmpID);
+		//$_SESSION['userID'] = $id["id"];
+		$result=$connect->query(sprintf("SELECT * FROM event"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="5%">Id</th>  
+                     <th width="25%">Nazwa</th> 
+					 <th width="15%">Cena</th>
+					 <th width="15%">Data</th>
+					 <th width="15%">Szczegóły</th>
+					 
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+           $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
+					 <td> BUTTON </td>
+				</tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+ 
+}
 	
+function fetch_students_list(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
+		$id = mysqli_fetch_array($tmpID);
+		$_SESSION['userID'] = $id["id"];
+		$result=$connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID'].")"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="5%">Id</th>  
+                     <th width="10%">Imię</th> 
+					 <th width="10%">Nazwisko</th>
+					 <th width="10%">Data urodzenia</th>
+					 <th width="10%">Imię rodzica</th>
+					 <th width="10%">Nazwisko rodzica</th>
+					 <th width="10%">Mail rodzica</th>
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = ".$row["id"].")")); 
+			$parent = mysqli_fetch_array($parentTMP);
+           $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["name"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["surname"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["email"].'</td>
+					 </tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+ 
+}	
+
+
+function fetch_treasurer_data(){
+		session_start();
+	
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		$result=$connect->query(sprintf("SELECT * FROM parent WHERE id =".$_SESSION['userID']));
+		$res=mysqli_fetch_array($result);
+		
+        $output .= '<table>
+		<tr><td>Imię: </td><td>'.$res["name"].'</td></tr> 
+		<tr><td>Nazwisko: </td><td>'.$res["surname"].'</td></tr> 
+		<tr><td>Email: </td><td>'.$res["email"].'</td></tr> 
+	<table>
+		   ';
+ echo $output; 
+	
+	
+}
 
 //------------------------
 function changePassword()

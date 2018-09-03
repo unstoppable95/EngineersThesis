@@ -1,5 +1,3 @@
-
-
 <html> 
 <head> 
 	<title>Skarbnik-panel główny</title>
@@ -51,14 +49,6 @@ $_SESSION['treasurerAsParent']=false;
 	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 	$conn = @new mysqli($servername, $username, $password, $dbName);
 	
-	if ($conn->connect_errno!=0){
-		echo "Blad: ".$conn->connect_errno;// " Opis bledu: ".$conn->connect_error;
-	}
-	else {
-				$sql="SELECT * FROM event";
-				$results=$conn->query($sql);
-	}
-	
 	$result=$conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
 	$isUser = $result->num_rows;
 	if ($isUser <= 0){
@@ -84,36 +74,11 @@ $_SESSION['treasurerAsParent']=false;
 
 <div class="lewa_strona">
 	<div class="naglowek" >
-		<h1> Konto klasy ...Ia... </h1>
-		<h3> Wydarzenia klasy ...Ia... </h3>
+		<div id="class_name"></div>
+		<h3> Wydarzenia klasy</h3>
+		<div id="class_event"></div>
 	</div>
 
-	<div class="tabela_wydarzen">
-		<table width="600" border = "1" cellpaddin="1" cellspacing="1">
-			<tr>
-			<th>Nazwa</th>
-			<th>Cena</th>
-			<th>Data</th>
-			<th> </th>
-			<th> </th>
-			
-
-			</tr>
-			
-			<?php
-			while($event=mysqli_fetch_assoc($results)){
-				echo "<tr>";
-				echo "<td>".$event['name']."</td>";
-				echo "<td>".$event['price']."</td>";
-				echo "<td>".$event['date']."</td>";
-				echo "<td><input type='button' class='btn_details' value='Szczegoly' /></td>";
-				echo "<td><input type='button' class='btn_delate' value='Usun' /></td>";
-				echo "</tr>";
-			}
-			?>
-			
-		</table>
-	</div>
 </div>
 
 <!--MODAL DETAILS -->
@@ -144,6 +109,39 @@ $(document).ready(function(){
 	
 	if (zmienna){	
 	$('#userModal').modal('show');
-		}	  
+		}
+
+	function fetch_event_list()
+	{
+		$.ajax({
+			url:"treasurer_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_event_list'},
+			success:function(data){
+				$('#class_event').html(data);
+			}
+		});
+		
+	}
+	fetch_event_list();
+	
+	function fetch_class_name()
+	{
+		$.ajax({
+			url:"treasurer_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_class_name'},
+			success:function(data){
+				$('#class_name').html(data);
+			}
+		});
+		
+	}
+	fetch_class_name();
+
+
+
+
+		
  }); 
   </script>

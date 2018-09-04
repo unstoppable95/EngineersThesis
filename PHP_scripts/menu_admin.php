@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>MENU </title>
+	<title>ADMIN-panel glowny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="admin_menu/a_style.css" title="Arkusz stylów CSS">
 

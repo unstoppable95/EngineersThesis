@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 02 Wrz 2018, 13:14
+-- Czas generowania: 04 Wrz 2018, 14:36
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -131,6 +131,10 @@ CREATE TABLE `parent` (
 --
 DELIMITER $$
 CREATE TRIGGER `delParentUsername` AFTER DELETE ON `parent` FOR EACH ROW delete from username where login=OLD.email
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `updateTypeParentUsername` AFTER UPDATE ON `parent` FOR EACH ROW UPDATE username set type=NEW.type where login=NEW.email
 $$
 DELIMITER ;
 
@@ -285,7 +289,7 @@ ALTER TABLE `event`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
@@ -314,7 +318,7 @@ ALTER TABLE `child`
 -- Ograniczenia dla tabeli `class`
 --
 ALTER TABLE `class`
-  ADD CONSTRAINT `class_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `class_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `class_acount`

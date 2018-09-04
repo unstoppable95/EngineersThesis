@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>dodaj klasę</title>
+	<title>ADMIN-dodaj klase</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
 </head>

@@ -45,14 +45,18 @@ function changeTreasuer2(){
     } else {
 		$newParentEmail = $_POST['trMail'];
         $newParentEmail  = htmlentities($newParentEmail , ENT_QUOTES, "UTF-8");
-		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from class where id=".$_SESSION['changeID'].")", mysqli_real_escape_string($conn, $newParentEmail )));
+		
+		$conn->query(sprintf("UPDATE parent SET type='p' where id=(select parent_id from class where id ='".$_SESSION['changeID']."')"));
+		$conn->query(sprintf("UPDATE class SET parent_id=(select id from parent where email='%s') where id='".$_SESSION['changeID']."'", mysqli_real_escape_string($conn, $newParentEmail )));
+		$conn->query(sprintf("UPDATE parent SET type='t' where email='%s'", mysqli_real_escape_string($conn, $newParentEmail )));
+		
 		
 	}
 	
 	  $conn->close();
 	
-   // header('Location: menu_admin.php');
-//echo $_SESSION['changeID'];
+    header('Location: menu_admin.php');
+
 }
 
 	

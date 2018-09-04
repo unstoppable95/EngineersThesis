@@ -20,6 +20,13 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	changePassword();
 	}	
 	
+	if ((isset($_POST['changeParentMail'])))
+	{
+	changeParentMail();
+	}	
+	
+
+	
 	if ((isset($_POST['function2call'])))
 	{
 		$function2call = $_POST['function2call'];	
@@ -28,9 +35,40 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
         case 'treasuer_data' : fetch_treasurer_data(); break;
 		case 'fetch_event_list': fetch_event_list(); break;
 		case 'fetch_class_name': fetch_class_name(); break;
+		case 'deleteStudent': deleteStudent(); break;
+		case 'btn_pMailChange': btn_pMailChange(); break;
 	}
 
 	}
+	
+	
+	
+function changeParentMail(){
+	session_start();
+	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " .$_SESSION['changeIDmail']. "' );</script>";
+
+}	
+
+function btn_pMailChange(){
+	session_start();
+	$_SESSION['changeIDmail']=$_POST["id"];
+	echo  "<script>console.log( 'Id:  " .$_SESSION['changeIDmail']. "' );</script>";
+	
+}
+
+	
+	
+function deleteStudent(){
+		//session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		if($res=$connect->query(sprintf("DELETE FROM child WHERE id = '".$_POST["id"]."'"))){
+			 echo 'Pomyslnie usunięto ucznia';  
+		}
+
+}
+
+	
 
 function fetch_class_name(){
 		session_start();
@@ -121,6 +159,8 @@ function fetch_students_list(){
 					 <th width="10%">Imię rodzica</th>
 					 <th width="10%">Nazwisko rodzica</th>
 					 <th width="10%">Mail rodzica</th>
+					 <th width="10%">Usuń ucznia</th>
+					 <th width="10%">Zmień maila rodzica</th>
                 </tr>'; 
 				
 				
@@ -139,6 +179,8 @@ function fetch_students_list(){
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["name"].'</td>
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["surname"].'</td>
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["email"].'</td>
+					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
 					 </tr>  
            ';  
       }  

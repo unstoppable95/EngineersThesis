@@ -183,7 +183,8 @@ function fetch_child_list(){
  
  $output .= '</table>  
       </div>';  
- echo $output;  
+ echo $output; 
+
  
 }
 

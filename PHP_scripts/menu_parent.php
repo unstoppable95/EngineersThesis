@@ -112,35 +112,56 @@ require_once "connection.php";
 	
 </div>
 
-<!--MODAL DETAILS -->
+<!--MODAL CHANGE PASSWORD -->
 <div id="userModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
     
-		<h2>ZMIEŃ HASŁO </h2>
 		<p>
-		
 		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
 		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
 		</p>
-			
+		
    </div>
   </form>
  </div>
 </div>
+
+
+<!--MODAL CHOOSE CHILD -->
+<div id="chooseChildModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h2>WYBIERZ DZIECKO</h2>
+		<h3> Lista Twoich dzieci: </h3>
+		<div id="child_list"></div>
+		
+   </div>
+  </form>
+ </div>
+</div>
+
+
 </body>
 </html>
 
 
 <script>
 $(document).ready(function(){
-	
+
 	var zmienna='<?php echo $_SESSION['firstLog'];?>';
 	
+	
 	if (zmienna){	
-	$('#userModal').modal('show');
-		}
+		$('#userModal').modal('show');
+	}
+	else{
+		$('#chooseChildModal').modal('show');
+	}
+		
 	
 	
 	function fetch_data()
@@ -156,6 +177,37 @@ $(document).ready(function(){
 		
 	}
 	fetch_data();
+	
+	
+		function fetch_child_list()
+	{
+		$.ajax({
+			url:"parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_child_list'},
+			success:function(data){
+				$('#child_list').html(data);
+			}
+		});
+		
+	}
+	fetch_child_list();
+	
+	
+	$(document).on('click','.btn_choose',function(){
+	var id=$(this).data("id3");
+
+	$.ajax({
+		url:"parent_helper.php",
+		method:"POST",
+		data:{function2call: 'choose', id:id},
+		dataType:"text",
+		success:function(data){
+			alert(data);			
+                     }  
+                });  
+      });
+	
 	
 	
 		function fetch_balance()

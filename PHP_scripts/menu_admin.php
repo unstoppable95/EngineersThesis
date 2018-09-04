@@ -63,15 +63,7 @@
 	<form action="admin_helper.php" method="post">
 		
 			<div id="class_list"></div>
-		
-		<textarea cols="50" rows="3" wrap="on">
-			<?php 
-			if (isset($_SESSION['funDisplay_1]']))
-			{
-				echo $_SESSION['funDisplay'];
-			}
-			?></textarea>
-		<input type="submit" name="showClasses" value=" Pokaz"/>
+
 	</form>
 
 </div>
@@ -98,23 +90,21 @@
  <div class="modal-dialog">
   <form method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
-    
+	
+	<!-- <div id="id_data"></div> -->
     <h2>Zmiana skarbnika</h2>
 	<h3>Podaj dane nowego skarbnika</h3>
 	<form action="admin_helper.php" method="post">
 	<table>
-		<tr><td>Imię: </td><td><input type="text" name="trName"/></td></tr> 
-		<tr><td>Nazwisko: </td><td><input type="text" name="trSurname"/></td></tr>
 		<tr><td>Email: </td><td><input type="text" name="trMail"/></td></tr>
-	
-		<tr><td colspan="2"><input type="submit" name="changeTreasuer" class="btn_commitChange" value="Zatwierdź"/></td></tr>
+	<tr><td colspan="2"><input type="submit" name="changeTreasuer2" class="btn_commitChange" value="Zatwierdź"/></td></tr>
 	<table>
 	</form>
 
-   <!--
+   <!---
     <div class="modal-footer">
      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div> -->
+    </div>  -->
    </div>
   </form>
  </div>
@@ -177,7 +167,28 @@ $(document).on('click','.btn_delete',function(){
                 });
 	 
            
-      });    
+      }); 
+
+
+	$(document).on('click','.btn_trChange',function(){
+	var id=$(this).data("id3");
+	//console.log(id);
+		$.ajax({
+			url:"admin_helper.php",
+			method:"POST",
+			data:{function2call: 'changeTreasuerr', id:id},
+			dataType:"text",
+				success:function(data){
+				//$('#parent_data').html(data);
+				//$('#id_data').html(data);
+				//console.log("wykonalem");
+			
+                     }      					 
+                });
+	 
+           
+      });
+	  
 	  
 	  
  }); 

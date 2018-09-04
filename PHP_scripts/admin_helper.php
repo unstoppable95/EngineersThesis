@@ -1,5 +1,4 @@
  <?php
-
 if ((isset($_POST['changePassword']))) {
     changePassword();
 }
@@ -13,6 +12,11 @@ if ((isset($_POST['showClasses']))) {
 }
 
 
+if ((isset($_POST['changeTreasuer2']))) {
+    changeTreasuer2();
+}
+
+
 		if ((isset($_POST['function2call'])))
 	{
 		$function2call = $_POST['function2call'];	
@@ -20,12 +24,44 @@ if ((isset($_POST['showClasses']))) {
         case 'fetch' : fetch();break;
         case 'delete' : deleteFromDB(); break;
 		case 'details' : showDetails(); break;
+		case 'changeTreasuerr' : changeTreasurer(); break;
 	}
 
 	}
 
+function changeTreasuer2(){
+	echo "<script>console.log( 'Debug Objectss: " .$_SESSION['changeID']. "' );</script>";
+	
+	  //session_start();
+    if (empty($_POST['trMail']) || $_POST['trMail'] == '0') {
+        header('Location: menu_admin.php');
+        exit();
+    }
+    require_once "connection.php";
+    $conn = new mysqli($servername, $username, $password, $dbName);
+    
+    if ($conn->connect_errno != 0) {
+        echo "Blad: " . $conn->connect_errno; 
+    } else {
+		$newParentEmail = $_POST['trMail'];
+        $newParentEmail  = htmlentities($newParentEmail , ENT_QUOTES, "UTF-8");
+		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from class where id=".$_SESSION['changeID'].")", mysqli_real_escape_string($conn, $newParentEmail )));
+		
+	}
+	
+	  $conn->close();
+	
+   // header('Location: menu_admin.php');
+//echo $_SESSION['changeID'];
+}
 
 	
+function changeTreasurer(){
+	session_start();
+	$_SESSION['changeID']=$_POST["id"];
+	echo "Zmieniane id: ".$_SESSION['changeID'];
+}
+
 	
 function changePassword()
 {
@@ -152,9 +188,10 @@ function addClassTreasurer()
     
 }
 //-------------
-function displayClass()
+/*
+function displayClass() //-------------
 {
-    session_start();
+    //session_start();
   
     require_once "connection.php";
     $conn = new mysqli($servername, $username, $password, $dbName);
@@ -183,12 +220,12 @@ function displayClass()
    header('Location: menu_admin.php');
     
 }
-
+*/
 //---------------------------------------
 //--------------------------
 
-	function fetch(){
-		session_start();
+function fetch(){
+		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
@@ -237,7 +274,7 @@ function displayClass()
 }
 
 function deleteFromDB(){
-		session_start();
+		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		if($res=$connect->query(sprintf("DELETE FROM class WHERE id = '".$_POST["id"]."'"))){
@@ -249,7 +286,7 @@ function deleteFromDB(){
 
 
 function showDetails(){
-		session_start();
+		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  

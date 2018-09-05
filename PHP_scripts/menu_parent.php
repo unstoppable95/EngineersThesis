@@ -65,6 +65,9 @@ require_once "connection.php";
 		$_SESSION['firstLog']=true;
 		
 	}
+	
+	$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
+	$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
 
 
 	
@@ -83,7 +86,14 @@ require_once "connection.php";
 					echo $myVar;
 				}
   ?>
-  <a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>
+  
+  <?php
+		if ((int)$_SESSION['amountOfChild'] > 1){
+					$myVar='<a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
+					echo $myVar;
+				}
+  ?>
+  
 	<a href="parent_menu/p_history.php">Historia wpłat</a>
   <a href="parent_menu/p_classAccount.php">Konto klasowe</a>
   <a href="parent_menu/p_settings.php">Ustawienia</a>
@@ -153,12 +163,13 @@ require_once "connection.php";
 $(document).ready(function(){
 
 	var zmienna='<?php echo $_SESSION['firstLog'];?>';
+	var amount='<?php echo $_SESSION['amountOfChild'];?>';
 	
 	
 	if (zmienna){	
 		$('#userModal').modal('show');
 	}
-	else{
+	if(amount > 1){
 		$('#chooseChildModal').modal('show');
 	}
 		
@@ -203,6 +214,7 @@ $(document).ready(function(){
 		data:{function2call: 'choose', id:id},
 		dataType:"text",
 		success:function(data){
+			$('#chooseChildModal').modal('hide');
 			alert(data);			
                      }  
                 });  

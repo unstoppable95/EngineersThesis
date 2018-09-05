@@ -23,7 +23,13 @@ if (!isset($_SESSION['loggedIn']))
 					echo $myVar;
 				}
   ?>
-  <a href="p_choiceChild.php">Wybór dziecka</a>
+ 
+  <?php
+		if ((int)$_SESSION['amountOfChild'] > 1){
+					$myVar='<a href="p_choiceChild.php">Wybór dziecka</a>';
+					echo $myVar;
+				}
+  ?>
   <a href="p_history.php">Historia wpłat</a>
   <a href="p_classAccount.php" class="active">Konto klasowe</a>
   <a href="p_settings.php">Ustawienia</a>

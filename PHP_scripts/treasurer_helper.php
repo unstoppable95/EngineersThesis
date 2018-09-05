@@ -321,6 +321,35 @@ function addEvent()
 			{
 			echo "Error updating record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;;
 			}
+			
+		
+		
+			$resultclassID=($conn->query(sprintf("select * from class where parent_id='".$_SESSION['userID']."'")))->fetch_assoc();		
+			$classID = $resultclassID['id'];
+			
+			$resulteventID=($conn->query(sprintf("select * from event where name='%s' and date='%s'", mysqli_real_escape_string($conn, $eventName), mysqli_real_escape_string($conn, $eventDate))))->fetch_assoc();		
+			$eventID = $resulteventID['id'];
+			
+			$result=$conn->query(sprintf("select * from child where class_id='".$classID."'"));
+		 if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  	
+		
+		$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', 0)", mysqli_real_escape_string($conn, $eventID), mysqli_real_escape_string($conn, $row["id"])));
+			
+			 
+      }  
+ 
+ }  
+ else  
+ {  
+       echo "Nie udalo sie dodac dziecka";
+ }  	
+			
+					
+			
+			
 		}
 
 	$conn->close();

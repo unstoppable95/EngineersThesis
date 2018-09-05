@@ -53,7 +53,13 @@
 				
 				//przekierowanie do innego pliku jak OK logowanie post -formulatrze get- w adresie byloby widac
 				//header('Location: menu.php');
-	
+				
+				$resultID=($conn->query(sprintf("select * from parent where email='".$_SESSION['user']."'")))->fetch_assoc();
+		
+				$_SESSION['userID'] = $resultID['id'];
+				
+			
+				
 				if ($typeDB['type'] =="a"){
 					header('Location: menu_admin.php')
 				;}

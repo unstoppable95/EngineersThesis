@@ -91,7 +91,7 @@ if (!isset($_SESSION['loggedIn']))
 
     <h2>ZMIANA MAILA RODZICA</h2>
 	<h3>Podaj nowego maila rodzica</h3>
-		Email: <input type="text" name="newParentMailMail"/>
+		Email: <input type="text" name="newParentMail"/>
 		<input type="submit" name="changeParentMail" class="btn_commitChange" value="Zatwierdz"/>
 
    </div>

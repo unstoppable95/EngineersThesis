@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 04 Wrz 2018, 14:36
+-- Czas generowania: 05 Wrz 2018, 09:07
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -229,7 +229,7 @@ ALTER TABLE `event`
 --
 ALTER TABLE `parent`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `parent_username_FK` (`email`);
+  ADD UNIQUE KEY `UniqueEmail` (`email`);
 
 --
 -- Indeksy dla tabeli `participation`
@@ -289,13 +289,13 @@ ALTER TABLE `event`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;;
 
 --
 -- Ograniczenia dla zrzutów tabel

@@ -45,14 +45,43 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	
 function changeParentMail(){
 	session_start();
-	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " .$_SESSION['changeIDmail']. "' );</script>";
+	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " .$_SESSION['changeEmailChildID']. "' );</script>";
+	
+	  //session_start();
+    if (empty($_POST['newParentMail']) || $_POST['newParentMail'] == '0') {
+        header('Location: treasuer_menu/settings.php');
+        exit();
+    }
+    require_once "connection.php";
+    $conn = new mysqli($servername, $username, $password, $dbName);
+    
+    if ($conn->connect_errno != 0) {
+        echo "Blad: " . $conn->connect_errno; 
+    } else {
+		$newParentEmail = $_POST['newParentMail'];
+        $newParentEmail  = htmlentities($newParentEmail , ENT_QUOTES, "UTF-8");
+		
+		$result=$conn->query(sprintf("select * from parent where id=(select parent_id from child where id='".$_SESSION['changeEmailChildID']."')"));
+		$details = $result->fetch_assoc();
+		$oldParentEmail = $details['email'];
+		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from child where id='".$_SESSION['changeEmailChildID']."')", mysqli_real_escape_string($conn, $newParentEmail )));
+		$conn->query(sprintf("UPDATE username set login='$newParentEmail' where login='$oldParentEmail'"));
+		
+	}
+	
+	  $conn->close();
+	
+    header('Location: treasuer_menu/settings.php');	
+		
 
+	
+	
 }	
 
 function btn_pMailChange(){
 	session_start();
-	$_SESSION['changeIDmail']=$_POST["id"];
-	echo  "<script>console.log( 'Id:  " .$_SESSION['changeIDmail']. "' );</script>";
+	$_SESSION['changeEmailChildID']=$_POST["id"];
+	echo  "<script>console.log( 'Id:  " .$_SESSION['changeEmailChildID']. "' );</script>";
 	
 }
 

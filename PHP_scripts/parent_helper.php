@@ -136,6 +136,7 @@ function deleteFromDB(){
 
 function fetch_child_list(){
 		session_start();
+		$_SESSION['firstDisplayParent']=false;
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = ''; 

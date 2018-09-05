@@ -57,7 +57,7 @@
 				$resultID=($conn->query(sprintf("select * from parent where email='".$_SESSION['user']."'")))->fetch_assoc();
 		
 				$_SESSION['userID'] = $resultID['id'];
-				
+				$_SESSION['firstDisplayParent']=true;
 			
 				
 				if ($typeDB['type'] =="a"){

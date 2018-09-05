@@ -331,13 +331,15 @@ function addEvent()
 			$eventID = $resulteventID['id'];
 			
 			$result=$conn->query(sprintf("select * from child where class_id='".$classID."'"));
+			
 		 if(mysqli_num_rows($result) > 0)  
  {  
       while($row = mysqli_fetch_array($result))  
       {  	
 		
 		$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', 0)", mysqli_real_escape_string($conn, $eventID), mysqli_real_escape_string($conn, $row["id"])));
-			
+		$parent=($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='".$row["id"]."')")))->fetch_assoc();
+		mail($parent["email"], "Dodano nowe wydarzenie: $eventName" , "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiło się nowe wydarzenie o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");	
 			 
       }  
  

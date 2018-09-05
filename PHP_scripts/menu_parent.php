@@ -164,14 +164,18 @@ $(document).ready(function(){
 
 	var zmienna='<?php echo $_SESSION['firstLog'];?>';
 	var amount='<?php echo $_SESSION['amountOfChild'];?>';
-	
+	var firstDisplay='<?php echo $_SESSION['firstDisplayParent'];?>';
 	
 	if (zmienna){	
 		$('#userModal').modal('show');
 	}
-	if(amount > 1){
+	else {
+		if(amount > 1 && firstDisplay){
 		$('#chooseChildModal').modal('show');
 	}
+	}
+	
+	
 		
 	
 	

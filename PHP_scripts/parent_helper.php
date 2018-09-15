@@ -73,7 +73,7 @@ function fetch(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
-		$result=$connect->query(sprintf("SELECT * from event"));
+		$result=$connect->query(sprintf("SELECT * from event WHERE id IN (SELECT event_id FROM participation WHERE child_id =" .$_SESSION['choosenChild'].")"));
 		
 		
  $output .= '  
@@ -123,7 +123,8 @@ function deleteFromDB(){
 		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
-		if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
+		//"DELETE FROM participation where event_id='".$_POST["id"]."' AND child_id = " .$_SESSION['choosenChild'].";"
+		if($res=$connect->query(sprintf("DELETE FROM participation where event_id='".$_POST["id"]."' AND child_id = " .$_SESSION['choosenChild']))){
 			 echo 'Pomyslnie wypisano dziecko';  
 		}
 
@@ -209,6 +210,7 @@ function fetch_parent_data(){
 }
 
 function choose(){
+	session_start();
 	$_SESSION['choosenChild']=$_POST["id"];
 	$ale="Wybrales dziecko o id: ".$_SESSION['choosenChild'];
 	echo $ale;

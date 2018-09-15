@@ -37,11 +37,15 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 		case 'fetch_class_name': fetch_class_name(); break;
 		case 'deleteStudent': deleteStudent(); break;
 		case 'btn_pMailChange': btn_pMailChange(); break;
+		case 'fetch_event_details': fetch_event_details(); break;
+		
 	}
 
 	}
 	
-	
+function fetch_event_details(){
+	//.$_POST["id"] -> id eventu
+}	
 	
 function changeParentMail(){
 	session_start();
@@ -117,11 +121,10 @@ function fetch_event_list(){
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
 		
-		//$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
-		//$id = mysqli_fetch_array($tmpID);
-		//$_SESSION['userID'] = $id["id"];
-		$result=$connect->query(sprintf("SELECT * FROM event"));
 		
+		
+		$result=$connect->query(sprintf("select * from event where id in(select event_id from participation where child_id in (select id from child where class_id = (select id from class where parent_id='".$_SESSION['userID']."')))"));
+	
 		
  $output .= '  
       <div class="table-responsive">  
@@ -146,7 +149,7 @@ function fetch_event_list(){
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td> BUTTON </td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
 				</tr>  
            ';  
       }  

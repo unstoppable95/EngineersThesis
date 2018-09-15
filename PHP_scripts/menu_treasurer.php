@@ -98,6 +98,25 @@ $_SESSION['treasurerAsParent']=false;
   </form>
  </div>
 </div>
+
+<!--EVENT DETAILS -->
+<div id="eventDetailsModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h2>Szczegoly </h2>
+		<div id="event_details"></div>
+<!--EVENT DETAILS		<p>
+		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
+		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
+		</p>-->
+			
+   </div>
+  </form>
+ </div>
+</div>
+
 </body>
 </html>
 
@@ -110,7 +129,25 @@ $(document).ready(function(){
 	if (zmienna){	
 	$('#userModal').modal('show');
 		}
-
+	
+	function fetch_event_details()
+	{	
+	
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"treasurer_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_event_details', id:id},
+			success:function(data){
+				$('#event_details').html(data);
+			}
+		});
+		
+	}
+	fetch_event_details();
+	
+	
+	
 	function fetch_event_list()
 	{
 		$.ajax({
@@ -140,7 +177,7 @@ $(document).ready(function(){
 	fetch_class_name();
 
 
-
+ 
 
 		
  }); 

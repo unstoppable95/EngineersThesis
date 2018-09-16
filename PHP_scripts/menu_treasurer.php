@@ -130,22 +130,41 @@ $(document).ready(function(){
 	$('#userModal').modal('show');
 		}
 	
-	function fetch_event_details()
+	/* function fetch_event_details()
 	{	
 	
-		var id=$(this).data("id3");
+		var id=$(this).data("id4");
+		console.log("Jestem tu 4" + id); 
 		$.ajax({
 			url:"treasurer_helper.php",
 			method:"POST",
 			data:{function2call:'fetch_event_details', id:id},
 			success:function(data){
+				console.log("Jestem tu" + id); 
 				$('#event_details').html(data);
 			}
 		});
 		
 	}
 	fetch_event_details();
-	
+	*/
+	$(document).on('click','.btn_detailsEvent',function(){
+	var id=$(this).data("id4");
+	console.log("Jestem tu 4" + id); 
+		$.ajax({
+			url:"treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'fetch_event_details', id:id},
+			dataType:"text",
+				success:function(data){
+					$('#event_details').html(data);
+				//$('#parent_data').html(data);
+				//$('#id_data').html(data);
+				//console.log("wykonalem");
+			
+                     }      					 
+                });   
+      });
 	
 	
 	function fetch_event_list()

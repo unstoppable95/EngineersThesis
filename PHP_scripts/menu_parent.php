@@ -117,6 +117,16 @@ require_once "connection.php";
 		</table>
 		</form>
 		
+		<h3> Dokonaj wpłaty </h3>
+		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+				Kwota: <input type="text" name="amountOfMoney" /> <br /><br />
+				
+				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br>
+				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br>
+				
+				<input type="submit" value="Wpłać" name="MakePayment"/>
+		</form>
+		
 	</div>
 
 	

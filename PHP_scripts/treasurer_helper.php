@@ -44,6 +44,9 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	}
 	
 function fetch_event_details(){
+	session_start();
+			$output = "<h1> DZIALAM!! ID:  ".$_POST["id"]."</h1>";
+		echo $output;
 	//.$_POST["id"] -> id eventu
 }	
 	
@@ -149,7 +152,8 @@ function fetch_event_list(){
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal" id="pMailChange_btn" name="pMailChange_btn" data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
+					 
 				</tr>  
            ';  
       }  

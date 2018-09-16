@@ -27,8 +27,69 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	changePassword();
 	}
 	
+	if ((isset($_POST['MakePayment'])))
+	{
+	makePayment();
+	}
+	
 
+//call when parent want to transfer money to child account. It increment child's account and then it automatically pay for event (chronological), as long as the account balance allows it
+function makePayment(){
+	session_start();
+	if (empty($_POST['amountOfMoney']) || $_POST['amountOfMoney'] == '0')
+	{
+		header('Location: parent_menu/p_settings.php');
+		exit();
+	}
+		
+	require_once "connection.php";
 
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno; 
+	}
+	  else
+	{ 
+		$amountOfMoney = $_POST['amountOfMoney'];
+		$child = $_SESSION['choosenChild'];
+		
+		if($_POST['typeOfAccount']=="normal"){
+				$curr=$conn->query(sprintf("SELECT balance FROM account WHERE child_id =".$child));
+				$currentBalanceTmp=mysqli_fetch_array($curr);
+				$currentBalance = currentBalanceTmp["balance"];
+				
+				$newBalance = $currentBalance + $amountOfMoney;
+				
+				if ($result = $conn->query(sprintf("UPDATE account SET balance=".$newBalance." WHERE child_id = ".$child)))
+				{
+					echo "Record updated successfully";
+				}
+				else
+				{
+					echo "Error updating record: " . $conn->error;
+				}
+		}
+		else{ //if parent want to transfer money to class account
+
+			
+		}
+	
+	
+	
+	}
+	
+	
+	$conn->close();
+	header('Location: menu_parent.php');
+		
+		
+		
+		
+		
+
+	
+}
 
 function changePassword()
 	{
@@ -81,11 +142,10 @@ function fetch(){
            <table class="table table-bordered">  
                 <tr>  
                      <th width="5%">Id</th>  
-                     <th width="40%">Nazwa</th>  
+                     <th width="50%">Nazwa</th>  
                      <th width="15%">Cena</th>  
                      <th width="20%">Data</th>  
 					 <th width="10%">Wypisz dziecko</th>
-					 <th width="10%">Szczegóły</th>
                 </tr>'; 
 				
 				
@@ -99,8 +159,7 @@ function fetch(){
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
                      <td class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
                      <td class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>  
-					  <td><button type="button" name="details_btn" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
+					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
                 </tr>  
            ';  
       }  

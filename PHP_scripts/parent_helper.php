@@ -52,16 +52,19 @@ function makePayment(){
 	  else
 	{ 
 		$amountOfMoney = $_POST['amountOfMoney'];
+		$amountOfMoney = htmlentities($amountOfMoney, ENT_QUOTES, "UTF-8");
 		$child = $_SESSION['choosenChild'];
+		$child = htmlentities($child, ENT_QUOTES, "UTF-8");
 		
 		if($_POST['typeOfAccount']=="normal"){
 				$curr=$conn->query(sprintf("SELECT balance FROM account WHERE child_id =".$child));
 				$currentBalanceTmp=mysqli_fetch_array($curr);
-				$currentBalance = currentBalanceTmp["balance"];
+				$currentBalance = (int) currentBalanceTmp["balance"];
 				
-				$newBalance = $currentBalance + $amountOfMoney;
 				
-				if ($result = $conn->query(sprintf("UPDATE account SET balance=".$newBalance." WHERE child_id = ".$child)))
+				$newBalance = $currentBalance + (int) $amountOfMoney;
+				
+				if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'",  mysqli_real_escape_string($conn, $newBalance),  mysqli_real_escape_string($conn, $child))))
 				{
 					echo "Record updated successfully";
 				}
@@ -282,12 +285,12 @@ function fetch_balance(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
-		/*
-		$result=$connect->query(sprintf("SELECT * FROM parent WHERE id =".$_SESSION['userID']));
+		
+		$result=$connect->query(sprintf("SELECT balance FROM account WHERE child_id =".$_SESSION['choosenChild']));
 		$res=mysqli_fetch_array($result);
-		*/
-        $output .= 'JEST FUNKCJA DO DANYCH, zmienic tylko zapytanie (fetch_balance)
-		   ';
+
+		
+        $output .= $res["balance"];
  echo $output;  
 	
 }

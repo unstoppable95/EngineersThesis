@@ -105,7 +105,7 @@ $_SESSION['treasurerAsParent']=false;
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
     
-		<h2>Szczegoly </h2>
+		<h2>Szczegóły </h2>
 		<div id="event_details"></div>
 <!--EVENT DETAILS		<p>
 		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />

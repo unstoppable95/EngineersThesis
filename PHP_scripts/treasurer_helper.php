@@ -44,10 +44,73 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	}
 	
 function fetch_event_details(){
-	session_start();
-			$output = "<h1> DZIALAM!! ID:  ".$_POST["id"]."</h1>";
-		echo $output;
-	//.$_POST["id"] -> id eventu
+		session_start();	
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		
+		
+		$result=($connect->query(sprintf("select count(*) as total from participation where event_id ='".$_POST["id"]."' ")))->fetch_assoc();
+		$output .="Liczba uczestników eventu: ".$result["total"]."";
+	
+		
+		$resultAmount=($connect->query(sprintf("select price from event where id ='".$_POST["id"]."' ")))->fetch_assoc();
+		$totalAmount=$resultAmount["price"] * $result["total"];
+		
+		$resultAmountPaid=($connect->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='".$_POST["id"]."' ")))->fetch_assoc();
+		$totalAmountPaid=$resultAmountPaid["totalPaid"];
+		
+		$output .="<br> Całkowity koszt eventu: ".$totalAmount."<br> Suma wpłat uczestników: ".$totalAmountPaid."";
+		$output .="<br><br>";
+		
+		
+		$result=$connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid from child ch, participation p where ch.id = p.child_id and p.event_id='".$_POST["id"]."'"));
+		
+		
+		$output .= ' 
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="30%">Imie</th>  
+                     <th width="40%">Nazwisko</th> 
+				
+					 <th width="15%">Kwota wpłacona</th>
+					<th width="15%">Koszt</th>
+					 
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+           $output .= '  
+                <tr>  
+                  
+                     <td class="name" data-id1="" contenteditable>'.$row["name"].'</td>  
+					 <td class="name" data-id1="" contenteditable>'.$row["surname"].'</td>
+					 <td class="name" data-id1="" contenteditable>'.$row["amount_paid"].'</td>
+					  <td class="name" data-id1="" contenteditable>'.$resultAmount["price"].'</td>
+				</tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output;  
+		
+		
+		
+	
 }	
 	
 function changeParentMail(){

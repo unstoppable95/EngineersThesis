@@ -25,6 +25,11 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	changeParentMail();
 	}	
 	
+	if ((isset($_POST['editEvent'])))
+	{
+	editEvent();
+	}	
+	
 
 	
 	if ((isset($_POST['function2call'])))
@@ -38,9 +43,66 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 		case 'deleteStudent': deleteStudent(); break;
 		case 'btn_pMailChange': btn_pMailChange(); break;
 		case 'fetch_event_details': fetch_event_details(); break;
+		case 'deleteEvent': deleteEvent(); break;
+		case 'saveEditEvent': saveEditEventID(); break;
+		
 		
 	}
 
+	}
+	
+	
+	function saveEditEventID(){
+		session_start();
+		$_SESSION['changeEventID']=$_POST["id"];
+		
+	}
+	
+	function editEvent(){
+	session_start();	
+    if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate'])) {
+	   header('Location: menu_treasurer.php');
+		exit();
+    }
+    require_once "connection.php";
+    $conn = new mysqli($servername, $username, $password, $dbName);
+    
+    if ($conn->connect_errno != 0) {
+        echo "Blad: " . $conn->connect_errno; 
+    } else {
+		
+		 if (!empty($_POST['newEventName'])){
+			$newEventName = $_POST['newEventName'];
+			$newEventName  = htmlentities($newEventName , ENT_QUOTES, "UTF-8");
+			$result=$conn->query(sprintf("update event set name='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventName )));
+		 }
+		 
+		  if (!empty($_POST['newEventPrice'])){
+			$newEventPrice = $_POST['newEventPrice'];
+			$newEventPrice  = htmlentities($newEventPrice , ENT_QUOTES, "UTF-8");
+			$result=$conn->query(sprintf("update event set price='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventPrice )));
+		 }
+		 
+		  if (!empty($_POST['newEventDate'])){
+			$newEventDate = $_POST['newEventDate'];
+			$newEventDate  = htmlentities($newEventDate , ENT_QUOTES, "UTF-8");
+			$result=$conn->query(sprintf("update event set date='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventDate )));
+		 }			
+	}
+	$conn->close();
+	header('Location: menu_treasurer.php');			
+	}
+	
+	
+	
+	function deleteEvent(){
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
+			 echo 'Pomyslnie usunięto event';  
+		}
+		
+		
 	}
 	
 function fetch_event_details(){
@@ -197,10 +259,12 @@ function fetch_event_list(){
            <table class="table table-bordered">  
                 <tr>  
                      <th width="5%">Id</th>  
-                     <th width="25%">Nazwa</th> 
+                     <th width="20%">Nazwa</th> 
 					 <th width="15%">Cena</th>
 					 <th width="15%">Data</th>
 					 <th width="15%">Szczegóły</th>
+					  <th width="15%">Edycja</th>
+					 <th width="15%">Usuwanie</th>
 					 
                 </tr>'; 
 				
@@ -215,8 +279,9 @@ function fetch_event_list(){
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
 					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal" id="pMailChange_btn" name="pMailChange_btn" data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
-					 
+					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="'.$row["id"].'" class="btn_editEvent">Edytuj</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="'.$row["id"].'" class="btn_deleteEvent">Usuń event</button></td>
 				</tr>  
            ';  
       }  

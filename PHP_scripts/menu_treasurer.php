@@ -88,8 +88,7 @@ $_SESSION['treasurerAsParent']=false;
    <div class="modal-content">
     
 		<h2>ZMIEŃ HASŁO </h2>
-		<p>
-		
+		<p>		
 		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
 		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
 		</p>
@@ -106,16 +105,37 @@ $_SESSION['treasurerAsParent']=false;
    <div class="modal-content">
     
 		<h2>Szczegóły </h2>
-		<div id="event_details"></div>
-<!--EVENT DETAILS		<p>
-		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
-		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
-		</p>-->
-			
+		<div id="event_details"></div>			
    </div>
   </form>
  </div>
 </div>
+
+<!--EVENT EDIT -->
+<div id="eventEditModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h2>Edycja</h2>
+		<!--<div id="event_edit"></div>		-->
+	
+		<table>
+		<tr><td>Nazwa: </td><td><input type="text" name="newEventName"/></td></tr> 
+		<tr><td>Cena: </td><td><input type="text" name="newEventPrice" /></td></tr> 
+		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="newEventDate" /> </td></tr> 
+		<tr><td colspan="2"><input type="submit" name="editEvent" class="btn_edit" value="Zatwierdz"/></td></tr>
+		<table>
+   </div>
+  </form>
+ </div>
+</div>
+
+
+
+
+
+
 
 </body>
 </html>
@@ -130,27 +150,48 @@ $(document).ready(function(){
 	$('#userModal').modal('show');
 		}
 	
-	/* function fetch_event_details()
-	{	
-	
-		var id=$(this).data("id4");
-		console.log("Jestem tu 4" + id); 
+	  //save which event edit want to edit
+	  $(document).on('click','.btn_editEvent',function(){
+	var id=$(this).data("id4");
 		$.ajax({
 			url:"treasurer_helper.php",
 			method:"POST",
-			data:{function2call:'fetch_event_details', id:id},
-			success:function(data){
-				console.log("Jestem tu" + id); 
-				$('#event_details').html(data);
-			}
-		});
-		
-	}
-	fetch_event_details();
-	*/
+			data:{function2call: 'saveEditEvent', id:id},
+			dataType:"text",
+				success:function(data){
+                     }      					 
+                });
+	 
+           
+      });
+	
+
+	
+	
+	//delete event
+	$(document).on('click','.btn_deleteEvent',function(){
+	var id=$(this).data("id4");
+	if(confirm("Czy jestes pewny, ze chcesz usunąć ten event?"))  
+           {
+	$.ajax({
+		url:"treasurer_helper.php",
+		method:"POST",
+		data:{function2call: 'deleteEvent', id:id},
+		dataType:"text",
+		success:function(data){
+			alert(data);
+			fetch_event_list()
+			
+                     }  
+                });  
+           }  
+      });
+	
+	
+
 	$(document).on('click','.btn_detailsEvent',function(){
 	var id=$(this).data("id4");
-	console.log("Jestem tu 4" + id); 
+
 		$.ajax({
 			url:"treasurer_helper.php",
 			method:"POST",
@@ -158,9 +199,7 @@ $(document).ready(function(){
 			dataType:"text",
 				success:function(data){
 					$('#event_details').html(data);
-				//$('#parent_data').html(data);
-				//$('#id_data').html(data);
-				//console.log("wykonalem");
+			
 			
                      }      					 
                 });   

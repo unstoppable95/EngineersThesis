@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 05 Wrz 2018, 09:07
+-- Czas generowania: 18 Wrz 2018, 13:50
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -111,6 +111,54 @@ CREATE TABLE `event` (
   `price` int(11) NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Wyzwalacze `event`
+--
+DELIMITER $$
+CREATE TRIGGER `delParticipationAfterDelEvent` BEFORE DELETE ON `event` FOR EACH ROW begin 
+ DECLARE curDate DATE; 
+ DECLARE eventDate DATE;
+DECLARE v_child_id, v_event_id , v_amount_paid INTEGER;
+ DECLARE v_count INTEGER;
+ DECLARE v_loop_counter INTEGER;
+declare my_cursor cursor for select * from participation where event_id=OLD.id;
+ 
+
+Select CURDATE() into curDate;
+Select old.date into eventDate;
+Select count(*) into v_count from participation where event_id=OLD.id;
+SET v_loop_counter =0;
+ 
+ if v_count >0 then
+ open my_cursor;
+ 
+ 
+ myLOOP: LOOP
+ fetch my_cursor into  v_event_id, v_child_id, v_amount_paid;
+  SET v_loop_counter =v_loop_counter+1;
+  IF(select datediff(eventDate,curDate) >=0) THEN
+update account set balance=balance+v_amount_paid where 	child_id=v_child_id; 
+END IF;
+ 
+  delete from participation where event_id=v_event_id and child_id =v_child_id;
+  
+  
+  
+   IF v_loop_counter=v_count THEN
+      
+        leave myLOOP;
+   END IF;
+  
+
+ end loop myLOOP;
+
+ close my_cursor;
+ end if;
+ 
+ end
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -265,7 +313,7 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -277,7 +325,7 @@ ALTER TABLE `class`
 -- AUTO_INCREMENT dla tabeli `class_acount`
 --
 ALTER TABLE `class_acount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=0;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -295,7 +343,7 @@ ALTER TABLE `parent`
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=0;
 
 --
 -- Ograniczenia dla zrzutów tabel
@@ -330,8 +378,7 @@ ALTER TABLE `class_acount`
 -- Ograniczenia dla tabeli `participation`
 --
 ALTER TABLE `participation`
-  ADD CONSTRAINT `participation_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `participation_event_FK` FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `participation_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `payment`

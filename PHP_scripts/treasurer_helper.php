@@ -98,11 +98,19 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	function deleteEvent(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
-		if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
+		$currrentDate=date('Y-m-d');
+		$res=($connect->query(sprintf("select * FROM event WHERE id = '".$_POST["id"]."'")))->fetch_assoc();
+		
+	
+		if ($res["date"]>$currrentDate){
+			if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
 			 echo 'Pomyslnie usunięto event';  
+			} 
 		}
-		
-		
+		else {
+			echo 'Nie możesz usunąć eventu, który już się odbył!';  
+		}
+			
 	}
 	
 function fetch_event_details(){

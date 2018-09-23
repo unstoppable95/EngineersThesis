@@ -66,11 +66,16 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
     }
     require_once "connection.php";
     $conn = new mysqli($servername, $username, $password, $dbName);
-    
+    $currrentDate=date('Y-m-d');
+	$res=($conn->query(sprintf("select * FROM event WHERE id = '".$_SESSION['changeEventID']."'")))->fetch_assoc();
+	
+	
     if ($conn->connect_errno != 0) {
         echo "Blad: " . $conn->connect_errno; 
     } else {
 		
+		if ($res["date"]>=$currrentDate){
+			
 		 if (!empty($_POST['newEventName'])){
 			$newEventName = $_POST['newEventName'];
 			$newEventName  = htmlentities($newEventName , ENT_QUOTES, "UTF-8");
@@ -83,14 +88,36 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 			$result=$conn->query(sprintf("update event set price='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventPrice )));
 		 }
 		 
-		  if (!empty($_POST['newEventDate'])){
+		
+		  if ( $_POST['newEventDate']>=$currrentDate && !empty($_POST['newEventDate'])){
 			$newEventDate = $_POST['newEventDate'];
 			$newEventDate  = htmlentities($newEventDate , ENT_QUOTES, "UTF-8");
 			$result=$conn->query(sprintf("update event set date='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventDate )));
-		 }			
+		 }	
+			//echo 'Edycja pomyślna!';  
+		
+		echo "<script>
+	alert('Edycja pomyślna!');
+	window.location.href='menu_treasurer.php';
+	</script>";
+
+		
+		}
+		
+		else {
+				echo "<script>
+	alert('Nie możesz edytować wydarzenia, które się odbyło!');
+	window.location.href='menu_treasurer.php';
+	</script>";
+
+			
+			//echo 'Nie możesz edytować eventu, który już się odbył!';  
+		}
+
+			
 	}
 	$conn->close();
-	header('Location: menu_treasurer.php');			
+	//header('Location: menu_treasurer.php');			
 	}
 	
 	

@@ -114,7 +114,7 @@ $_SESSION['treasurerAsParent']=false;
 <!--EVENT EDIT -->
 <div id="eventEditModal" class="modal fade" >
  <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+    <form action="treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
    <div class="modal-content">
     
 		<h2>Edycja</h2>
@@ -124,8 +124,11 @@ $_SESSION['treasurerAsParent']=false;
 		<tr><td>Nazwa: </td><td><input type="text" name="newEventName"/></td></tr> 
 		<tr><td>Cena: </td><td><input type="text" name="newEventPrice" /></td></tr> 
 		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="newEventDate" /> </td></tr> 
-		<tr><td colspan="2"><input type="submit" name="editEvent" class="btn_edit" value="Zatwierdz"/></td></tr>
+		<tr><td colspan="2"><input type="submit" name="editEvent"  class="btn_edit" value="Zatwierdz"/></td></tr>
 		<table>
+		
+		
+		
    </div>
   </form>
  </div>
@@ -150,6 +153,8 @@ $(document).ready(function(){
 	$('#userModal').modal('show');
 		}
 	
+
+
 	  //save which event edit want to edit
 	  $(document).on('click','.btn_editEvent',function(){
 	var id=$(this).data("id4");
@@ -158,7 +163,9 @@ $(document).ready(function(){
 			method:"POST",
 			data:{function2call: 'saveEditEvent', id:id},
 			dataType:"text",
+		
 				success:function(data){
+					
                      }      					 
                 });
 	 

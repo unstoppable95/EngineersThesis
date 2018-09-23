@@ -31,7 +31,9 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	{
 	makePayment();
 	}
+
 	
+
 
 //call when parent want to transfer money to child account. It increment child's account and then it automatically pay for event (chronological), as long as the account balance allows it
 function makePayment(){
@@ -54,15 +56,14 @@ function makePayment(){
 		$amountOfMoney = $_POST['amountOfMoney'];
 		$amountOfMoney = htmlentities($amountOfMoney, ENT_QUOTES, "UTF-8");
 		$child = $_SESSION['choosenChild'];
-		$child = htmlentities($child, ENT_QUOTES, "UTF-8");
 		
 		if($_POST['typeOfAccount']=="normal"){
-				$curr=$conn->query(sprintf("SELECT balance FROM account WHERE child_id =".$child));
-				$currentBalanceTmp=mysqli_fetch_array($curr);
-				$currentBalance = (int) currentBalanceTmp["balance"];
-				
-				
-				$newBalance = $currentBalance + (int) $amountOfMoney;
+				$curr=$conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =".$_SESSION['choosenChild']));
+				//$currentBalanceTmp=mysqli_fetch_array($curr);
+				$res=mysqli_fetch_array($curr);
+				$currentBalance = $res["b"];
+
+				$newBalance = $currentBalance + $amountOfMoney;
 				
 				if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'",  mysqli_real_escape_string($conn, $newBalance),  mysqli_real_escape_string($conn, $child))))
 				{
@@ -78,8 +79,7 @@ function makePayment(){
 			
 		}
 	
-	
-	
+
 	}
 	
 	
@@ -145,7 +145,8 @@ function fetch(){
            <table class="table table-bordered">  
                 <tr>  
                      <th width="5%">Id</th>  
-                     <th width="50%">Nazwa</th>  
+                     <th width="35%">Nazwa</th> 
+					 <th width="15%">Wpłacono</th>
                      <th width="15%">Cena</th>  
                      <th width="20%">Data</th>  
 					 <th width="10%">Wypisz dziecko</th>
@@ -156,10 +157,16 @@ function fetch(){
  {  
       while($row = mysqli_fetch_array($result))  
       {  
+			
+			$payedTmp=$connect->query(sprintf("SELECT * FROM participation WHERE child_id =".$_SESSION['choosenChild']." AND event_id=".$row["id"]));
+				$res=mysqli_fetch_array($payedTmp);
+				$paid = $res["amount_paid"];
+			
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td> 
+					<td class="name" data-id1="'.$row["id"].'" contenteditable>'.$paid.'</td>  					 
                      <td class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
                      <td class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
 					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
@@ -236,6 +243,7 @@ function fetch_child_list(){
 				</tr>  
            ';  
       }  
+	  // href="menu_parent.php"
  
  }  
  else  
@@ -276,6 +284,8 @@ function choose(){
 	$_SESSION['choosenChild']=$_POST["id"];
 	$ale="Wybrales dziecko o id: ".$_SESSION['choosenChild'];
 	echo $ale;
+	//header('Location: menu_parent.php');
+	//exit();
 	
 }
 

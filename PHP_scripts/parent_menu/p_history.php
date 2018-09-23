@@ -3,6 +3,11 @@
 	<title>Rodzic-historia</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="p_style.css" title="Arkusz stylów CSS">
+	
+	<script src="../js/jquery-2.2.4.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
 </head>
 <?php
 session_start();
@@ -39,20 +44,39 @@ if (!isset($_SESSION['loggedIn']))
 
 <div class="lewa_strona">
 	<h1> Historia wpłat </h1>
-		...<br>
-		...<br>
-		Tu tabelka z całą chistorią wpłat, na końcu uregulowane ... <br>
-		...<br> 
-		...<br>
+		<div id="payment_history"></div>
 
 
 </div>
 
 
-
-
-
-
-
-
 </body>
+</html>
+
+
+
+<script>
+
+$(document).ready(function(){
+	
+		function fetch_payment_history()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_payment_history'},
+			success:function(data){
+				$('#payment_history').html(data);
+			}
+		});
+		
+	}
+	fetch_payment_history();
+	
+
+
+ }); 
+  
+
+
+</script>

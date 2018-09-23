@@ -68,6 +68,12 @@ require_once "connection.php";
 	
 	$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
 	$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
+	
+	if($_SESSION['amountOfChild']==1){
+		$tmp=$conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
+		$row = mysqli_fetch_array($tmp);
+		$_SESSION['choosenChild']=$row["id"];
+	}
 
 
 	
@@ -105,8 +111,7 @@ require_once "connection.php";
 <div class="lewa_strona">
 	<div class="naglowek" >
 		<h1> Konto rodzica </h1>
-		<h3> Bierzące płatności ...imie wybranego dziecka ... </h3>
-		
+		<div id="child_name"></div>
 		<div id="live_data"></div>
 		
 		<h3> Stan konta </h3>
@@ -123,7 +128,12 @@ require_once "connection.php";
 				
 				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br>
 				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br>
-				
+				<br>
+				 <select name="paymentType">
+					<option value="gotowka">Gotówka</option>
+					<option value="konto">Na konto</option>
+				</select>
+				<br><br>
 				<input type="submit" value="Wpłać" name="MakePayment"/>
 		</form>
 		
@@ -202,6 +212,21 @@ $(document).ready(function(){
 		
 	}
 	fetch_data();
+	
+	
+		function fetch_child_name()
+	{
+		$.ajax({
+			url:"parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_child_name'},
+			success:function(data){
+				$('#child_name').html(data);
+			}
+		});
+		
+	}
+	fetch_child_name();
 	
 	
 		function fetch_child_list()

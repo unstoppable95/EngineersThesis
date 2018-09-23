@@ -10,12 +10,17 @@ if ((isset($_POST['changePassword'])))
 	{
 		$function2call = $_POST['function2call'];	
 		switch($function2call) {
-        case 'fetch' : fetch();break;
-        case 'delete' : deleteFromDB(); break;
-		case 'fetch_child_list': fetch_child_list(); break;
-		case 'choose' : choose(); break;
-		case 'parent_data' : fetch_parent_data(); break;
-		case 'fetch_balance' : fetch_balance(); break;
+			case 'fetch' : fetch();break;
+			case 'delete' : deleteFromDB(); break;
+			case 'fetch_child_list': fetch_child_list(); break;
+			case 'choose' : choose(); break;
+			case 'parent_data' : fetch_parent_data(); break;
+			case 'fetch_balance' : fetch_balance(); break;
+			case 'fetch_payment_history' : fetch_payment_history(); break;
+			case 'fetch_child_name' : fetch_child_name(); break;
+			case 'fetch_class_expenses_list' : fetch_class_expenses_list(); break;
+			case 'fetch_class_account_data' : fetch_class_account_data(); break;
+		
 	}
 
 	}
@@ -33,7 +38,92 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	}
 
 	
+function 	
+	
+	
+function fetch_class_expenses_list(){
+		 echo "Funkcja do generowania listy wydatków klasowych"; 
+}
 
+
+function fetch_class_account_data(){
+	/*
+		<form>
+		<table>
+			<tr><td>Ilość pieniędzy wpłaconych na konto klasowe dziecka:  </td><td>...kwota...</td></tr> 
+			<tr><td>Suma pieniędzy na koncie klasowym całej klasy:  </td><td>...kwota...</td></tr> 
+		</table>
+	</form>
+	*/
+	echo "Funkcja do generowania danych o koncie klasowym dziecka";
+	
+}
+	
+function fetch_child_name(){
+			session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName); 
+		$result=$connect->query(sprintf("SELECT * FROM child WHERE id=".$_SESSION['choosenChild']));
+				
+				
+	 if(mysqli_num_rows($result) > 0)  
+	 {  
+		 $row = mysqli_fetch_array($result);
+		 $class=$connect->query(sprintf("SELECT * FROM class WHERE id=".$row["class_id"]));	
+		 $classrow = mysqli_fetch_array($class);
+		 
+		$output = '<h3> Bierzące płatności dziecka: '.$row["name"].' '.$row["surname"].', klasa: '.$classrow["name"].' </h3>';  
+	 }  
+
+ echo $output; 
+}	
+
+
+function fetch_payment_history(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		$result=$connect->query(sprintf("SELECT * FROM payment WHERE account_id =(SELECT id FROM account WHERE child_id = ".$_SESSION['choosenChild'].") ORDER BY date"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="33%">Kwota</th> 
+					 <th width="33%">Data</th>
+                     <th width="34%">Typ wpłaty</th>
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+			
+           $output .= '  
+                <tr>  
+                     <td class="name" data-id1="'.$row["id"].'" >'.$row["amount"].'</td> 
+					<td class="name" data-id1="'.$row["id"].'" >'.$row["date"].'</td>  					 
+                     <td class="price" data-id2="'.$row["id"].'" >'."row[type]".'</td>
+                </tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie znaleziono wpłat</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output; 
+	
+}
 
 //call when parent want to transfer money to child account. It increment child's account and then it automatically pay for event (chronological), as long as the account balance allows it
 function makePayment(){
@@ -67,6 +157,12 @@ function makePayment(){
 				
 				if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'",  mysqli_real_escape_string($conn, $newBalance),  mysqli_real_escape_string($conn, $child))))
 				{
+					
+				$account_idTMP=$conn->query(sprintf("SELECT id FROM account WHERE child_id =".$_SESSION['choosenChild']));
+				$res=mysqli_fetch_array($account_idTMP);
+				$accountID = $res["id"];
+					
+					$conn->query(sprintf("INSERT INTO payment (account_id,amount) VALUES (".$accountID.",".$amountOfMoney.")"));
 					echo "Record updated successfully";
 				}
 				else
@@ -192,7 +288,9 @@ function deleteFromDB(){
 		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
-		//"DELETE FROM participation where event_id='".$_POST["id"]."' AND child_id = " .$_SESSION['choosenChild'].";"
+		
+		//adding paid money to account
+		
 		if($res=$connect->query(sprintf("DELETE FROM participation where event_id='".$_POST["id"]."' AND child_id = " .$_SESSION['choosenChild']))){
 			 echo 'Pomyslnie wypisano dziecko';  
 		}

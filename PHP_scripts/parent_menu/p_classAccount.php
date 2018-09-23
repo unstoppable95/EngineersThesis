@@ -3,6 +3,11 @@
 	<title>Rodzic-konto klasowe</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="p_style.css" title="Arkusz stylów CSS">
+	
+		<script src="../js/jquery-2.2.4.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  
 </head>
 <?php
 session_start();
@@ -40,20 +45,10 @@ if (!isset($_SESSION['loggedIn']))
 <div class="lewa_strona">
 	<h1> Konto klasowe </h1>
 	<h3> Stan konta klasowego dziecka </h3>
-	
-	<form>
-		<table>
-			<tr><td>Ilość pieniędzy wpłaconych na konto klasowe dziecka:  </td><td>...kwota...</td></tr> 
-			<tr><td>Suma pieniędzy na koncie klasowym całej klasy:  </td><td>...kwota...</td></tr> 
-		</table>
-	</form>
-		
+	<div id="class_account_data"></div>
+
 	<h3> Wydatki z konta klasowego </h3>
-			...<br>
-		...<br>
-		Tu tabelka z wydatkami klaoswymi ... <br>
-		...<br> 
-		...<br>
+		<div id="class_expenses_list"></div>
 
 
 </div>
@@ -61,8 +56,50 @@ if (!isset($_SESSION['loggedIn']))
 
 
 
-
-
-
-
 </body>
+</html>
+
+
+
+<script>
+
+$(document).ready(function(){
+	
+	function fetch_class_account_data()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_class_account_data'},
+			success:function(data){
+				$('#class_account_data').html(data);
+			}
+		});
+		
+	}
+	fetch_class_account_data();
+	
+	
+		function fetch_class_expenses_list()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_class_expenses_list'},
+			success:function(data){
+				$('#class_expenses_list').html(data);
+			}
+		});
+		
+	}
+	fetch_class_expenses_list();
+	
+	
+
+
+ }); 
+  
+
+
+</script>
+

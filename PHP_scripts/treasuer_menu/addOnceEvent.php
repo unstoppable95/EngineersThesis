@@ -19,7 +19,6 @@ if (!isset($_SESSION['loggedIn']))
 	<a href="../menu_treasurer.php" >Strona główna</a>
 	<a href="../menu_parent.php">Moje dzieci</a>
   <a href="addStudent.php" >Dodaj ucznia do klasy</a>
-  <a href="addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="addOnceEvent.php" class="active">Dodaj event jednorazowy</a>
   <a href="settings.php" >Ustawienia</a>
   <a href="../logout.php"> Wyloguj się</a>

@@ -66,7 +66,6 @@ $_SESSION['treasurerAsParent']=false;
 	<a href="#" class="active">Strona główna</a>
 	<a href="menu_parent.php">Moje dzieci</a>
   <a href="treasuer_menu/addStudent.php">Dodaj ucznia do klasy</a>
-  <a href="treasuer_menu/addCyclicEvent.php">Dodaj event cykliczny</a>
   <a href="treasuer_menu/addOnceEvent.php">Dodaj event jednorazowy</a>
   <a href="treasuer_menu/settings.php">Ustawienia</a>
 	<a href="logout.php"> Wyloguj się</a>

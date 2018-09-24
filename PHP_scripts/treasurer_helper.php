@@ -45,11 +45,77 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 		case 'fetch_event_details': fetch_event_details(); break;
 		case 'deleteEvent': deleteEvent(); break;
 		case 'saveEditEvent': saveEditEventID(); break;
+		case 'fetch_expenses_list': fetch_expenses_list(); break;
 		
 		
 	}
 
 	}
+	
+	
+function fetch_expenses_list(){
+		/*session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		
+		$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
+		$id = mysqli_fetch_array($tmpID);
+		$_SESSION['userID'] = $id["id"];
+		$result=$connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = ".$_SESSION['userID'].")"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="5%">Id</th>  
+                     <th width="10%">Imię</th> 
+					 <th width="10%">Nazwisko</th>
+					 <th width="10%">Data urodzenia</th>
+					 <th width="10%">Imię rodzica</th>
+					 <th width="10%">Nazwisko rodzica</th>
+					 <th width="10%">Mail rodzica</th>
+					 <th width="10%">Usuń ucznia</th>
+					 <th width="10%">Zmień maila rodzica</th>
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = ".$row["id"].")")); 
+			$parent = mysqli_fetch_array($parentTMP);
+           $output .= '  
+                <tr>  
+                     <td>'.$row["id"].'</td>  
+                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["name"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["surname"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["email"].'</td>
+					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
+					 </tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output; 
+*/ 
+	
+}
 	
 	
 	function saveEditEventID(){

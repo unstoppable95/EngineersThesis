@@ -20,6 +20,7 @@ if (!isset($_SESSION['loggedIn']))
 <div class="menu">
 	<a href="../menu_treasurer.php" >Strona główna</a>
 	<a href="../menu_parent.php">Moje dzieci</a>
+	<a href="expenses.php">Wydatki klasowe</a>
   <a href="addStudent.php" class="active">Dodaj ucznia do klasy</a>
   <a href="addOnceEvent.php">Dodaj event jednorazowy</a>
   <a href="settings.php" >Ustawienia</a>

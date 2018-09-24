@@ -30,6 +30,11 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	editEvent();
 	}	
 	
+	if ((isset($_POST['addExpense'])))
+	{
+	addExpense();
+	}
+	
 
 	
 	if ((isset($_POST['function2call'])))
@@ -47,37 +52,59 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 		case 'saveEditEvent': saveEditEventID(); break;
 		case 'fetch_expenses_list': fetch_expenses_list(); break;
 		
-		
 	}
 
 	}
 	
+
+function addExpense(){
+	session_start();
+	require_once "connection.php";
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	
+	$class_account_idx =  $connect->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= ".$_SESSION['userID'].")"));
+	$clid = mysqli_fetch_array($class_account_idx);
+	$class_account_id= $clid["id"];
+	$excepted_budget = $clid["excpected_budget"];
+	
+	$curr_exp =  $connect->query(sprintf("SELECT SUM(price) FROM expense WHERE class_account_id = ".$class_account_id));
+	$x = mysqli_fetch_array($class_account_idx);
+	$currentExpenses= $x["s"];
+	
+	
+	if($_POST["expensePrice"] + $currentExpenses <= $excepted_budget){
+		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id) VALUES ('".$_POST["expenseName"]."',".$_POST["expensePrice"].", ".$class_account_id.")"));
+		
+		//KOMUNIKAT ZE DODANO POMYSLNIE
+	}
+	else{
+		//KOMUNIKAT ZE BUDZET JEST PRZEKROCZONY I NIE MOZNA DODAC
+		
+	}
+	header('Location: treasuer_menu/expenses.php');	
+	
+}
+	
 	
 function fetch_expenses_list(){
-		/*session_start();
+		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
 		
 		$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
 		$id = mysqli_fetch_array($tmpID);
-		$_SESSION['userID'] = $id["id"];
-		$result=$connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = ".$_SESSION['userID'].")"));
+		$_SESSION['userID'] = $id["id"]; //userID = treasuerID
+		$result=$connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= ".$_SESSION['userID']."))"));
 		
 		
  $output .= '  
       <div class="table-responsive">  
            <table class="table table-bordered">  
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="10%">Imię</th> 
-					 <th width="10%">Nazwisko</th>
-					 <th width="10%">Data urodzenia</th>
-					 <th width="10%">Imię rodzica</th>
-					 <th width="10%">Nazwisko rodzica</th>
-					 <th width="10%">Mail rodzica</th>
-					 <th width="10%">Usuń ucznia</th>
-					 <th width="10%">Zmień maila rodzica</th>
+                     <th width="33%">Nazwa</th>  
+                     <th width="33%">Cena</th> 
+					 <th width="34%">Data</th>
                 </tr>'; 
 				
 				
@@ -85,20 +112,13 @@ function fetch_expenses_list(){
  {  
       while($row = mysqli_fetch_array($result))  
       {  
-			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = ".$row["id"].")")); 
-			$parent = mysqli_fetch_array($parentTMP);
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
                      <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["name"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["surname"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["email"].'</td>
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
-					 </tr>  
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
+					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
+					</tr>  
            ';  
       }  
  
@@ -106,14 +126,34 @@ function fetch_expenses_list(){
  else  
  {  
       $output .= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
+                          <td colspan="4">Nie dodano jeszcze wydatków w tej klasie</td>  
                      </tr>';  
  }  
  
- $output .= '</table>  
-      </div>';  
- echo $output; 
-*/ 
+	 
+	
+	$tmpbalance = $connect->query(sprintf("SELECT id, balance, excpected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID']." )"));
+		$bal = mysqli_fetch_array($tmpbalance);
+		$balance = $bal["balance"];
+		$exceptedBalance = $bal["excpected_budget"];
+		$class_account_id= $bal["id"];
+	
+	
+		$curr_exp =  $connect->query(sprintf("SELECT SUM(price) as s FROM expense WHERE class_account_id = ".$class_account_id));
+		$x = mysqli_fetch_array($curr_exp);
+		$currentExpenses= $x["s"];
+	
+	$availableMoney = $exceptedBalance - $currentExpenses;
+
+	 $output .= '</table>  
+	 <h2> Stan konta klasowego </h2>
+
+	 Ilość pieniędzy zebranyc na koncie klasowym: '.$balance.'
+	 <br> Przewidywana cała kwota budżetu: '.$exceptedBalance.'
+	 <br> Ilość pozostałego budżetu: '.$availableMoney.'
+		  </div>';  
+	 echo $output; 
+ 
 	
 }
 	

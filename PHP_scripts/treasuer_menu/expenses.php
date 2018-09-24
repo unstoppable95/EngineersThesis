@@ -61,6 +61,9 @@ if (!isset($_SESSION['loggedIn']))
 	<h1> Wydatki klasowe </h1>
 	<h2> Lista wydatków </h2>
 		<div id="expenses_list"></div>
+		
+		<br>
+		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent">Dodaj wydatek</button>
 
 
 
@@ -101,7 +104,7 @@ $(document).ready(function(){
 	function fetch_expenses_list()
 	{
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call:'fetch_expenses_list'},
 			success:function(data){
@@ -111,10 +114,6 @@ $(document).ready(function(){
 		
 	}
 	fetch_expenses_list();
-
-
- 
-
 		
  }); 
   </script>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 24 Wrz 2018, 13:15
+-- Czas generowania: 24 Wrz 2018, 15:16
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -39,9 +39,8 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `child_id`, `balance`) VALUES
-(1, 1, 1117),
-(2, 2, 0),
-(3, 3, 0);
+(1, 1, 500),
+(2, 2, 0);
 
 -- --------------------------------------------------------
 
@@ -63,9 +62,8 @@ CREATE TABLE `child` (
 --
 
 INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
-(1, 'Antek', 'S', '2018-09-13', 2, 1),
-(2, 'X', 'Y', '2008-08-06', 3, 1),
-(3, 's', 'S', '2018-09-04', 2, 1);
+(1, 'Piotrus', 'Junior', '2018-09-05', 2, 1),
+(2, 'Kasia', 'Junior', '2018-09-04', 2, 1);
 
 --
 -- Wyzwalacze `child`
@@ -164,12 +162,7 @@ CREATE TABLE `event` (
 --
 
 INSERT INTO `event` (`id`, `name`, `price`, `date`) VALUES
-(1, 'PuntaCana', 100, '2018-09-27'),
-(2, 'X', 2000, '2018-09-28'),
-(3, 'P', 55, '2018-10-07'),
-(4, 'ZAKOPIEC', 999, '2018-10-05'),
-(5, 'Sus', 10000, '2018-09-28'),
-(6, 'XYZ', 1111, '2018-10-07');
+(1, 'PuntaCana', 1000, '2018-09-19');
 
 --
 -- Wyzwalacze `event`
@@ -218,6 +211,91 @@ END IF;
  end
 $$
 DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `payForEventAfterUpdateEvent` AFTER UPDATE ON `event` FOR EACH ROW begin 
+DECLARE v_childID,v_amountPaid,v_balance, v_count,v_loop_counter INTEGER;
+DECLARE childs_details cursor for select p.child_id,p.amount_paid,a.balance  from participation p join account a on p.child_id=a.child_id where p.event_id=NEW.id;
+
+Select count(*) into v_count from participation where event_id=NEW.id;
+
+SET v_loop_counter=0;
+
+if v_count >0 THEN
+open childs_details;
+
+ myLOOP: LOOP
+ SET v_loop_counter =v_loop_counter+1;
+
+ fetch childs_details into v_childID,v_amountPaid,v_balance;
+ 
+ if (NEW.price<OLD.price ) then
+	
+	if (OLD.price=v_amountPaid) then
+	update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+	update account set balance=balance+(OLD.price-NEW.price) where child_id=v_childID;
+	end if;
+	
+	if (OLD.price>v_amountPaid) then
+		
+		if(NEW.price<v_amountPaid) then
+		update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+		update account set balance=balance+(v_amountPaid-NEW.price) where child_id=v_childID;
+		end if;
+		
+		if(NEW.price>v_amountPaid) then
+			
+			if(v_amountPaid+v_balance>=NEW.price) then
+			update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+			update account set balance=balance+(NEW.price-v_amountPaid) where child_id=v_childID;
+			end if;
+			
+			
+			if (v_amountPaid+v_balance<NEW.price) then
+			update participation set amount_paid=v_balance+v_amountPaid where child_id=v_childID and event_id=NEW.id;
+			update account set balance=0 where child_id=v_childID;
+			end if;
+		
+		end if;
+		
+		
+	end if;
+	
+	
+ end if;
+ 
+ if (NEW.price > OLD.price) then
+	
+	if (v_amountPaid+v_balance>=NEW.price) then
+	update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+	update account set balance=balance-(NEW.price-v_amountPaid) where child_id=v_childID;
+	end if;
+ 
+ 
+	if  (v_amountPaid+v_balance<NEW.price) then
+	update participation set amount_paid=v_amountPaid+v_balance where child_id=v_childID and event_id=NEW.id;
+	update account set balance=0 where child_id=v_childID;
+	end if ;
+ 
+ end if;
+ 
+ 
+ 
+ 
+ 
+IF v_loop_counter=v_count THEN
+       leave myLOOP;
+   END IF; 
+   
+ end loop myLOOP;
+
+
+end if;
+close childs_details;
+
+
+end
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -253,8 +331,7 @@ CREATE TABLE `parent` (
 
 INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
 (1, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't'),
-(2, 's', 's', 'ss', 'p'),
-(3, 's', 'y', 'sy', 'p');
+(2, 'Piotr', 'Senior', 'piotr-pawlaczyk5@wp.pl', 'p');
 
 --
 -- Wyzwalacze `parent`
@@ -285,17 +362,8 @@ CREATE TABLE `participation` (
 --
 
 INSERT INTO `participation` (`event_id`, `child_id`, `amount_paid`) VALUES
-(2, 2, 0),
-(2, 3, 0),
-(3, 2, 0),
-(3, 3, 0),
-(4, 2, 0),
-(4, 3, 0),
-(5, 2, 0),
-(5, 3, 0),
-(6, 1, 0),
-(6, 2, 0),
-(6, 3, 0);
+(1, 1, 1000),
+(1, 2, 0);
 
 -- --------------------------------------------------------
 
@@ -316,11 +384,7 @@ CREATE TABLE `payment` (
 --
 
 INSERT INTO `payment` (`id`, `date`, `account_id`, `amount`, `type`) VALUES
-(1, '2018-09-23 16:37:31', 1, 1, ''),
-(2, '2018-09-23 16:38:18', 1, 200, ''),
-(3, '2018-09-23 16:39:02', 1, 2, ''),
-(4, '2018-09-23 16:40:10', 1, 3000, ''),
-(5, '2018-09-23 19:31:52', 1, 200, '');
+(1, '2018-09-24 13:06:05', 1, 1500, 'gotowka');
 
 --
 -- Wyzwalacze `payment`
@@ -398,9 +462,8 @@ INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
 ('admin', 'admin', 'a', 0),
 ('kasia', 'kasia', 't', 0),
 ('kasjozw@wp.pl', 'kasia', 't', 0),
-('piter', 'piter', 'p', 0),
-('ss', 'x', 'p', 0),
-('sy', 'Y3OD1ey0', 'p', 1);
+('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0),
+('piter', 'piter', 'p', 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -491,13 +554,13 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -521,7 +584,7 @@ ALTER TABLE `class_account_payment`
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`
@@ -533,13 +596,13 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Ograniczenia dla zrzutów tabel

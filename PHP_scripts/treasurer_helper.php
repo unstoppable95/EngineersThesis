@@ -352,7 +352,7 @@ function fetch_event_list(){
 		
 		
 		
-		$result=$connect->query(sprintf("select * from event where id in(select event_id from participation where child_id in (select id from child where class_id = (select id from class where parent_id='".$_SESSION['userID']."')))"));
+		$result=$connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='".$_SESSION['userID']."')"));
 	
 		
  $output .= '  

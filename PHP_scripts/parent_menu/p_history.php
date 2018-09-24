@@ -44,7 +44,11 @@ if (!isset($_SESSION['loggedIn']))
 
 <div class="lewa_strona">
 	<h1> Historia wpłat </h1>
+	<h3> Wpłaty ka konto dziecka </h3>
 		<div id="payment_history"></div>
+		
+			<h3> Wpłaty ka konto klasowe </h3>
+		<div id="class_account_payment_history"></div>
 
 
 </div>
@@ -72,6 +76,21 @@ $(document).ready(function(){
 		
 	}
 	fetch_payment_history();
+	
+		
+	function fetch_class_account_payment_history()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_class_account_payment_history'},
+			success:function(data){
+				$('#class_account_payment_history').html(data);
+			}
+		});
+		
+	}
+	fetch_class_account_payment_history();
 	
 
 

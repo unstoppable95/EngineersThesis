@@ -20,6 +20,7 @@ if ((isset($_POST['changePassword'])))
 			case 'fetch_child_name' : fetch_child_name(); break;
 			case 'fetch_class_expenses_list' : fetch_class_expenses_list(); break;
 			case 'fetch_class_account_data' : fetch_class_account_data(); break;
+			case 'fetch_class_account_payment_history' : fetch_class_account_payment_history(); break;
 		
 	}
 
@@ -37,6 +38,52 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	makePayment();
 	}
 
+	
+function fetch_class_account_payment_history(){
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+		$result=$connect->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = ".$_SESSION['choosenChild']." ORDER BY date"));
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="33%">Kwota</th> 
+					 <th width="33%">Data</th>
+                     <th width="34%">Typ wpłaty</th>
+                </tr>'; 
+				
+				
+ if(mysqli_num_rows($result) > 0)  
+ {  
+      while($row = mysqli_fetch_array($result))  
+      {  
+			
+           $output .= '  
+                <tr>  
+                     <td class="name" data-id1="'.$row["id"].'" >'.$row["amount"].'</td> 
+					<td class="name" data-id1="'.$row["id"].'" >'.$row["date"].'</td>  					 
+                     <td class="price" data-id2="'.$row["id"].'" >'.$row["type"].'</td>
+                </tr>  
+           ';  
+      }  
+ 
+ }  
+ else  
+ {  
+      $output .= '<tr>  
+                          <td colspan="4">Nie znaleziono wpłat</td>  
+                     </tr>';  
+ }  
+ 
+ $output .= '</table>  
+      </div>';  
+ echo $output; 
+		
+}
 
 	
 function fetch_class_expenses_list(){
@@ -44,7 +91,7 @@ function fetch_class_expenses_list(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
-		$result=$connect->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_acount WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")) ORDER BY date"));
+		$result=$connect->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")) ORDER BY date"));
 		
 		$output .= '  
       <div class="table-responsive">  
@@ -95,11 +142,11 @@ function fetch_class_account_data(){
 	
 	
 	
-	$class_acc_id=$conn->query(sprintf("SELECT id FROM class_acount WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
+	$class_acc_id=$conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
 	$ress=$class_acc_id->fetch_assoc();
 	$class_account_id = $ress["id"];
  
-	$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_acount WHERE id =".$class_account_id));
+	$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_account WHERE id =".$class_account_id));
 	$res=mysqli_fetch_array($curr_class_balance);
 	$current_class_balance = $res["balance"];
 		 
@@ -228,21 +275,21 @@ function makePayment(){
 		}
 		else{ //if parent want to transfer money to class account
 			//fetch class account id
-			$class_acc_id=$conn->query(sprintf("SELECT id FROM class_acount WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
+			$class_acc_id=$conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
 			$ress=$class_acc_id->fetch_assoc();
 			$class_account_id = $ress["id"];
 		
 			//inserting payment to class account
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id) VALUES (".$amountOfMoney.",".$class_account_id.",".$_SESSION['choosenChild'].")"));
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (".$amountOfMoney.",".$class_account_id.",".$_SESSION['choosenChild'].",'".$_POST['paymentType']."')"));
 			
 			//updating class account balance
-			$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_acount WHERE id =".$class_account_id));
+			$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_account WHERE id =".$class_account_id));
 			$res=mysqli_fetch_array($curr_class_balance);
 			$current_class_balance = $res["balance"];
 			
 			$new_account_balance = $current_class_balance + $amountOfMoney;
 			
-			$conn->query(sprintf("UPDATE class_acount SET balance='%s' WHERE id = '%s'",  mysqli_real_escape_string($conn, $new_account_balance),  mysqli_real_escape_string($conn, $class_account_id)));
+			$conn->query(sprintf("UPDATE class_account SET balance='%s' WHERE id = '%s'",  mysqli_real_escape_string($conn, $new_account_balance),  mysqli_real_escape_string($conn, $class_account_id)));
 
 		}
 	

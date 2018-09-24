@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 23 Wrz 2018, 19:01
+-- Czas generowania: 24 Wrz 2018, 13:15
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -39,7 +39,7 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`id`, `child_id`, `balance`) VALUES
-(1, 1, 927),
+(1, 1, 1117),
 (2, 2, 0),
 (3, 3, 0);
 
@@ -113,24 +113,10 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Struktura tabeli dla tabeli `class_account_payment`
+-- Struktura tabeli dla tabeli `class_account`
 --
 
-CREATE TABLE `class_account_payment` (
-  `id` int(11) NOT NULL,
-  `amount` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `class_account_id` int(11) NOT NULL,
-  `child_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
--- --------------------------------------------------------
-
---
--- Struktura tabeli dla tabeli `class_acount`
---
-
-CREATE TABLE `class_acount` (
+CREATE TABLE `class_account` (
   `id` int(11) NOT NULL,
   `balance` int(11) DEFAULT NULL,
   `expenses` int(11) DEFAULT NULL,
@@ -139,11 +125,26 @@ CREATE TABLE `class_acount` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
--- Zrzut danych tabeli `class_acount`
+-- Zrzut danych tabeli `class_account`
 --
 
-INSERT INTO `class_acount` (`id`, `balance`, `expenses`, `excpected_budget`, `class_id`) VALUES
+INSERT INTO `class_account` (`id`, `balance`, `expenses`, `excpected_budget`, `class_id`) VALUES
 (1, 0, 0, 0, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabeli dla tabeli `class_account_payment`
+--
+
+CREATE TABLE `class_account_payment` (
+  `id` int(11) NOT NULL,
+  `amount` int(11) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `type` varchar(50) COLLATE utf8_polish_ci NOT NULL,
+  `class_account_id` int(11) NOT NULL,
+  `child_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 -- --------------------------------------------------------
 
@@ -166,7 +167,9 @@ INSERT INTO `event` (`id`, `name`, `price`, `date`) VALUES
 (1, 'PuntaCana', 100, '2018-09-27'),
 (2, 'X', 2000, '2018-09-28'),
 (3, 'P', 55, '2018-10-07'),
-(4, 'ZAKOPIEC', 999, '2018-10-05');
+(4, 'ZAKOPIEC', 999, '2018-10-05'),
+(5, 'Sus', 10000, '2018-09-28'),
+(6, 'XYZ', 1111, '2018-10-07');
 
 --
 -- Wyzwalacze `event`
@@ -282,73 +285,17 @@ CREATE TABLE `participation` (
 --
 
 INSERT INTO `participation` (`event_id`, `child_id`, `amount_paid`) VALUES
-(1, 1, 100),
-(1, 2, 0),
-(1, 3, 0),
-(2, 1, 2000),
 (2, 2, 0),
 (2, 3, 0),
 (3, 2, 0),
 (3, 3, 0),
-(4, 1, 0),
 (4, 2, 0),
-(4, 3, 0);
-
---
--- Wyzwalacze `participation`
---
-DELIMITER $$
-CREATE TRIGGER `payForEventParticipation` AFTER DELETE ON `participation` FOR EACH ROW begin
-
-DECLARE vc_amount ,vc_id, vc_price , v_count , v_loop_counter, v_balance INTEGER;
-DECLARE vc_date DATE;
-DECLARE my_cursor cursor for select p.amount_paid,e.date,e.price, e.id from participation p join event e on  p.event_id=e.id  where child_id=OLD.child_id order by e.date asc;
-
-
-Select count(*) into v_count from participation where child_id=OLD.child_id;
-Select balance into v_balance from account where child_id=OLD.child_id;
-
-SET v_loop_counter=0;
-update account set balance=v_balance+OLD.amount_paid where child_id=OLD.child_id;
-
-
-if v_count >0 THEN
- open my_cursor;
- 
- myLOOP: LOOP
- SET v_loop_counter =v_loop_counter+1;
- fetch my_cursor into vc_amount,vc_date,vc_price,vc_id;
- 
- IF(vc_amount<vc_price and v_balance>0 ) THEN
-
-	
-    if (v_balance>=vc_price-vc_amount) THEN
-    update participation set amount_paid=vc_price where event_id=vc_id and child_id=OLD.child_id;
-    set v_balance=v_balance-(vc_price-vc_amount);
-	set vc_amount=vc_price;
-	end if;
-  
-    if (v_balance<vc_price-vc_amount) THEN
-	update participation set amount_paid=amount_paid+v_balance where event_id=vc_id and child_id=OLD.child_id;
-	set v_balance=0;
-	end if;
-    
-	update account set balance=v_balance where child_id=OLD.child_id;
-	
-	
-    end if;
-
-IF v_loop_counter=v_count THEN
-       leave myLOOP;
-   END IF; 
-   
- end loop myLOOP;
- close my_cursor;
-end IF;
-
-end
-$$
-DELIMITER ;
+(4, 3, 0),
+(5, 2, 0),
+(5, 3, 0),
+(6, 1, 0),
+(6, 2, 0),
+(6, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -372,7 +319,8 @@ INSERT INTO `payment` (`id`, `date`, `account_id`, `amount`, `type`) VALUES
 (1, '2018-09-23 16:37:31', 1, 1, ''),
 (2, '2018-09-23 16:38:18', 1, 200, ''),
 (3, '2018-09-23 16:39:02', 1, 2, ''),
-(4, '2018-09-23 16:40:10', 1, 3000, '');
+(4, '2018-09-23 16:40:10', 1, 3000, ''),
+(5, '2018-09-23 19:31:52', 1, 200, '');
 
 --
 -- Wyzwalacze `payment`
@@ -481,19 +429,19 @@ ALTER TABLE `class`
   ADD KEY `class_parent_FK` (`parent_id`);
 
 --
+-- Indeksy dla tabeli `class_account`
+--
+ALTER TABLE `class_account`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `class_account_class_FK` (`class_id`);
+
+--
 -- Indeksy dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `class_account_payment_child_FK` (`child_id`),
   ADD KEY `class_account_payment_class_account_FK` (`class_account_id`);
-
---
--- Indeksy dla tabeli `class_acount`
---
-ALTER TABLE `class_acount`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `class_account_class_FK` (`class_id`);
 
 --
 -- Indeksy dla tabeli `event`
@@ -558,22 +506,22 @@ ALTER TABLE `class`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT dla tabeli `class_account`
+--
+ALTER TABLE `class_account`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT dla tabeli `class_acount`
---
-ALTER TABLE `class_acount`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`
@@ -591,7 +539,7 @@ ALTER TABLE `parent`
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Ograniczenia dla zrzutów tabel
@@ -617,23 +565,23 @@ ALTER TABLE `class`
   ADD CONSTRAINT `class_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON UPDATE CASCADE;
 
 --
+-- Ograniczenia dla tabeli `class_account`
+--
+ALTER TABLE `class_account`
+  ADD CONSTRAINT `class_account_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Ograniczenia dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
   ADD CONSTRAINT `class_account_payment_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `class_account_payment_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_acount` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ograniczenia dla tabeli `class_acount`
---
-ALTER TABLE `class_acount`
-  ADD CONSTRAINT `class_account_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `class_account_payment_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `expense`
 --
 ALTER TABLE `expense`
-  ADD CONSTRAINT `expense_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_acount` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `expense_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `participation`

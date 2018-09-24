@@ -549,7 +549,9 @@ function addEvent()
 		$eventPrice = htmlentities($eventPrice, ENT_QUOTES, "UTF-8");
 		$eventDate = $_POST['eventDate'];
 		$eventDate = htmlentities($eventDate, ENT_QUOTES, "UTF-8");
-		if ($result = $conn->query(sprintf("insert into event (name,price,date) values ('%s' , '%s' ,'%s')", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventPrice) , mysqli_real_escape_string($conn, $eventDate))))
+		$resultclassID=($conn->query(sprintf("select * from class where parent_id='".$_SESSION['userID']."'")))->fetch_assoc();		
+		$classID = $resultclassID['id'];
+		if ($result = $conn->query(sprintf("insert into event (name,price,date,class_ID) values ('%s' , '%s' ,'%s',$classID)", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventPrice) , mysqli_real_escape_string($conn, $eventDate))))
 			{
 			echo "Record updated successfully";
 			}
@@ -560,8 +562,7 @@ function addEvent()
 			
 		
 		
-			$resultclassID=($conn->query(sprintf("select * from class where parent_id='".$_SESSION['userID']."'")))->fetch_assoc();		
-			$classID = $resultclassID['id'];
+			
 			
 			$resulteventID=($conn->query(sprintf("select * from event where name='%s' and date='%s'", mysqli_real_escape_string($conn, $eventName), mysqli_real_escape_string($conn, $eventDate))))->fetch_assoc();		
 			$eventID = $resulteventID['id'];

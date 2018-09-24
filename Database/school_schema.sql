@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 24 Wrz 2018, 15:16
+-- Czas generowania: 24 Wrz 2018, 18:00
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -34,14 +34,6 @@ CREATE TABLE `account` (
   `balance` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
---
--- Zrzut danych tabeli `account`
---
-
-INSERT INTO `account` (`id`, `child_id`, `balance`) VALUES
-(1, 1, 500),
-(2, 2, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -58,18 +50,39 @@ CREATE TABLE `child` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
--- Zrzut danych tabeli `child`
---
-
-INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
-(1, 'Piotrus', 'Junior', '2018-09-05', 2, 1),
-(2, 'Kasia', 'Junior', '2018-09-04', 2, 1);
-
---
 -- Wyzwalacze `child`
 --
 DELIMITER $$
-CREATE TRIGGER `addChildAccount` AFTER INSERT ON `child` FOR EACH ROW insert into account (child_id,balance ) values (NEW.id,0)
+CREATE TRIGGER `addChildAccountChildParticipation` AFTER INSERT ON `child` FOR EACH ROW begin
+DECLARE v_count, v_loop_counter, v_id INTEGER;
+DECLARE v_date,curDate DATE;
+DECLARE classEvents cursor for select id,date from event where class_id=NEW.class_id;
+
+insert into account (child_id,balance ) values (NEW.id,0);
+SET v_loop_counter=0;
+select count(*) into v_count from event where class_id=NEW.class_id;
+Select CURDATE() into curDate;
+if v_count>0 THEN
+	open classEvents;
+    
+ myLOOP: LOOP    
+    SET v_loop_counter =v_loop_counter+1; 
+    fetch classEvents into v_id,v_date;
+	
+    if(v_date>curDate) then
+	insert into participation (event_id,child_id,amount_paid) values (v_id,NEW.id,0);
+	end if;
+    
+   IF v_loop_counter=v_count THEN
+       leave myLOOP;
+   END IF; 
+ end loop myLOOP;  
+    close classEvents;
+    
+end if;
+
+
+end
 $$
 DELIMITER ;
 DELIMITER $$
@@ -154,15 +167,9 @@ CREATE TABLE `event` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `price` int(11) NOT NULL,
-  `date` date NOT NULL
+  `date` date NOT NULL,
+  `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `event`
---
-
-INSERT INTO `event` (`id`, `name`, `price`, `date`) VALUES
-(1, 'PuntaCana', 1000, '2018-09-19');
 
 --
 -- Wyzwalacze `event`
@@ -357,14 +364,6 @@ CREATE TABLE `participation` (
   `amount_paid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
---
--- Zrzut danych tabeli `participation`
---
-
-INSERT INTO `participation` (`event_id`, `child_id`, `amount_paid`) VALUES
-(1, 1, 1000),
-(1, 2, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -378,13 +377,6 @@ CREATE TABLE `payment` (
   `amount` int(11) NOT NULL,
   `type` varchar(30) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `payment`
---
-
-INSERT INTO `payment` (`id`, `date`, `account_id`, `amount`, `type`) VALUES
-(1, '2018-09-24 13:06:05', 1, 1500, 'gotowka');
 
 --
 -- Wyzwalacze `payment`
@@ -460,10 +452,8 @@ CREATE TABLE `username` (
 
 INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
 ('admin', 'admin', 'a', 0),
-('kasia', 'kasia', 't', 0),
 ('kasjozw@wp.pl', 'kasia', 't', 0),
-('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0),
-('piter', 'piter', 'p', 0);
+('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -554,13 +544,13 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -584,7 +574,7 @@ ALTER TABLE `class_account_payment`
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 25 Wrz 2018, 08:26
+-- Czas generowania: 25 Wrz 2018, 13:19
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -111,21 +111,14 @@ CREATE TABLE `class` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
--- Zrzut danych tabeli `class`
---
-
-INSERT INTO `class` (`id`, `name`, `parent_id`) VALUES
-(1, 'Mat-Fiz', 1);
-
---
 -- Wyzwalacze `class`
 --
 DELIMITER $$
-CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_acount (balance,expenses, 	excpected_budget,class_id) values(0,0,0,NEW.id)
+CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_account (balance,expenses, 	excpected_budget,class_id) values(0,0,0,NEW.id)
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `delClassAccount` AFTER DELETE ON `class` FOR EACH ROW delete from class_acount where class_id=OLD.id
+CREATE TRIGGER `delClassAccount` AFTER DELETE ON `class` FOR EACH ROW delete from class_account where class_id=OLD.id
 $$
 DELIMITER ;
 
@@ -142,13 +135,6 @@ CREATE TABLE `class_account` (
   `expected_budget` int(11) DEFAULT NULL,
   `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `class_account`
---
-
-INSERT INTO `class_account` (`id`, `balance`, `expenses`, `expected_budget`, `class_id`) VALUES
-(1, 0, 0, 80, 1);
 
 -- --------------------------------------------------------
 
@@ -341,14 +327,6 @@ CREATE TABLE `parent` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
--- Zrzut danych tabeli `parent`
---
-
-INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
-(1, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't'),
-(2, 'Piotr', 'Senior', 'piotr-pawlaczyk5@wp.pl', 'p');
-
---
 -- Wyzwalacze `parent`
 --
 DELIMITER $$
@@ -459,9 +437,7 @@ CREATE TABLE `username` (
 --
 
 INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
-('admin', 'admin', 'a', 0),
-('kasjozw@wp.pl', 'kasia', 't', 0),
-('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0);
+('admin', 'admin', 'a', 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -643,6 +619,12 @@ ALTER TABLE `class_account_payment`
 --
 ALTER TABLE `expense`
   ADD CONSTRAINT `expense_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `parent`
+--
+ALTER TABLE `parent`
+  ADD CONSTRAINT `parent_username_FK` FOREIGN KEY (`email`) REFERENCES `username` (`login`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `participation`

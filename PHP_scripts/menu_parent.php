@@ -180,6 +180,10 @@ require_once "connection.php";
 
 
 <script>
+$('#chooseChildModal').on('hidden.bs.modal', function () {
+     location.reload();
+});
+
 $(document).ready(function(){
 
 	var zmienna='<?php echo $_SESSION['firstLog'];?>';

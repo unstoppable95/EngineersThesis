@@ -166,13 +166,13 @@ function fetch_expenses_list(){
 }
 	
 	
-	function saveEditEventID(){
+function saveEditEventID(){
 		session_start();
 		$_SESSION['changeEventID']=$_POST["id"];
 		
 	}
 	
-	function editEvent(){
+function editEvent(){
 	session_start();	
     if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate'])) {
 	   header('Location: menu_treasurer.php');
@@ -238,7 +238,7 @@ function fetch_expenses_list(){
 	
 	
 	
-	function deleteEvent(){
+function deleteEvent(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$currrentDate=date('Y-m-d');
@@ -576,7 +576,7 @@ function changePassword()
 // -----------------------------------
 
 function addEvent()
-	{
+{
 	session_start();
 	if (empty($_POST['eventName']) || $_POST['eventName'] == '0' || empty($_POST['eventPrice']) || $_POST['eventPrice'] == '0' || empty($_POST['eventDate']) || $_POST['eventDate'] == '0')
 		{
@@ -623,8 +623,27 @@ function addEvent()
  {  
       while($row = mysqli_fetch_array($result))  
       {  	
+  //////////
+		$acc_bal=($conn->query(sprintf("SELECT balance FROM account WHERE child_id='%s'",mysqli_real_escape_string($conn, $row["id"]))))->fetch_assoc();		
+		$account_balance = $acc_bal['balance']; 
+		$eventPrice = $_POST['eventPrice'];
 		
-		$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', 0)", mysqli_real_escape_string($conn, $eventID), mysqli_real_escape_string($conn, $row["id"])));
+		if($account_balance > $eventPrice) {
+			$toBePaid = $eventPrice;
+			$newAccountBalance = $account_balance - $eventPrice;
+		}
+		
+		if($account_balance <= $eventPrice) {
+			$toBePaid = $account_balance;
+			$newAccountBalance = 0;
+		}
+		
+		//update balance
+		$conn->query(sprintf("UPDATE account SET balance='%s' where child_id='%s'", mysqli_real_escape_string($conn, $newAccountBalance ),  mysqli_real_escape_string($conn, $row["id"] )));
+		
+		/////////
+		$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', '%s')", mysqli_real_escape_string($conn, $eventID), mysqli_real_escape_string($conn, $row["id"]), mysqli_real_escape_string($conn, $toBePaid)));
+		
 		$parent=($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='".$row["id"]."')")))->fetch_assoc();
 		mail($parent["email"], "Dodano nowe wydarzenie: $eventName" , "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiło się nowe wydarzenie o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");	
 			 

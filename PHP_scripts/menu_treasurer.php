@@ -59,6 +59,15 @@ $_SESSION['treasurerAsParent']=false;
 		$_SESSION['firstLog']=true;
 		
 	}
+	
+	$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
+	$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
+	
+	if($_SESSION['amountOfChild']==1){
+		$tmp=$conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
+		$row = mysqli_fetch_array($tmp);
+		$_SESSION['choosenChild']=$row["id"];
+	}
 ?>
 <body>
 

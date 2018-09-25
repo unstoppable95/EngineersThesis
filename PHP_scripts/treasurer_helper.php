@@ -278,7 +278,7 @@ function fetch_event_details(){
 		$output .="<br><br>";
 		
 		
-		$result=$connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid from child ch, participation p where ch.id = p.child_id and p.event_id='".$_POST["id"]."'"));
+		$result=$connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'".$resultAmount["price"]."') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='".$_POST["id"]."' order by idx asc"  ));
 		
 		
 		$output .= ' 

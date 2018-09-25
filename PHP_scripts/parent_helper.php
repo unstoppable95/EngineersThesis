@@ -351,7 +351,7 @@ function fetch(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
-		$result=$connect->query(sprintf("SELECT * from event WHERE id IN (SELECT event_id FROM participation WHERE child_id =" .$_SESSION['choosenChild'].")"));
+		$result=$connect->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" .$_SESSION['choosenChild']." WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" .$_SESSION['choosenChild'].") order by sortx desc"));
 		
 		
  $output .= '  

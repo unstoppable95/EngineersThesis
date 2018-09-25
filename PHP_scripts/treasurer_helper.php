@@ -140,10 +140,10 @@ function fetch_expenses_list(){
  
 	 
 	
-	$tmpbalance = $connect->query(sprintf("SELECT id, balance, excpected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID']." )"));
+	$tmpbalance = $connect->query(sprintf("SELECT id, balance, expected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID']." )"));
 		$bal = mysqli_fetch_array($tmpbalance);
 		$balance = $bal["balance"];
-		$exceptedBalance = $bal["excpected_budget"];
+		$exceptedBalance = $bal["expected_budget"];
 		$class_account_id= $bal["id"];
 	
 	

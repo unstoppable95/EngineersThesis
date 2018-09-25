@@ -65,7 +65,7 @@ function addExpense(){
 	$class_account_idx =  $connect->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= ".$_SESSION['userID'].")"));
 	$clid = mysqli_fetch_array($class_account_idx);
 	$class_account_id= $clid["id"];
-	$excepted_budget = $clid["excpected_budget"];
+	$excepted_budget = $clid["expected_budget"];
 	
 	$curr_exp =  $connect->query(sprintf("SELECT SUM(price) FROM expense WHERE class_account_id = ".$class_account_id));
 	$x = mysqli_fetch_array($class_account_idx);
@@ -76,12 +76,20 @@ function addExpense(){
 		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id) VALUES ('".$_POST["expenseName"]."',".$_POST["expensePrice"].", ".$class_account_id.")"));
 		
 		//KOMUNIKAT ZE DODANO POMYSLNIE
+		
+		echo "<script>
+	alert('Dodano pomyślnie!');
+	window.location.href='treasuer_menu/expenses.php';
+	</script>";
 	}
 	else{
 		//KOMUNIKAT ZE BUDZET JEST PRZEKROCZONY I NIE MOZNA DODAC
-		
+		echo "<script>
+	alert('Przekroczono budżet -> nie można już dodać wydatków z klasowych!');
+	window.location.href='treasuer_menu/expenses.php';
+	</script>";
 	}
-	header('Location: treasuer_menu/expenses.php');	
+	//header('Location: treasuer_menu/expenses.php');	
 	
 }
 	
@@ -180,7 +188,7 @@ function fetch_expenses_list(){
         echo "Blad: " . $conn->connect_errno; 
     } else {
 		
-		if ($res["date"]>=$currrentDate){
+		if ($res["date"]>=$currrentDate && $_POST['newEventDate']>=$currrentDate){
 			
 		 if (!empty($_POST['newEventName'])){
 			$newEventName = $_POST['newEventName'];
@@ -195,12 +203,14 @@ function fetch_expenses_list(){
 		 }
 		 
 		
-		  if ( $_POST['newEventDate']>=$currrentDate && !empty($_POST['newEventDate'])){
+		  if ( !empty($_POST['newEventDate'])){
 			$newEventDate = $_POST['newEventDate'];
 			$newEventDate  = htmlentities($newEventDate , ENT_QUOTES, "UTF-8");
 			$result=$conn->query(sprintf("update event set date='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventDate )));
 		 }	
 			//echo 'Edycja pomyślna!';  
+		
+		
 		
 		echo "<script>
 	alert('Edycja pomyślna!');

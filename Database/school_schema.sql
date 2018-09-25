@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 24 Wrz 2018, 18:00
+-- Czas generowania: 25 Wrz 2018, 08:26
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -54,11 +54,16 @@ CREATE TABLE `child` (
 --
 DELIMITER $$
 CREATE TRIGGER `addChildAccountChildParticipation` AFTER INSERT ON `child` FOR EACH ROW begin
-DECLARE v_count, v_loop_counter, v_id INTEGER;
+DECLARE v_count, v_loop_counter, v_id ,v_child_count INTEGER;
 DECLARE v_date,curDate DATE;
 DECLARE classEvents cursor for select id,date from event where class_id=NEW.class_id;
 
 insert into account (child_id,balance ) values (NEW.id,0);
+select count(*) into v_child_count from child where class_id = NEW.class_id;
+
+update class_account set expected_budget=v_child_count*10*4 where class_id=NEW.class_id;
+
+
 SET v_loop_counter=0;
 select count(*) into v_count from event where class_id=NEW.class_id;
 Select CURDATE() into curDate;
@@ -86,7 +91,10 @@ end
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `delAccountChild` AFTER DELETE ON `child` FOR EACH ROW delete from account where child_id=OLD.id
+CREATE TRIGGER `delAccountChild` AFTER DELETE ON `child` FOR EACH ROW begin
+delete from account where child_id=OLD.id;
+
+end
 $$
 DELIMITER ;
 
@@ -131,7 +139,7 @@ CREATE TABLE `class_account` (
   `id` int(11) NOT NULL,
   `balance` int(11) DEFAULT NULL,
   `expenses` int(11) DEFAULT NULL,
-  `excpected_budget` int(11) DEFAULT NULL,
+  `expected_budget` int(11) DEFAULT NULL,
   `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
@@ -139,8 +147,8 @@ CREATE TABLE `class_account` (
 -- Zrzut danych tabeli `class_account`
 --
 
-INSERT INTO `class_account` (`id`, `balance`, `expenses`, `excpected_budget`, `class_id`) VALUES
-(1, 0, 0, 0, 1);
+INSERT INTO `class_account` (`id`, `balance`, `expenses`, `expected_budget`, `class_id`) VALUES
+(1, 0, 0, 80, 1);
 
 -- --------------------------------------------------------
 
@@ -544,13 +552,13 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -574,7 +582,7 @@ ALTER TABLE `class_account_payment`
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`
@@ -592,7 +600,7 @@ ALTER TABLE `parent`
 -- AUTO_INCREMENT dla tabeli `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Ograniczenia dla zrzutów tabel

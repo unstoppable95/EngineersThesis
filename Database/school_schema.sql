@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 25 Wrz 2018, 13:19
+-- Czas generowania: 26 Wrz 2018, 17:41
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -34,6 +34,13 @@ CREATE TABLE `account` (
   `balance` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
+--
+-- Zrzut danych tabeli `account`
+--
+
+INSERT INTO `account` (`id`, `child_id`, `balance`) VALUES
+(6, 6, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -50,18 +57,27 @@ CREATE TABLE `child` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
+-- Zrzut danych tabeli `child`
+--
+
+INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
+(6, 'Piotrus', 'Junior', '2018-09-20', 4, 2);
+
+--
 -- Wyzwalacze `child`
 --
 DELIMITER $$
 CREATE TRIGGER `addChildAccountChildParticipation` AFTER INSERT ON `child` FOR EACH ROW begin
 DECLARE v_count, v_loop_counter, v_id ,v_child_count INTEGER;
 DECLARE v_date,curDate DATE;
+DECLARE v_monthly_fee INTEGER;
 DECLARE classEvents cursor for select id,date from event where class_id=NEW.class_id;
 
 insert into account (child_id,balance ) values (NEW.id,0);
+select monthly_fee into v_monthly_fee from class_account where class_id=NEW.class_id;
 select count(*) into v_child_count from child where class_id = NEW.class_id;
 
-update class_account set expected_budget=v_child_count*10*4 where class_id=NEW.class_id;
+update class_account set expected_budget=v_child_count*10*v_monthly_fee where class_id=NEW.class_id;
 
 
 SET v_loop_counter=0;
@@ -111,10 +127,17 @@ CREATE TABLE `class` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
+-- Zrzut danych tabeli `class`
+--
+
+INSERT INTO `class` (`id`, `name`, `parent_id`) VALUES
+(2, 'Mat-Fiz', 3);
+
+--
 -- Wyzwalacze `class`
 --
 DELIMITER $$
-CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_account (balance,expenses, 	excpected_budget,class_id) values(0,0,0,NEW.id)
+CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_account (balance,expenses, 	expected_budget,class_id) values(0,0,0,NEW.id)
 $$
 DELIMITER ;
 DELIMITER $$
@@ -131,10 +154,18 @@ DELIMITER ;
 CREATE TABLE `class_account` (
   `id` int(11) NOT NULL,
   `balance` int(11) DEFAULT NULL,
+  `monthly_fee` int(11) NOT NULL DEFAULT '0',
   `expenses` int(11) DEFAULT NULL,
   `expected_budget` int(11) DEFAULT NULL,
   `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `class_account`
+--
+
+INSERT INTO `class_account` (`id`, `balance`, `monthly_fee`, `expenses`, `expected_budget`, `class_id`) VALUES
+(2, 10, 2, 0, 0, 2);
 
 -- --------------------------------------------------------
 
@@ -150,6 +181,13 @@ CREATE TABLE `class_account_payment` (
   `class_account_id` int(11) NOT NULL,
   `child_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `class_account_payment`
+--
+
+INSERT INTO `class_account_payment` (`id`, `amount`, `date`, `type`, `class_account_id`, `child_id`) VALUES
+(1, 10, '2018-09-26 15:39:21', 'gotowka', 2, 6);
 
 -- --------------------------------------------------------
 
@@ -327,6 +365,14 @@ CREATE TABLE `parent` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
+-- Zrzut danych tabeli `parent`
+--
+
+INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
+(3, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't'),
+(4, 'Piotr', 'Pawlaczyk', 'piotr-pawlaczyk5@wp.pl', 'p');
+
+--
 -- Wyzwalacze `parent`
 --
 DELIMITER $$
@@ -437,7 +483,9 @@ CREATE TABLE `username` (
 --
 
 INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
-('admin', 'admin', 'a', 0);
+('admin', 'admin', 'a', 0),
+('kasjozw@wp.pl', 'kasia', 't', 0),
+('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -528,31 +576,31 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
 --
 ALTER TABLE `class`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account`
 --
 ALTER TABLE `class_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -570,7 +618,7 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
@@ -619,12 +667,6 @@ ALTER TABLE `class_account_payment`
 --
 ALTER TABLE `expense`
   ADD CONSTRAINT `expense_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ograniczenia dla tabeli `parent`
---
-ALTER TABLE `parent`
-  ADD CONSTRAINT `parent_username_FK` FOREIGN KEY (`email`) REFERENCES `username` (`login`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `participation`

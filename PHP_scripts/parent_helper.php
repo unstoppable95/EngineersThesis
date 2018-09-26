@@ -82,7 +82,7 @@ function fetch_paid_months(){
 					}
 					else{					
 						if($i==$fully_paid_months){
-							$topay = - $amount_of_paid_money + (($i+1)*$monthly_fee);
+							$topay = -(($i)* $monthly_fee) + $amount_of_paid_money;
 							$fild_color='#FF5050';
 						}
 						else{

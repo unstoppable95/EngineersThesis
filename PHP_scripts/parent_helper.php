@@ -21,6 +21,7 @@ if ((isset($_POST['changePassword'])))
 			case 'fetch_class_expenses_list' : fetch_class_expenses_list(); break;
 			case 'fetch_class_account_data' : fetch_class_account_data(); break;
 			case 'fetch_class_account_payment_history' : fetch_class_account_payment_history(); break;
+			case 'fetch_paid_months' : fetch_paid_months(); break;
 		
 	}
 
@@ -38,6 +39,80 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	makePayment();
 	}
 
+	
+function fetch_paid_months(){
+	
+		session_start();
+		require_once "connection.php";
+		$connect = new mysqli($servername, $username, $password, $dbName);
+		$output = '';  
+			//echo("Dupa");
+		$sum=$connect->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = ".$_SESSION['choosenChild']));
+		$r=$sum->fetch_assoc();
+		$amount_of_paid_money = $r["s"];
+	
+		$monthly_f = $connect->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
+		$x = $monthly_f->fetch_assoc();
+		$monthly_fee = $x["m"];
+		//echo("Wplacono: ".$amount_of_paid_money.", Miesieczny czynsz: ".$monthly_fee);
+		
+		
+		
+ $output .= '  
+      <div class="table-responsive">  
+           <table class="table table-bordered">  
+                <tr>  
+                     <th width="50%">Miesiąc</th> 
+					 <th width="50%">Wpłacona kwota</th>
+                </tr>'; 
+				
+				
+		 if($amount_of_paid_money > 0)  
+		 {  
+
+				$months = array('wrzesień', 'październik', 'listopad', 'grudzień', 'styczeń', 'luty','marzec','kwiecień','maj','czerwiec');   
+				$topay=0;
+				$fild_color = '#66ff66';
+				$fully_paid_months = floor($amount_of_paid_money / $monthly_fee);
+				
+				for ($i = 0; $i < 10; $i++)
+				{  
+					if($i  < $fully_paid_months){
+						$topay = $monthly_fee;
+					}
+					else{					
+						if($i==$fully_paid_months){
+							$topay = - $amount_of_paid_money + (($i+1)*$monthly_fee);
+							$fild_color='#FF5050';
+						}
+						else{
+							$topay = 0;
+						}
+					}
+					
+				   $output .= '  
+						<tr>  
+							 <td bgcolor='.$fild_color.' >'.$months[$i].'</td> 
+							<td bgcolor='.$fild_color.'  >'.$topay.'</td> 
+						</tr>  
+				   ';  
+				}  
+ 
+		 }  
+		 else  
+		 {  
+			  $output .= '<tr>  
+								  <td colspan="4">Nie znaleziono wpłat</td>  
+							 </tr>';  
+		 }  
+		 
+		 $output .= '</table>  
+			  </div>';  
+		 echo $output; 
+		 
+
+		 
+}
 	
 function fetch_class_account_payment_history(){
 		session_start();

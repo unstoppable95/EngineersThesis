@@ -4,6 +4,11 @@ if ((isset($_POST['changePassword'])))
 	{
 	changePassword();
 	}
+	
+if ((isset($_POST['changeMonthlyFee'])))
+	{
+	changeMonthlyFee();
+	}
 
 if ((isset($_POST['addEvent'])))
 	{
@@ -535,6 +540,42 @@ function fetch_treasurer_data(){
 	
 	
 }
+
+function changeMonthlyFee(){
+	session_start();
+	if (empty($_POST['newMonthlyFee']) || $_POST['newMonthlyFee'] == '0')
+		{
+		header('Location: treasuer_menu/settings.php');
+		exit();
+		}
+	require_once "connection.php";
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno; 
+	}
+	 else
+	{ 
+		$newMonthlyFee = $_POST['newMonthlyFee'];
+		$newMonthlyFee = htmlentities($newMonthlyFee, ENT_QUOTES, "UTF-8");
+		$login = $_SESSION['user'];
+		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+		if ($result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee) , mysqli_real_escape_string($conn, $login))))
+			{
+			echo "Record updated successfully";
+			}
+		  else
+			{
+			echo "Error updating record: " . $conn->error;
+			}
+	}
+
+	$conn->close();
+	header('Location: treasuer_menu/settings.php');
+}
+		
+	
 
 //------------------------
 function changePassword()

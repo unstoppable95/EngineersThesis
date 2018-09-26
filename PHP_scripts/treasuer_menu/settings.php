@@ -78,6 +78,17 @@ if (!isset($_SESSION['loggedIn']))
 
 	<table>
 	</form>
+	
+	<br>
+	<h2> Zmień kwotę miesięcznej składki klasowej </h2>
+	<form action="../treasurer_helper.php" method="post" id="form1">
+	<table>
+		<tr><td>Nowe miesięczna składka: </td><td><input type="monthly_fee" name="newMonthlyFee" /></td></tr> 
+		<tr><td colspan="2"><input type="submit"  name="changeMonthlyFee" value="Zatwierdz"/></td></tr>
+
+	<table>
+	</form>
+	
 
 
 </div>

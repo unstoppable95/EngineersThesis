@@ -49,6 +49,9 @@ if (!isset($_SESSION['loggedIn']))
 
 	<h3> Wydatki z konta klasowego </h3>
 		<div id="class_expenses_list"></div>
+	<h3> Opłacone miesiące pieniędzy klasowych </h3>
+		<div id="paid_months"></div>
+	
 
 
 </div>
@@ -80,7 +83,7 @@ $(document).ready(function(){
 	fetch_class_account_data();
 	
 	
-		function fetch_class_expenses_list()
+	function fetch_class_expenses_list()
 	{
 		$.ajax({
 			url:"../parent_helper.php",
@@ -93,6 +96,22 @@ $(document).ready(function(){
 		
 	}
 	fetch_class_expenses_list();
+	
+	
+	
+	function fetch_paid_months()
+	{
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call:'fetch_paid_months'},
+			success:function(data){
+				$('#paid_months').html(data);
+			}
+		});
+		
+	}
+	fetch_paid_months();
 	
 	
 

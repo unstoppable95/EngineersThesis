@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 26 Wrz 2018, 17:41
+-- Czas generowania: 27 Wrz 2018, 18:24
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -107,9 +107,28 @@ end
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `delAccountChild` AFTER DELETE ON `child` FOR EACH ROW begin
-delete from account where child_id=OLD.id;
+CREATE TRIGGER `delAccountChildChagneClassAccount` AFTER DELETE ON `child` FOR EACH ROW begin
+DECLARE differenceInMonths INTEGER;
+DECLARE currentMonth  INTEGER;
+DECLARE sumPayment INTEGER;
+DECLARE charge,monthlyFee INTEGER;
+DECLARE classID INTEGER;
 
+select MONTH(CURDATE()) into currentMonth from dual;
+select sum(amount) into sumPayment from class_account_payment where child_id=OLD.id;
+select monthly_fee into monthlyFee from class_account where id=(select class_account_id from class_account_payment where child_id=OLD.id);
+select class_account_id into classID from class_account_payment where child_id=OLD.id;
+if currentMonth >=1 and currentMonth <=6 THEN
+set currentMonth=currentMonth+12;
+end if;
+set differenceInMonths = currentMonth -9 +1;
+set charge= differenceInMonths *monthlyFee;
+
+delete from class_account_payment where child_id=OLD.id;
+insert into class_account_payment (amount,class_account_id, child_id,type) values (charge,classID,OLD.id,"auto");
+update class_account set expected_budget=expected_budget-10*monthlyFee +charge;
+
+delete from account where child_id=OLD.id;
 end
 $$
 DELIMITER ;
@@ -179,7 +198,7 @@ CREATE TABLE `class_account_payment` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `type` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `class_account_id` int(11) NOT NULL,
-  `child_id` int(11) NOT NULL
+  `child_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
@@ -606,7 +625,7 @@ ALTER TABLE `class_account_payment`
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`

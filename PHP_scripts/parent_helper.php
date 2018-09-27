@@ -446,6 +446,12 @@ function fetch(){
  {  
       while($row = mysqli_fetch_array($result))  
       {  
+  			if( $row["sortx"] == 0){
+				$color =  ' bgcolor = #66ff66 ';
+			}
+			else{
+				$color =  '';
+			}
 			
 			$payedTmp=$connect->query(sprintf("SELECT * FROM participation WHERE child_id =".$_SESSION['choosenChild']." AND event_id=".$row["id"]));
 				$res=mysqli_fetch_array($payedTmp);
@@ -453,12 +459,12 @@ function fetch(){
 			
            $output .= '  
                 <tr>  
-                     <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td> 
-					<td class="name" data-id1="'.$row["id"].'" contenteditable>'.$paid.'</td>  					 
-                     <td class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
-                     <td class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
+                     <td'.$color.'>'.$row["id"].'</td>  
+                     <td '.$color.'class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td> 
+					<td '.$color.'class="name" data-id1="'.$row["id"].'" contenteditable>'.$paid.'</td>  					 
+                     <td '.$color.'class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
+                     <td '.$color.'class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
+					 <td '.$color.'><button type="button"  name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
                 </tr>  
            ';  
       }  

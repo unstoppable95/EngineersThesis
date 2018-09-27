@@ -303,13 +303,19 @@ function fetch_event_details(){
  {  
       while($row = mysqli_fetch_array($result))  
       {  
+			if( $row["amount_paid"] == $resultAmount["price"]){
+				$color =  ' bgcolor = #66ff66 ';
+			}
+			else{
+				$color =  '';
+			}
            $output .= '  
                 <tr>  
                   
-                     <td class="name" data-id1="" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="" contenteditable>'.$row["surname"].'</td>
-					 <td class="name" data-id1="" contenteditable>'.$row["amount_paid"].'</td>
-					  <td class="name" data-id1="" contenteditable>'.$resultAmount["price"].'</td>
+                     <td '.$color.'class="name" data-id1="" contenteditable>'.$row["name"].'</td>  
+					 <td '.$color.'class="name" data-id1="" contenteditable>'.$row["surname"].'</td>
+					 <td '.$color.'class="name" data-id1="" contenteditable>'.$row["amount_paid"].'</td>
+					  <td '.$color.'class="name" data-id1="" contenteditable>'.$resultAmount["price"].'</td>
 				</tr>  
            ';  
       }  

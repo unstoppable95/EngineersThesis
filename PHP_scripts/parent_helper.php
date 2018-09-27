@@ -241,6 +241,7 @@ function fetch_child_name(){
 			session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName); 
+		if (isset($_SESSION["choosenChild"])){	
 		$result=$connect->query(sprintf("SELECT * FROM child WHERE id=".$_SESSION['choosenChild']));
 				
 				
@@ -252,6 +253,10 @@ function fetch_child_name(){
 		 
 		$output = '<h3> Bierzące płatności dziecka: '.$row["name"].' '.$row["surname"].', klasa: '.$classrow["name"].' </h3>';  
 	 }  
+		}
+		else{
+			$output = "Wystapil blad w poborze dzieci";
+		}
 
  echo $output; 
 }	
@@ -425,7 +430,9 @@ function fetch(){
 		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
+		$output = ''; 
+		
+if (isset($_SESSION["choosenChild"])){		
 		$result=$connect->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" .$_SESSION['choosenChild']." WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" .$_SESSION['choosenChild'].") order by sortx desc"));
 		
 		
@@ -478,7 +485,11 @@ function fetch(){
  }  
  
  $output .= '</table>  
-      </div>';  
+      </div>'; 
+}
+else{
+	$output = "Wystapil blad w wyswietlaniu";
+}	
  echo $output;  
  
 }
@@ -625,6 +636,7 @@ function choose(){
 function fetch_balance(){
 	session_start();
 	
+	if (isset($_SESSION["choosenChild"])){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
@@ -634,6 +646,10 @@ function fetch_balance(){
 
 		
         $output .= $res["balance"];
+	}
+	else{
+		$output = "Wystapil błąd w poborze danych";
+	}
  echo $output;  
 	
 }

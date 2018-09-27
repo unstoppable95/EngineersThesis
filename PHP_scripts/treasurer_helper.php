@@ -385,9 +385,36 @@ function deleteStudent(){
 		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
-		if($res=$connect->query(sprintf("DELETE FROM child WHERE id = '".$_POST["id"]."'"))){
-			 echo 'Pomyslnie usunięto ucznia';  
+		
+		//checking if student have all previous months paid
+		$result=$connect->query(sprintf("SELECT SUM(amount) AS s FROM class_account_payment WHERE child_id = ".$_POST["id"]));
+		$res=mysqli_fetch_array($result);
+		$paidAmount = $res["s"];
+		
+		$currentMonth = date("m");
+		
+		$fee=$connect->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT class_account_id FROM class_account_payment WHERE child_id = ".$_POST["id"].")"));
+		$resss=mysqli_fetch_array($fee);
+		$monthlyFee = $resss["monthly_fee"];
+		
+		if ($currentMonth >=1 and $currentMonth <=6) {
+			$currentMonth = $currentMonth + 12;
 		}
+		$differenceInMonths = $currentMonth -9 +1;
+		$charge = $differenceInMonths * $monthlyFee;
+		
+		$x="x";
+		if($charge >= $paidAmount){
+			$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat';
+		}
+		else{
+			//deleting student
+			if($res=$connect->query(sprintf("DELETE FROM child WHERE id = '".$_POST["id"]."'"))){
+				$x = 'Pomyslnie usunięto ucznia';  
+			}
+			$x ="y";
+		}
+		echo $x;
 
 }
 

@@ -61,7 +61,7 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 
 	}
 	
-
+//button "Dodaj wydatek" in expenses.php
 function addExpense(){
 	session_start();
 	require_once "connection.php";
@@ -112,8 +112,8 @@ function fetch_expenses_list(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="33%">Nazwa</th>  
                      <th width="33%">Cena</th> 
@@ -128,10 +128,10 @@ function fetch_expenses_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					</tr>  
+                     <td >'.$row["name"].'</td>  
+					 <td >'.$row["price"].'</td>
+					 <td >'.$row["date"].'</td>
+				</tr>  
            ';  
       }  
  
@@ -170,7 +170,7 @@ function fetch_expenses_list(){
 	
 }
 	
-	
+//helping function to save which event is edited. Used in handling button confirm
 function saveEditEventID(){
 		session_start();
 		$_SESSION['changeEventID']=$_POST["id"];
@@ -249,7 +249,7 @@ function deleteEvent(){
 		$currrentDate=date('Y-m-d');
 		$res=($connect->query(sprintf("select * FROM event WHERE id = '".$_POST["id"]."'")))->fetch_assoc();
 		
-	
+		//checkoig if i can delete event (cannot delete event witch previous date)
 		if ($res["date"]>$currrentDate){
 			if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
 			 echo 'Pomyslnie usunięto event';  
@@ -267,12 +267,9 @@ function fetch_event_details(){
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
 		
-		
-		
 		$result=($connect->query(sprintf("select count(*) as total from participation where event_id ='".$_POST["id"]."' ")))->fetch_assoc();
 		$output .="Liczba uczestników eventu: ".$result["total"]."";
 	
-		
 		$resultAmount=($connect->query(sprintf("select price from event where id ='".$_POST["id"]."' ")))->fetch_assoc();
 		$totalAmount=$resultAmount["price"] * $result["total"];
 		
@@ -282,13 +279,11 @@ function fetch_event_details(){
 		$output .="<br> Całkowity koszt eventu: ".$totalAmount."<br> Suma wpłat uczestników: ".$totalAmountPaid."";
 		$output .="<br><br>";
 		
-		
 		$result=$connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'".$resultAmount["price"]."') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='".$_POST["id"]."' order by idx asc"  ));
 		
-		
 		$output .= ' 
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+		<div>  
+           <table>  
                 <tr>  
                      <th width="30%">Imie</th>  
                      <th width="40%">Nazwisko</th> 
@@ -303,6 +298,7 @@ function fetch_event_details(){
  {  
       while($row = mysqli_fetch_array($result))  
       {  
+			//green color for fully paid events
 			if( $row["amount_paid"] == $resultAmount["price"]){
 				$color =  ' bgcolor = #66ff66 ';
 			}
@@ -312,10 +308,10 @@ function fetch_event_details(){
            $output .= '  
                 <tr>  
                   
-                     <td '.$color.'class="name" data-id1="" contenteditable>'.$row["name"].'</td>  
-					 <td '.$color.'class="name" data-id1="" contenteditable>'.$row["surname"].'</td>
-					 <td '.$color.'class="name" data-id1="" contenteditable>'.$row["amount_paid"].'</td>
-					  <td '.$color.'class="name" data-id1="" contenteditable>'.$resultAmount["price"].'</td>
+                     <td '.$color.'>'.$row["name"].'</td>  
+					 <td '.$color.'>'.$row["surname"].'</td>
+					 <td '.$color.'>'.$row["amount_paid"].'</td>
+					 <td '.$color.'>'.$resultAmount["price"].'</td>
 				</tr>  
            ';  
       }  
@@ -332,9 +328,6 @@ function fetch_event_details(){
       </div>';  
  echo $output;  
 		
-		
-		
-	
 }	
 	
 function changeParentMail(){
@@ -444,15 +437,15 @@ function fetch_event_list(){
 	
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="5%">Id</th>  
                      <th width="20%">Nazwa</th> 
 					 <th width="15%">Cena</th>
 					 <th width="15%">Data</th>
 					 <th width="15%">Szczegóły</th>
-					  <th width="15%">Edycja</th>
+					 <th width="15%">Edycja</th>
 					 <th width="15%">Usuwanie</th>
 					 
                 </tr>'; 
@@ -465,9 +458,9 @@ function fetch_event_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["price"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
+                     <td data-id1="'.$row["id"].'">'.$row["name"].'</td>  
+					 <td data-id1="'.$row["id"].'">'.$row["price"].'</td>
+					 <td data-id1="'.$row["id"].'">'.$row["date"].'</td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="'.$row["id"].'" class="btn_editEvent">Edytuj</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="'.$row["id"].'" class="btn_deleteEvent">Usuń event</button></td>
@@ -502,8 +495,8 @@ function fetch_students_list(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="5%">Id</th>  
                      <th width="10%">Imię</th> 
@@ -526,14 +519,14 @@ function fetch_students_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["name"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["surname"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$parent["email"].'</td>
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" id="pMailChange_btn" name="pMailChange_btn" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
+                     <td data-id1="'.$row["id"].'">'.$row["name"].'</td>  
+					 <td data-id1="'.$row["id"].'">'.$row["surname"].'</td>
+					 <td data-id1="'.$row["id"].'">'.$row["date_of_birth"].'</td>
+					 <td data-id1="'.$row["id"].'">'.$parent["name"].'</td>
+					 <td data-id1="'.$row["id"].'">'.$parent["surname"].'</td>
+					 <td data-id1="'.$row["id"].'">'.$parent["email"].'</td>
+					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
 					 </tr>  
            ';  
       }  
@@ -552,7 +545,7 @@ function fetch_students_list(){
  
 }	
 
-
+//showing in settings
 function fetch_treasurer_data(){
 		session_start();
 	
@@ -610,7 +603,6 @@ function changeMonthlyFee(){
 		
 	
 
-//------------------------
 function changePassword()
 	{
 	session_start();
@@ -647,7 +639,7 @@ function changePassword()
 	header('Location: logout.php');
 	}
 
-// -----------------------------------
+
 
 function addEvent()
 {
@@ -728,9 +720,7 @@ function addEvent()
  {  
        echo "Nie udalo sie dodac dziecka";
  }  	
-			
-					
-			
+				
 			
 		}
 
@@ -738,7 +728,7 @@ function addEvent()
 	header('Location: treasuer_menu/addOnceEvent.php');
 	}
 
-// -------------------------------------------
+
 function randomPassword() {
     $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $pass = array(); //remember to declare $pass as an array
@@ -749,7 +739,8 @@ function randomPassword() {
     }
     return implode($pass); //turn the array into a string
 }
-//-----------------------------
+
+
 function addChildParent()
 	{
 	session_start();

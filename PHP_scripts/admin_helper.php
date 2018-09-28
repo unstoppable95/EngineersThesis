@@ -237,8 +237,8 @@ function fetch(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="10%">Id</th>  
                      <th width="25%">Nazwa</th> 
@@ -255,10 +255,10 @@ function fetch(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td><button type="button" name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
-					<td><button type="button" data-toggle="modal" data-target="#userModal" id="details_btn" name="details_btn" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td> 
-                <td><button type="button" data-toggle="modal" data-target="#changeTrModal" id="trChange_btn" name="trChange_btn" data-id3="'.$row["id"].'" class="btn_trChange">Zmień skarbnika</button></td>
+                     <td>'.$row["name"].'</td>  
+					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
+					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td> 
+					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="'.$row["id"].'" class="btn_trChange">Zmień skarbnika</button></td>
 				</tr>  
            ';  
       }  
@@ -310,8 +310,8 @@ function showDetails(){
 		   
 		   
 		   $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="10%">Id</th>  
                      <th width="40%">Imię</th> 
@@ -328,9 +328,9 @@ function showDetails(){
 		   $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'">'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'">'.$row["surname"].'</td>
-					 <td class="name" data-id1="'.$row["id"].'">'.$row["date_of_birth"].'</td>
+                     <td>'.$row["name"].'</td>  
+					 <td>'.$row["surname"].'</td>
+					 <td>'.$row["date_of_birth"].'</td>
                 </tr>  
            ';  
       }  

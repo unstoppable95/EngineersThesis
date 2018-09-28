@@ -22,7 +22,7 @@ if (!isset($_SESSION['loggedIn']))
 	<a href="../menu_parent.php">Moje dzieci</a>
 	<a href="expenses.php">Wydatki klasowe</a>
   <a href="addStudent.php" class="active">Dodaj ucznia do klasy</a>
-  <a href="addOnceEvent.php">Dodaj event jednorazowy</a>
+  <a href="addOnceEvent.php">Dodaj wydarzenie</a>
   <a href="settings.php" >Ustawienia</a>
   <a href="../logout.php"> Wyloguj się</a>
 </div> 

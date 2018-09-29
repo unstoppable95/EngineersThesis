@@ -59,8 +59,8 @@ function fetch_paid_months(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="50%">Miesiąc</th> 
 					 <th width="50%">Wpłacona kwota</th>
@@ -92,7 +92,7 @@ function fetch_paid_months(){
 					
 				   $output .= '  
 						<tr>  
-							 <td bgcolor='.$fild_color.' >'.$months[$i].'</td> 
+							<td bgcolor='.$fild_color.' >'.$months[$i].'</td> 
 							<td bgcolor='.$fild_color.'  >'.$topay.'</td> 
 						</tr>  
 				   ';  
@@ -109,9 +109,7 @@ function fetch_paid_months(){
 		 $output .= '</table>  
 			  </div>';  
 		 echo $output; 
-		 
-
-		 
+		 		 
 }
 	
 function fetch_class_account_payment_history(){
@@ -123,8 +121,8 @@ function fetch_class_account_payment_history(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="33%">Kwota</th> 
 					 <th width="33%">Data</th>
@@ -139,13 +137,12 @@ function fetch_class_account_payment_history(){
 			
            $output .= '  
                 <tr>  
-                     <td class="name" data-id1="'.$row["id"].'" >'.$row["amount"].'</td> 
-					<td class="name" data-id1="'.$row["id"].'" >'.$row["date"].'</td>  					 
-                     <td class="price" data-id2="'.$row["id"].'" >'.$row["type"].'</td>
+                    <td>'.$row["amount"].'</td> 
+					<td>'.$row["date"].'</td>  					 
+                    <td>'.$row["type"].'</td>
                 </tr>  
            ';  
       }  
- 
  }  
  else  
  {  
@@ -169,8 +166,8 @@ function fetch_class_expenses_list(){
 		$result=$connect->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")) ORDER BY date"));
 		
 		$output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="33%">Nazwa</th> 
 					 <th width="33%">Cena</th>
@@ -185,13 +182,12 @@ function fetch_class_expenses_list(){
 					
 				   $output .= '  
 						<tr>  
-							 <td class="name" data-id1="'.$row["id"].'" >'.$row["name"].'</td> 
-							<td class="name" data-id1="'.$row["id"].'" >'.$row["price"].'</td>  					 
-							 <td class="price" data-id2="'.$row["id"].'" >'.$row["date"].'</td>
+							 <td>'.$row["name"].'</td> 
+							<td>'.$row["price"].'</td>  					 
+							 <td>'.$row["date"].'</td>
 						</tr>  
 				   ';  
 			  }  
-		 
 		 }  
 		 else  
 		 {  
@@ -215,8 +211,6 @@ function fetch_class_account_data(){
 	$r=$sum->fetch_assoc();
 	$amount_of_paid_money = $r["s"];
 	
-	
-	
 	$class_acc_id=$conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
 	$ress=$class_acc_id->fetch_assoc();
 	$class_account_id = $ress["id"];
@@ -238,7 +232,7 @@ function fetch_class_account_data(){
 }
 	
 function fetch_child_name(){
-			session_start();
+		session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName); 
 		if (isset($_SESSION["choosenChild"])){	
@@ -271,8 +265,8 @@ function fetch_payment_history(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="33%">Kwota</th> 
 					 <th width="33%">Data</th>
@@ -287,9 +281,9 @@ function fetch_payment_history(){
 			
            $output .= '  
                 <tr>  
-                     <td class="name" data-id1="'.$row["id"].'" >'.$row["amount"].'</td> 
-					<td class="name" data-id1="'.$row["id"].'" >'.$row["date"].'</td>  					 
-                     <td class="price" data-id2="'.$row["id"].'" >'.$row["type"].'</td>
+                     <td>'.$row["amount"].'</td> 
+					<td>'.$row["date"].'</td>  					 
+                     <td>'.$row["type"].'</td>
                 </tr>  
            ';  
       }  
@@ -437,8 +431,8 @@ if (isset($_SESSION["choosenChild"])){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="5%">Id</th>  
                      <th width="35%">Nazwa</th> 
@@ -466,12 +460,12 @@ if (isset($_SESSION["choosenChild"])){
 			
            $output .= '  
                 <tr>  
-                     <td'.$color.'>'.$row["id"].'</td>  
-                     <td '.$color.'class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td> 
-					<td '.$color.'class="name" data-id1="'.$row["id"].'" contenteditable>'.$paid.'</td>  					 
-                     <td '.$color.'class="price" data-id2="'.$row["id"].'" contenteditable>'.$row["price"].'</td>  
-                     <td '.$color.'class="date" data-id2="'.$row["id"].'" contenteditable>'.$row["date"].'</td>
-					 <td '.$color.'><button type="button"  name="delete_btn" data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
+                    <td'.$color.'>'.$row["id"].'</td>  
+                    <td '.$color.'>'.$row["name"].'</td> 
+					<td '.$color.'>'.$paid.'</td>  					 
+                    <td '.$color.'>'.$row["price"].'</td>  
+                    <td '.$color.'>'.$row["date"].'</td>
+					<td '.$color.'><button type="button"data-id3="'.$row["id"].'" class="btn_delete">Wypisz</button></td>
                 </tr>  
            ';  
       }  
@@ -562,8 +556,8 @@ function fetch_child_list(){
 		
 		
  $output .= '  
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
+      <div>  
+           <table>  
                 <tr>  
                      <th width="5%">Id</th>  
                      <th width="20%">Imię</th> 
@@ -580,10 +574,10 @@ function fetch_child_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["name"].'</td>  
-					 <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["surname"].'</td>
-					  <td class="name" data-id1="'.$row["id"].'" contenteditable>'.$row["date_of_birth"].'</td>
-					 <td><button type="button" name="chooose_btn" data-id3="'.$row["id"].'" class="btn_choose">Wybierz</button></td>  
+                     <td>'.$row["name"].'</td>  
+					 <td>'.$row["surname"].'</td>
+					 <td>'.$row["date_of_birth"].'</td>
+					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_choose">Wybierz</button></td>  
 				</tr>  
            ';  
       }  

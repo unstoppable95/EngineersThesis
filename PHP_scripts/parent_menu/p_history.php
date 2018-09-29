@@ -44,10 +44,10 @@ if (!isset($_SESSION['loggedIn']))
 
 <div class="lewa_strona">
 	<h1> Historia wpłat </h1>
-	<h3> Wpłaty ka konto dziecka </h3>
+	<h3> Wpłaty na konto dziecka </h3>
 		<div id="payment_history"></div>
 		
-			<h3> Wpłaty ka konto klasowe </h3>
+			<h3> Wpłaty na konto klasowe </h3>
 		<div id="class_account_payment_history"></div>
 
 

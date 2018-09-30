@@ -34,15 +34,16 @@
 	
 </head>
 <?php
-	session_start();
-	
-	if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: index.php');
-		exit();
-	}
-	require_once "admin_helper.php";
-	
+session_start();
+
+if (!isset($_SESSION['loggedIn']))
+{
+	header('Location: index.php');
+	exit();
+}
+
+require_once "admin_helper.php";
+
 ?>
 	
 <body>
@@ -120,10 +121,7 @@
    </div>
   </form>
  </div>
-</div>
-
-
-	
+</div>	
 </body>
 </html>
 
@@ -143,8 +141,10 @@ $(document).ready(function(){
 		
 	}
 	fetch_data();
+
 	
-//delete
+// delete
+
 $(document).on('click','.btn_delete',function(){
 	var id=$(this).data("id3");
 	if(confirm("Czy jestes pewny, ze chcesz usunąć tą klasę?"))  

@@ -9,10 +9,10 @@
 session_start();
 
 if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
+{
+	header('Location: ../index.php');
+	exit();
+}
 
 ?>
 <body>
@@ -40,7 +40,6 @@ if (!isset($_SESSION['loggedIn']))
 		<tr><td>Imię: </td><td><input type="text" name="parentName" /></td></tr>  
 		<tr><td>Nazwisko: </td><td><input type="text" name="parentSurname" /></td></tr> 
 		<tr><td>Mail: </td><td><input type="text" name="parentEmail" /></td></tr> 
-	
 		<tr><td colspan="2"><input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/></td></tr>
 	<table>
 	</form>

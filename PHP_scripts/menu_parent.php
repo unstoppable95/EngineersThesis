@@ -38,45 +38,49 @@
 session_start();
 
 if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
+{
+	header('Location: ../index.php');
+	exit();
+}
+
 require_once "connection.php";
-	
-	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
-	$conn = @new mysqli($servername, $username, $password, $dbName);
-	
-	if ($conn->connect_errno!=0){
-		echo "Blad: ".$conn->connect_errno;// " Opis bledu: ".$conn->connect_error;
-	}
-	else {
-				$sql="SELECT * FROM event";
-				$results=$conn->query($sql);
-	}
-	
-	$result=$conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
-	$isUser = $result->num_rows;
-	if ($isUser <= 0){
-	
-		$_SESSION['firstLog']=null;
-	}
-	else{
-		$_SESSION['firstLog']=true;
-		
-	}
-	
-	$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
-	$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
-	
-	if($_SESSION['amountOfChild']==1){
-		$tmp=$conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
-		$row = mysqli_fetch_array($tmp);
-		$_SESSION['choosenChild']=$row["id"];
-	}
 
+// stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 
-	
+$conn = @new mysqli($servername, $username, $password, $dbName);
+
+if ($conn->connect_errno != 0)
+{
+	echo "Blad: " . $conn->connect_errno; // " Opis bledu: ".$conn->connect_error;
+}
+else
+{
+	$sql = "SELECT * FROM event";
+	$results = $conn->query($sql);
+}
+
+$result = $conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
+$isUser = $result->num_rows;
+
+if ($isUser <= 0)
+{
+	$_SESSION['firstLog'] = null;
+}
+else
+{
+	$_SESSION['firstLog'] = true;
+}
+
+$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
+
+if ($_SESSION['amountOfChild'] == 1)
+{
+	$tmp = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+	$row = mysqli_fetch_array($tmp);
+	$_SESSION['choosenChild'] = $row["id"];
+}
+
 ?>  
 </head>
 
@@ -86,19 +90,25 @@ require_once "connection.php";
 <div class="menu">
 	<a href="#" class="active">Strona główna</a>
 	  <?php
-		if ($_SESSION['type'] =="t"){
-					$myVar='<a href="menu_treasurer.php">Panel skarbnika</a>';
-					$_SESSION['treasurerAsParent']=true;
-					echo $myVar;
-				}
-  ?>
+
+if ($_SESSION['type'] == "t")
+{
+	$myVar = '<a href="menu_treasurer.php">Panel skarbnika</a>';
+	$_SESSION['treasurerAsParent'] = true;
+	echo $myVar;
+}
+
+?>
   
   <?php
-		if ((int)$_SESSION['amountOfChild'] > 1){
-					$myVar='<a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
-					echo $myVar;
-				}
-  ?>
+
+if ((int)$_SESSION['amountOfChild'] > 1)
+{
+	$myVar = '<a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
+	echo $myVar;
+}
+
+?>
   
 	<a href="parent_menu/p_history.php">Historia wpłat</a>
   <a href="parent_menu/p_classAccount.php">Konto klasowe</a>
@@ -126,14 +136,14 @@ require_once "connection.php";
 		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
 				Kwota: <input type="text" name="amountOfMoney" /> <br /><br />
 				
-				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br>
-				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br>
-				<br>
+				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
+				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />
+				<br />
 				 <select name="paymentType">
 					<option value="gotowka">Gotówka</option>
 					<option value="konto">Na konto</option>
 				</select>
-				<br><br>
+				<br /><br />
 				<input type="submit" value="Wpłać" name="MakePayment"/>
 		</form>
 		
@@ -186,9 +196,12 @@ $('#chooseChildModal').on('hidden.bs.modal', function () {
 
 $(document).ready(function(){
 
-	var zmienna='<?php echo $_SESSION['firstLog'];?>';
-	var amount='<?php echo $_SESSION['amountOfChild'];?>';
-	var firstDisplay='<?php echo $_SESSION['firstDisplayParent'];?>';
+	var zmienna='<?php
+echo $_SESSION['firstLog']; ?>';
+	var amount='<?php
+echo $_SESSION['amountOfChild']; ?>';
+	var firstDisplay='<?php
+echo $_SESSION['firstDisplayParent']; ?>';
 	
 	if (zmienna){	
 		$('#userModal').modal('show');
@@ -278,9 +291,11 @@ $(document).ready(function(){
 		
 	}
 	fetch_balance();
+
 	
 	
-	//delete
+	// delete
+
 $(document).on('click','.btn_delete',function(){
 	var id=$(this).data("id3");
 	if(confirm("Czy jestes pewny, ze chcesz wypisac dziecko z tego wydarzenia?"))  

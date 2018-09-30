@@ -5,22 +5,28 @@
 <link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
 
 <?php
-	session_start();
-	if((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn']==true))
+session_start();
+
+if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
+{
+	if ($_SESSION['type'] == "a")
 	{
-		
-		if ($_SESSION['type'] =="a"){
-					header('Location: menu_admin.php')
-				;}
-		if ($_SESSION['type'] =="p" || $_SESSION['treasurerAsParent']==true){
-					header('Location: menu_parent.php');
-				}
-		if ($_SESSION['type'] =="t" && $_SESSION['treasurerAsParent']==false){
-					header('Location: menu_treasurer.php');
-				}
-				
-		exit();
+		header('Location: menu_admin.php');
 	}
+
+	if ($_SESSION['type'] == "p" || $_SESSION['treasurerAsParent'] == true)
+	{
+		header('Location: menu_parent.php');
+	}
+
+	if ($_SESSION['type'] == "t" && $_SESSION['treasurerAsParent'] == false)
+	{
+		header('Location: menu_treasurer.php');
+	}
+
+	exit();
+}
+
 ?>
 </head>
 
@@ -35,11 +41,13 @@
 		<input type="submit" value="Zaloguj się" />
 		</p>
 		<?php
-	if(isset($_SESSION['error'])) 
-	{
-		echo $_SESSION['error'];
-	}
-	?>
+
+if (isset($_SESSION['error']))
+{
+	echo $_SESSION['error'];
+}
+
+?>
 		</div>
 	</div>
 	</form>

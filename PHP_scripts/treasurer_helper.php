@@ -1,287 +1,297 @@
 <?php
 
 if ((isset($_POST['changePassword'])))
-	{
+{
 	changePassword();
-	}
-	
+}
+
 if ((isset($_POST['changeMonthlyFee'])))
-	{
+{
 	changeMonthlyFee();
-	}
+}
 
 if ((isset($_POST['addEvent'])))
-	{
+{
 	addEvent();
-	}
+}
 
 if ((isset($_POST['addChildParent'])))
-	{
+{
 	addChildParent();
-	}
-	
+}
+
 if ((isset($_POST['RequiredNewPasswordAccept'])))
-	{
+{
 	changePassword();
-	}	
-	
-	if ((isset($_POST['changeParentMail'])))
-	{
+}
+
+if ((isset($_POST['changeParentMail'])))
+{
 	changeParentMail();
-	}	
-	
-	if ((isset($_POST['editEvent'])))
-	{
+}
+
+if ((isset($_POST['editEvent'])))
+{
 	editEvent();
-	}	
-	
-	if ((isset($_POST['addExpense'])))
-	{
+}
+
+if ((isset($_POST['addExpense'])))
+{
 	addExpense();
-	}
-	
+}
 
-	
-	if ((isset($_POST['function2call'])))
+if ((isset($_POST['function2call'])))
+{
+	$function2call = $_POST['function2call'];
+	switch ($function2call)
 	{
-		$function2call = $_POST['function2call'];	
-		switch($function2call) {
-        case 'students_list' : fetch_students_list();break;
-        case 'treasuer_data' : fetch_treasurer_data(); break;
-		case 'fetch_event_list': fetch_event_list(); break;
-		case 'fetch_class_name': fetch_class_name(); break;
-		case 'deleteStudent': deleteStudent(); break;
-		case 'btn_pMailChange': btn_pMailChange(); break;
-		case 'fetch_event_details': fetch_event_details(); break;
-		case 'deleteEvent': deleteEvent(); break;
-		case 'saveEditEvent': saveEditEventID(); break;
-		case 'fetch_expenses_list': fetch_expenses_list(); break;
-		
-	}
+	case 'students_list':
+		fetch_students_list();
+		break;
 
+	case 'treasuer_data':
+		fetch_treasurer_data();
+		break;
+
+	case 'fetch_event_list':
+		fetch_event_list();
+		break;
+
+	case 'fetch_class_name':
+		fetch_class_name();
+		break;
+
+	case 'deleteStudent':
+		deleteStudent();
+		break;
+
+	case 'btn_pMailChange':
+		btn_pMailChange();
+		break;
+
+	case 'fetch_event_details':
+		fetch_event_details();
+		break;
+
+	case 'deleteEvent':
+		deleteEvent();
+		break;
+
+	case 'saveEditEvent':
+		saveEditEventID();
+		break;
+
+	case 'fetch_expenses_list':
+		fetch_expenses_list();
+		break;
 	}
-	
-//button "Dodaj wydatek" in expenses.php
-function addExpense(){
+}
+
+// button "Dodaj wydatek" in expenses.php
+
+function addExpense()
+{
 	session_start();
 	require_once "connection.php";
+
 	$connect = new mysqli($servername, $username, $password, $dbName);
-	
-	$class_account_idx =  $connect->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= ".$_SESSION['userID'].")"));
+	$class_account_idx = $connect->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . ")"));
 	$clid = mysqli_fetch_array($class_account_idx);
-	$class_account_id= $clid["id"];
+	$class_account_id = $clid["id"];
 	$excepted_budget = $clid["expected_budget"];
-	
-	$curr_exp =  $connect->query(sprintf("SELECT SUM(price) FROM expense WHERE class_account_id = ".$class_account_id));
+	$curr_exp = $connect->query(sprintf("SELECT SUM(price) FROM expense WHERE class_account_id = " . $class_account_id));
 	$x = mysqli_fetch_array($class_account_idx);
-	$currentExpenses= $x["s"];
-	
-	
-	if($_POST["expensePrice"] + $currentExpenses <= $excepted_budget){
-		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id) VALUES ('".$_POST["expenseName"]."',".$_POST["expensePrice"].", ".$class_account_id.")"));
-		
-		//KOMUNIKAT ZE DODANO POMYSLNIE
-		
+	$currentExpenses = $x["s"];
+	if ($_POST["expensePrice"] + $currentExpenses <= $excepted_budget)
+	{
+		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id) VALUES ('" . $_POST["expenseName"] . "'," . $_POST["expensePrice"] . ", " . $class_account_id . ")"));
+
+		// KOMUNIKAT ZE DODANO POMYSLNIE
+
 		echo "<script>
-	alert('Dodano pomyślnie!');
+alert('Dodano pomyślnie!');
 	window.location.href='treasuer_menu/expenses.php';
 	</script>";
 	}
-	else{
-		//KOMUNIKAT ZE BUDZET JEST PRZEKROCZONY I NIE MOZNA DODAC
+	else
+	{
+
+		// KOMUNIKAT ZE BUDZET JEST PRZEKROCZONY I NIE MOZNA DODAC
+
 		echo "<script>
 	alert('Przekroczono budżet -> nie można już dodać wydatków z klasowych!');
 	window.location.href='treasuer_menu/expenses.php';
 	</script>";
 	}
-	
-	
 }
-	
-	
-function fetch_expenses_list(){
-		session_start();
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		
-		$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
-		$id = mysqli_fetch_array($tmpID);
-		$_SESSION['userID'] = $id["id"]; //userID = treasuerID
-		$result=$connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= ".$_SESSION['userID']."))"));
-		
-		
- $output .= '  
+
+function fetch_expenses_list()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$id = mysqli_fetch_array($tmpID);
+	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
+	$result = $connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . "))"));
+	$output.= '  
       <div>  
            <table>  
                 <tr>  
                      <th width="33%">Nazwa</th>  
                      <th width="33%">Cena</th> 
 					 <th width="34%">Data</th>
-                </tr>'; 
-				
-				
- if(mysqli_num_rows($result) > 0)  
- {  
-      while($row = mysqli_fetch_array($result))  
-      {  
-           $output .= '  
+                </tr>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$output.= '  
                 <tr>  
-                     <td>'.$row["id"].'</td>  
-                     <td >'.$row["name"].'</td>  
-					 <td >'.$row["price"].'</td>
-					 <td >'.$row["date"].'</td>
+                     <td>' . $row["id"] . '</td>  
+                     <td >' . $row["name"] . '</td>  
+					 <td >' . $row["price"] . '</td>
+					 <td >' . $row["date"] . '</td>
 				</tr>  
-           ';  
-      }  
- 
- }  
- else  
- {  
-      $output .= '<tr>  
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
                           <td colspan="4">Nie dodano jeszcze wydatków w tej klasie</td>  
-                     </tr>';  
- }  
- 
-	 
-	
-	$tmpbalance = $connect->query(sprintf("SELECT id, balance, expected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID']." )"));
-		$bal = mysqli_fetch_array($tmpbalance);
-		$balance = $bal["balance"];
-		$exceptedBalance = $bal["expected_budget"];
-		$class_account_id= $bal["id"];
-	
-	
-		$curr_exp =  $connect->query(sprintf("SELECT SUM(price) as s FROM expense WHERE class_account_id = ".$class_account_id));
-		$x = mysqli_fetch_array($curr_exp);
-		$currentExpenses= $x["s"];
-	
-	$availableMoney = $exceptedBalance - $currentExpenses;
+                     </tr>';
+	}
 
-	 $output .= '</table>  
+	$tmpbalance = $connect->query(sprintf("SELECT id, balance, expected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$bal = mysqli_fetch_array($tmpbalance);
+	$balance = $bal["balance"];
+	$exceptedBalance = $bal["expected_budget"];
+	$class_account_id = $bal["id"];
+	$curr_exp = $connect->query(sprintf("SELECT SUM(price) as s FROM expense WHERE class_account_id = " . $class_account_id));
+	$x = mysqli_fetch_array($curr_exp);
+	$currentExpenses = $x["s"];
+	$availableMoney = $exceptedBalance - $currentExpenses;
+	$output.= '</table>  
 	 <h2> Stan konta klasowego </h2>
 
-	 Ilość pieniędzy zebranyc na koncie klasowym: '.$balance.'
-	 <br> Przewidywana cała kwota budżetu: '.$exceptedBalance.'
-	 <br> Ilość pozostałego budżetu: '.$availableMoney.'
-		  </div>';  
-	 echo $output; 
- 
-	
+	 Ilość pieniędzy zebranyc na koncie klasowym: ' . $balance . '
+	 <br /> Przewidywana cała kwota budżetu: ' . $exceptedBalance . '
+	 <br /> Ilość pozostałego budżetu: ' . $availableMoney . '
+		  </div>';
+	echo $output;
 }
-	
-//helping function to save which event is edited. Used in handling button confirm
-function saveEditEventID(){
-		session_start();
-		$_SESSION['changeEventID']=$_POST["id"];
-		
-	}
-	
-function editEvent(){
-	session_start();	
-    if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate'])) {
-	   header('Location: menu_treasurer.php');
+
+// helping function to save which event is edited. Used in handling button confirm
+
+function saveEditEventID()
+{
+	session_start();
+	$_SESSION['changeEventID'] = $_POST["id"];
+}
+
+function editEvent()
+{
+	session_start();
+	if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate']))
+	{
+		header('Location: menu_treasurer.php');
 		exit();
-    }
-    require_once "connection.php";
-    $conn = new mysqli($servername, $username, $password, $dbName);
-    $currrentDate=date('Y-m-d');
-	$res=($conn->query(sprintf("select * FROM event WHERE id = '".$_SESSION['changeEventID']."'")))->fetch_assoc();
-	
-	
-    if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno; 
-    } else {
-		
-		if ($res["date"]>=$currrentDate && $_POST['newEventDate']>=$currrentDate){
-			
-		 if (!empty($_POST['newEventName'])){
-			$newEventName = $_POST['newEventName'];
-			$newEventName  = htmlentities($newEventName , ENT_QUOTES, "UTF-8");
-			$result=$conn->query(sprintf("update event set name='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventName )));
-		 }
-		 
-		  if (!empty($_POST['newEventPrice'])){
-			$newEventPrice = $_POST['newEventPrice'];
-			$newEventPrice  = htmlentities($newEventPrice , ENT_QUOTES, "UTF-8");
-			$result=$conn->query(sprintf("update event set price='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventPrice )));
-		 }
-		 
-		
-		  if ( !empty($_POST['newEventDate'])){
-			$newEventDate = $_POST['newEventDate'];
-			$newEventDate  = htmlentities($newEventDate , ENT_QUOTES, "UTF-8");
-			$result=$conn->query(sprintf("update event set date='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventDate )));
-		 }	
-		
-		
-		
-		
-		echo "<script>
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	$currrentDate = date('Y-m-d');
+	$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		if ($res["date"] >= $currrentDate && $_POST['newEventDate'] >= $currrentDate)
+		{
+			if (!empty($_POST['newEventName']))
+			{
+				$newEventName = $_POST['newEventName'];
+				$newEventName = htmlentities($newEventName, ENT_QUOTES, "UTF-8");
+				$result = $conn->query(sprintf("update event set name='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventName)));
+			}
+
+			if (!empty($_POST['newEventPrice']))
+			{
+				$newEventPrice = $_POST['newEventPrice'];
+				$newEventPrice = htmlentities($newEventPrice, ENT_QUOTES, "UTF-8");
+				$result = $conn->query(sprintf("update event set price='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventPrice)));
+			}
+
+			if (!empty($_POST['newEventDate']))
+			{
+				$newEventDate = $_POST['newEventDate'];
+				$newEventDate = htmlentities($newEventDate, ENT_QUOTES, "UTF-8");
+				$result = $conn->query(sprintf("update event set date='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventDate)));
+			}
+
+			echo "<script>
 	alert('Edycja pomyślna!');
 	window.location.href='menu_treasurer.php';
 	</script>";
-
-		
 		}
-		
-		else {
-				echo "<script>
+		else
+		{
+			echo "<script>
 	alert('Nie możesz edytować wydarzenia, które się odbyło!');
 	window.location.href='menu_treasurer.php';
 	</script>";
-
-			
-			
 		}
-
-			
 	}
+
 	$conn->close();
-				
-	}
-	
-	
-	
-function deleteEvent(){
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$currrentDate=date('Y-m-d');
-		$res=($connect->query(sprintf("select * FROM event WHERE id = '".$_POST["id"]."'")))->fetch_assoc();
-		
-		//checkoig if i can delete event (cannot delete event witch previous date)
-		if ($res["date"]>$currrentDate){
-			if($res=$connect->query(sprintf("DELETE FROM event WHERE id = '".$_POST["id"]."'"))){
-			 echo 'Pomyslnie usunięto event';  
-			} 
+}
+
+function deleteEvent()
+{
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$currrentDate = date('Y-m-d');
+	$res = ($connect->query(sprintf("select * FROM event WHERE id = '" . $_POST["id"] . "'")))->fetch_assoc();
+
+	// checkoig if i can delete event (cannot delete event witch previous date)
+
+	if ($res["date"] > $currrentDate)
+	{
+		if ($res = $connect->query(sprintf("DELETE FROM event WHERE id = '" . $_POST["id"] . "'")))
+		{
+			echo 'Pomyslnie usunięto event';
 		}
-		else {
-			echo 'Nie możesz usunąć eventu, który już się odbył!';  
-		}
-			
 	}
-	
-function fetch_event_details(){
-		session_start();	
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		
-		$result=($connect->query(sprintf("select count(*) as total from participation where event_id ='".$_POST["id"]."' ")))->fetch_assoc();
-		$output .="Liczba uczestników eventu: ".$result["total"]."";
-	
-		$resultAmount=($connect->query(sprintf("select price from event where id ='".$_POST["id"]."' ")))->fetch_assoc();
-		$totalAmount=$resultAmount["price"] * $result["total"];
-		
-		$resultAmountPaid=($connect->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='".$_POST["id"]."' ")))->fetch_assoc();
-		$totalAmountPaid=$resultAmountPaid["totalPaid"];
-		
-		$output .="<br> Całkowity koszt eventu: ".$totalAmount."<br> Suma wpłat uczestników: ".$totalAmountPaid."";
-		$output .="<br><br>";
-		
-		$result=$connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'".$resultAmount["price"]."') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='".$_POST["id"]."' order by idx asc"  ));
-		
-		$output .= ' 
+	else
+	{
+		echo 'Nie możesz usunąć eventu, który już się odbył!';
+	}
+}
+
+function fetch_event_details()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$result = ($connect->query(sprintf("select count(*) as total from participation where event_id ='" . $_POST["id"] . "' ")))->fetch_assoc();
+	$output.= "Liczba uczestników eventu: " . $result["total"] . "";
+	$resultAmount = ($connect->query(sprintf("select price from event where id ='" . $_POST["id"] . "' ")))->fetch_assoc();
+	$totalAmount = $resultAmount["price"] * $result["total"];
+	$resultAmountPaid = ($connect->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_POST["id"] . "' ")))->fetch_assoc();
+	$totalAmountPaid = $resultAmountPaid["totalPaid"];
+	$output.= "<br /> Całkowity koszt eventu: " . $totalAmount . "<br /> Suma wpłat uczestników: " . $totalAmountPaid . "";
+	$output.= "<br /><br />";
+	$result = $connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_POST["id"] . "' order by idx asc"));
+	$output.= ' 
 		<div>  
            <table>  
                 <tr>  
@@ -291,152 +301,147 @@ function fetch_event_details(){
 					 <th width="15%">Kwota wpłacona</th>
 					<th width="15%">Koszt</th>
 					 
-                </tr>'; 
-				
-				
- if(mysqli_num_rows($result) > 0)  
- {  
-      while($row = mysqli_fetch_array($result))  
-      {  
-			//green color for fully paid events
-			if( $row["amount_paid"] == $resultAmount["price"]){
-				$color =  ' bgcolor = #66ff66 ';
+                </tr>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+
+			// green color for fully paid events
+
+			if ($row["amount_paid"] == $resultAmount["price"])
+			{
+				$color = ' bgcolor = #66ff66 ';
 			}
-			else{
-				$color =  '';
+			else
+			{
+				$color = '';
 			}
-           $output .= '  
+
+			$output.= '  
                 <tr>  
                   
-                     <td '.$color.'>'.$row["name"].'</td>  
-					 <td '.$color.'>'.$row["surname"].'</td>
-					 <td '.$color.'>'.$row["amount_paid"].'</td>
-					 <td '.$color.'>'.$resultAmount["price"].'</td>
+                     <td ' . $color . '>' . $row["name"] . '</td>  
+					 <td ' . $color . '>' . $row["surname"] . '</td>
+					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
+					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
 				</tr>  
-           ';  
-      }  
- 
- }  
- else  
- {  
-      $output .= '<tr>  
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
                           <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
-                     </tr>';  
- }  
- 
- $output .= '</table>  
-      </div>';  
- echo $output;  
-		
-}	
-	
-function changeParentMail(){
+                     </tr>';
+	}
+
+	$output.= '</table>  
+      </div>';
+	echo $output;
+}
+
+function changeParentMail()
+{
 	session_start();
-	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " .$_SESSION['changeEmailChildID']. "' );</script>";
-	
-	
-    if (empty($_POST['newParentMail']) || $_POST['newParentMail'] == '0') {
-        header('Location: treasuer_menu/settings.php');
-        exit();
-    }
-    require_once "connection.php";
-    $conn = new mysqli($servername, $username, $password, $dbName);
-    
-    if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno; 
-    } else {
+	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " . $_SESSION['changeEmailChildID'] . "' );</script>";
+	if (empty($_POST['newParentMail']) || $_POST['newParentMail'] == '0')
+	{
+		header('Location: treasuer_menu/settings.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
 		$newParentEmail = $_POST['newParentMail'];
-        $newParentEmail  = htmlentities($newParentEmail , ENT_QUOTES, "UTF-8");
-		
-		$result=$conn->query(sprintf("select * from parent where id=(select parent_id from child where id='".$_SESSION['changeEmailChildID']."')"));
+		$newParentEmail = htmlentities($newParentEmail, ENT_QUOTES, "UTF-8");
+		$result = $conn->query(sprintf("select * from parent where id=(select parent_id from child where id='" . $_SESSION['changeEmailChildID'] . "')"));
 		$details = $result->fetch_assoc();
 		$oldParentEmail = $details['email'];
-		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from child where id='".$_SESSION['changeEmailChildID']."')", mysqli_real_escape_string($conn, $newParentEmail )));
+		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from child where id='" . $_SESSION['changeEmailChildID'] . "')", mysqli_real_escape_string($conn, $newParentEmail)));
 		$conn->query(sprintf("UPDATE username set login='$newParentEmail' where login='$oldParentEmail'"));
-		
 	}
-	
-	  $conn->close();
-	
-    header('Location: treasuer_menu/settings.php');	
-		
 
-	
-	
-}	
+	$conn->close();
+	header('Location: treasuer_menu/settings.php');
+}
 
-function btn_pMailChange(){
+function btn_pMailChange()
+{
 	session_start();
-	$_SESSION['changeEmailChildID']=$_POST["id"];
-	echo  "<script>console.log( 'Id:  " .$_SESSION['changeEmailChildID']. "' );</script>";
-	
+	$_SESSION['changeEmailChildID'] = $_POST["id"];
+	echo "<script>console.log( 'Id:  " . $_SESSION['changeEmailChildID'] . "' );</script>";
 }
 
-	
-	
-function deleteStudent(){
-		
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		
-		//checking if student have all previous months paid
-		$result=$connect->query(sprintf("SELECT SUM(amount) AS s FROM class_account_payment WHERE child_id = ".$_POST["id"]));
-		$res=mysqli_fetch_array($result);
-		$paidAmount = $res["s"];
-		
-		$currentMonth = date("m");
-		
-		$fee=$connect->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT distinct class_account_id FROM class_account_payment WHERE child_id = ".$_POST["id"].")"));
-		$resss=mysqli_fetch_array($fee);
-		$monthlyFee = $resss["monthly_fee"];
-		
-		if ($currentMonth >=1 and $currentMonth <=6) {
-			$currentMonth = $currentMonth + 12;
-		}
-		$differenceInMonths = $currentMonth -9 +1;
-		$charge = $differenceInMonths * $monthlyFee;
-		
-		$x="start";
-		if($charge >= $paidAmount){
-			$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat';
-		}
-		else{
-			//deleting student
-			if($res=$connect->query(sprintf("DELETE FROM child WHERE id = '".$_POST["id"]."'"))){
-				$x = 'Pomyslnie usunięto ucznia';  
-			}
-			
-		}
-		echo $x;
+function deleteStudent()
+{
+	require_once "connection.php";
 
+	$connect = new mysqli($servername, $username, $password, $dbName);
+
+	// checking if student have all previous months paid
+
+	$result = $connect->query(sprintf("SELECT SUM(amount) AS s FROM class_account_payment WHERE child_id = " . $_POST["id"]));
+	$res = mysqli_fetch_array($result);
+	$paidAmount = $res["s"];
+	$currentMonth = date("m");
+	$fee = $connect->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT distinct class_account_id FROM class_account_payment WHERE child_id = " . $_POST["id"] . ")"));
+	$resss = mysqli_fetch_array($fee);
+	$monthlyFee = $resss["monthly_fee"];
+	if ($currentMonth >= 1 and $currentMonth <= 6)
+	{
+		$currentMonth = $currentMonth + 12;
+	}
+
+	$differenceInMonths = $currentMonth - 9 + 1;
+	$charge = $differenceInMonths * $monthlyFee;
+	$x = "start";
+	if ($charge >= $paidAmount)
+	{
+		$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat';
+	}
+	else
+	{
+
+		// deleting student
+
+		if ($res = $connect->query(sprintf("DELETE FROM child WHERE id = '" . $_POST["id"] . "'")))
+		{
+			$x = 'Pomyslnie usunięto ucznia';
+		}
+	}
+
+	echo $x;
 }
 
-	
-
-function fetch_class_name(){
-		session_start();
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		
-		$result=$connect->query(sprintf("SELECT name FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')"));
-		$res=mysqli_fetch_array($result);
-
-		$output = "<h1> Konto klasy ".$res['name']."</h1>";
-		echo $output;
-}
-
-function fetch_event_list(){
+function fetch_class_name()
+{
 	session_start();
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		
-		
-		
-		$result=$connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='".$_SESSION['userID']."')"));
-	
-		
- $output .= '  
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$result = $connect->query(sprintf("SELECT name FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+	$res = mysqli_fetch_array($result);
+	$output = "<h1> Konto klasy " . $res['name'] . "</h1>";
+	echo $output;
+}
+
+function fetch_event_list()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$result = $connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "')"));
+	$output.= '  
       <div>  
            <table>  
                 <tr>  
@@ -448,53 +453,48 @@ function fetch_event_list(){
 					 <th width="15%">Edycja</th>
 					 <th width="15%">Usuwanie</th>
 					 
-                </tr>'; 
-				
-				
- if(mysqli_num_rows($result) > 0)  
- {  
-      while($row = mysqli_fetch_array($result))  
-      {  
-           $output .= '  
+                </tr>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$output.= '  
                 <tr>  
-                     <td>'.$row["id"].'</td>  
-                     <td>'.$row["name"].'</td>  
-					 <td>'.$row["price"].'</td>
-					 <td>'.$row["date"].'</td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="'.$row["id"].'" class="btn_editEvent">Edytuj</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="'.$row["id"].'" class="btn_deleteEvent">Usuń event</button></td>
+                     <td>' . $row["id"] . '</td>  
+                     <td>' . $row["name"] . '</td>  
+					 <td>' . $row["price"] . '</td>
+					 <td>' . $row["date"] . '</td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent">Szczegóły</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent">Edytuj</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent">Usuń event</button></td>
 				</tr>  
-           ';  
-      }  
- 
- }  
- else  
- {  
-      $output .= '<tr>  
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
                           <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
-                     </tr>';  
- }  
- 
- $output .= '</table>  
-      </div>';  
- echo $output;  
- 
+                     </tr>';
+	}
+
+	$output.= '</table>  
+      </div>';
+	echo $output;
 }
-	
-function fetch_students_list(){
-		session_start();
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		
-		$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '".$_SESSION['user']."'"));
-		$id = mysqli_fetch_array($tmpID);
-		$_SESSION['userID'] = $id["id"];
-		$result=$connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = ".$_SESSION['userID'].")"));
-		
-		
- $output .= '  
+
+function fetch_students_list()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$id = mysqli_fetch_array($tmpID);
+	$_SESSION['userID'] = $id["id"];
+	$result = $connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")"));
+	$output.= '  
       <div>  
            <table>  
                 <tr>  
@@ -507,258 +507,217 @@ function fetch_students_list(){
 					 <th width="10%">Mail rodzica</th>
 					 <th width="10%">Usuń ucznia</th>
 					 <th width="10%">Zmień maila rodzica</th>
-                </tr>'; 
-				
-				
- if(mysqli_num_rows($result) > 0)  
- {  
-      while($row = mysqli_fetch_array($result))  
-      {  
-			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = ".$row["id"].")")); 
+                </tr>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = " . $row["id"] . ")"));
 			$parent = mysqli_fetch_array($parentTMP);
-           $output .= '  
+			$output.= '  
                 <tr>  
-                     <td>'.$row["id"].'</td>  
-                     <td>'.$row["name"].'</td>  
-					 <td>'.$row["surname"].'</td>
-					 <td>'.$row["date_of_birth"].'</td>
-					 <td>'.$parent["name"].'</td>
-					 <td>'.$parent["surname"].'</td>
-					 <td>'.$parent["email"].'</td>
-					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
+                     <td>' . $row["id"] . '</td>  
+                     <td>' . $row["name"] . '</td>  
+					 <td>' . $row["surname"] . '</td>
+					 <td>' . $row["date_of_birth"] . '</td>
+					 <td>' . $parent["name"] . '</td>
+					 <td>' . $parent["surname"] . '</td>
+					 <td>' . $parent["email"] . '</td>
+					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent">Usuń ucznia</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange">Zmień maila</button></td>
 					 </tr>  
-           ';  
-      }  
- 
- }  
- else  
- {  
-      $output .= '<tr>  
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
                           <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
-                     </tr>';  
- }  
- 
- $output .= '</table>  
-      </div>';  
- echo $output;  
- 
-}	
+                     </tr>';
+	}
 
-//showing in settings
-function fetch_treasurer_data(){
-		session_start();
-	
-		require_once "connection.php";
-		$connect = new mysqli($servername, $username, $password, $dbName);
-		$output = '';  
-		
-		$result=$connect->query(sprintf("SELECT * FROM parent WHERE id =".$_SESSION['userID']));
-		$res=mysqli_fetch_array($result);
-		
-        $output .= '<table>
-		<tr><td>Imię: </td><td>'.$res["name"].'</td></tr> 
-		<tr><td>Nazwisko: </td><td>'.$res["surname"].'</td></tr> 
-		<tr><td>Email: </td><td>'.$res["email"].'</td></tr> 
-	<table>
-		   ';
- echo $output; 
-	
-	
+	$output.= '</table>  
+      </div>';
+	echo $output;
 }
 
-function changeMonthlyFee(){
+// showing in settings
+
+function fetch_treasurer_data()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$result = $connect->query(sprintf("SELECT * FROM parent WHERE id =" . $_SESSION['userID']));
+	$res = mysqli_fetch_array($result);
+	$output.= '<table>
+		<tr><td>Imię: </td><td>' . $res["name"] . '</td></tr> 
+		<tr><td>Nazwisko: </td><td>' . $res["surname"] . '</td></tr> 
+		<tr><td>Email: </td><td>' . $res["email"] . '</td></tr> 
+	<table>
+		   ';
+	echo $output;
+}
+
+function changeMonthlyFee()
+{
 	session_start();
 	if (empty($_POST['newMonthlyFee']) || $_POST['newMonthlyFee'] == '0')
-		{
+	{
 		header('Location: treasuer_menu/settings.php');
 		exit();
-		}
+	}
+
 	require_once "connection.php";
+
 	$conn = new mysqli($servername, $username, $password, $dbName);
-	
 	if ($conn->connect_errno != 0)
 	{
-		echo "Blad: " . $conn->connect_errno; 
+		echo "Blad: " . $conn->connect_errno;
 	}
-	 else
-	{ 
+	else
+	{
 		$newMonthlyFee = $_POST['newMonthlyFee'];
 		$newMonthlyFee = htmlentities($newMonthlyFee, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		if ($result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee) , mysqli_real_escape_string($conn, $login))))
-			{
-			echo "Record updated successfully";
-			}
-		  else
-			{
-			echo "Error updating record: " . $conn->error;
-			}
+		$result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee) , mysqli_real_escape_string($conn, $login)));
 	}
 
 	$conn->close();
 	header('Location: treasuer_menu/settings.php');
 }
-		
-	
 
 function changePassword()
-	{
+{
 	session_start();
 	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0')
-		{
+	{
 		header('Location: treasuer_menu/settings.php');
 		exit();
-		}
+	}
 
 	require_once "connection.php";
 
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
-		{
-		echo "Blad: " . $conn->connect_errno; 
-		}
-	  else
-		{ 
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
 		$newPassword = $_POST['newPassword'];
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		if ($result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login))))
-			{
-			echo "Record updated successfully";
-			}
-		  else
-			{
-			echo "Error updating record: " . $conn->error;
-			}
-		}
+		$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+	}
 
 	$conn->close();
 	header('Location: logout.php');
-	}
-
-
+}
 
 function addEvent()
 {
 	session_start();
 	if (empty($_POST['eventName']) || $_POST['eventName'] == '0' || empty($_POST['eventPrice']) || $_POST['eventPrice'] == '0' || empty($_POST['eventDate']) || $_POST['eventDate'] == '0')
-		{
+	{
 		header('Location: treasuer_menu/addOnceEvent.php');
 		exit();
-		}
+	}
 
 	require_once "connection.php";
 
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
-		{
-		echo "Blad: " . $conn->connect_errno; 
-		}
-	  else
-		{ 
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
 		$eventName = $_POST['eventName'];
 		$eventName = htmlentities($eventName, ENT_QUOTES, "UTF-8");
 		$eventPrice = $_POST['eventPrice'];
 		$eventPrice = htmlentities($eventPrice, ENT_QUOTES, "UTF-8");
 		$eventDate = $_POST['eventDate'];
 		$eventDate = htmlentities($eventDate, ENT_QUOTES, "UTF-8");
-		$resultclassID=($conn->query(sprintf("select * from class where parent_id='".$_SESSION['userID']."'")))->fetch_assoc();		
+		$resultclassID = ($conn->query(sprintf("select * from class where parent_id='" . $_SESSION['userID'] . "'")))->fetch_assoc();
 		$classID = $resultclassID['id'];
-		if ($result = $conn->query(sprintf("insert into event (name,price,date,class_ID) values ('%s' , '%s' ,'%s',$classID)", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventPrice) , mysqli_real_escape_string($conn, $eventDate))))
+		$result = $conn->query(sprintf("insert into event (name,price,date,class_ID) values ('%s' , '%s' ,'%s',$classID)", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventPrice) , mysqli_real_escape_string($conn, $eventDate)));
+		$resulteventID = ($conn->query(sprintf("select * from event where name='%s' and date='%s'", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventDate))))->fetch_assoc();
+		$eventID = $resulteventID['id'];
+		$result = $conn->query(sprintf("select * from child where class_id='" . $classID . "'"));
+		if (mysqli_num_rows($result) > 0)
+		{
+			while ($row = mysqli_fetch_array($result))
 			{
-			echo "Record updated successfully";
+				$acc_bal = ($conn->query(sprintf("SELECT balance FROM account WHERE child_id='%s'", mysqli_real_escape_string($conn, $row["id"]))))->fetch_assoc();
+				$account_balance = $acc_bal['balance'];
+				$eventPrice = $_POST['eventPrice'];
+				if ($account_balance > $eventPrice)
+				{
+					$toBePaid = $eventPrice;
+					$newAccountBalance = $account_balance - $eventPrice;
+				}
+
+				if ($account_balance <= $eventPrice)
+				{
+					$toBePaid = $account_balance;
+					$newAccountBalance = 0;
+				}
+
+				// update balance
+
+				$conn->query(sprintf("UPDATE account SET balance='%s' where child_id='%s'", mysqli_real_escape_string($conn, $newAccountBalance) , mysqli_real_escape_string($conn, $row["id"])));
+				$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', '%s')", mysqli_real_escape_string($conn, $eventID) , mysqli_real_escape_string($conn, $row["id"]) , mysqli_real_escape_string($conn, $toBePaid)));
+				$parent = ($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='" . $row["id"] . "')")))->fetch_assoc();
+				mail($parent["email"], "Dodano nowe wydarzenie: $eventName", "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiło się nowe wydarzenie o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");
 			}
-		  else
-			{
-			echo "Error updating record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;;
-			}
-			
-		
-		
-			
-			
-			$resulteventID=($conn->query(sprintf("select * from event where name='%s' and date='%s'", mysqli_real_escape_string($conn, $eventName), mysqli_real_escape_string($conn, $eventDate))))->fetch_assoc();		
-			$eventID = $resulteventID['id'];
-			
-			$result=$conn->query(sprintf("select * from child where class_id='".$classID."'"));
-			
-		 if(mysqli_num_rows($result) > 0)  
- {  
-      while($row = mysqli_fetch_array($result))  
-      {  	
-  //////////
-		$acc_bal=($conn->query(sprintf("SELECT balance FROM account WHERE child_id='%s'",mysqli_real_escape_string($conn, $row["id"]))))->fetch_assoc();		
-		$account_balance = $acc_bal['balance']; 
-		$eventPrice = $_POST['eventPrice'];
-		
-		if($account_balance > $eventPrice) {
-			$toBePaid = $eventPrice;
-			$newAccountBalance = $account_balance - $eventPrice;
 		}
-		
-		if($account_balance <= $eventPrice) {
-			$toBePaid = $account_balance;
-			$newAccountBalance = 0;
+		else
+		{
+			echo "Nie udalo sie dodac dziecka";
 		}
-		
-		//update balance
-		$conn->query(sprintf("UPDATE account SET balance='%s' where child_id='%s'", mysqli_real_escape_string($conn, $newAccountBalance ),  mysqli_real_escape_string($conn, $row["id"] )));
-		
-		/////////
-		$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', '%s')", mysqli_real_escape_string($conn, $eventID), mysqli_real_escape_string($conn, $row["id"]), mysqli_real_escape_string($conn, $toBePaid)));
-		
-		$parent=($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='".$row["id"]."')")))->fetch_assoc();
-		mail($parent["email"], "Dodano nowe wydarzenie: $eventName" , "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiło się nowe wydarzenie o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");	
-			 
-      }  
- 
- }  
- else  
- {  
-       echo "Nie udalo sie dodac dziecka";
- }  	
-				
-			
-		}
+	}
 
 	$conn->close();
 	header('Location: treasuer_menu/addOnceEvent.php');
-	}
-
-
-function randomPassword() {
-    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-    $pass = array(); //remember to declare $pass as an array
-    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-    for ($i = 0; $i < 8; $i++) {
-        $n = rand(0, $alphaLength);
-        $pass[] = $alphabet[$n];
-    }
-    return implode($pass); //turn the array into a string
 }
 
+function randomPassword()
+{
+	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$pass = array(); //remember to declare $pass as an array
+	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+	for ($i = 0; $i < 8; $i++)
+	{
+		$n = rand(0, $alphaLength);
+		$pass[] = $alphabet[$n];
+	}
+
+	return implode($pass); //turn the array into a string
+}
 
 function addChildParent()
-	{
+{
 	session_start();
-	if (empty($_POST['childName']) || $_POST['childName'] == '0' || empty($_POST['childSurname']) || $_POST['childSurname'] == '0' || empty($_POST['childBirthdate']) || $_POST['childBirthdate'] == '0' || empty($_POST['parentName']) || $_POST['parentName'] == '0' || empty($_POST['parentSurname']) || $_POST['parentSurname'] == '0' )
-		{
+	if (empty($_POST['childName']) || $_POST['childName'] == '0' || empty($_POST['childSurname']) || $_POST['childSurname'] == '0' || empty($_POST['childBirthdate']) || $_POST['childBirthdate'] == '0' || empty($_POST['parentName']) || $_POST['parentName'] == '0' || empty($_POST['parentSurname']) || $_POST['parentSurname'] == '0')
+	{
 		header('Location: treasuer_menu/addStudent.php');
 		exit();
-		}
+	}
 
 	require_once "connection.php";
 
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
-		{
-		echo "Blad: " . $conn->connect_errno; 
-		}
-	  else
-		{ 
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
 		$childName = $_POST['childName'];
 		$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
 		$childSurname = $_POST['childSurname'];
@@ -769,89 +728,67 @@ function addChildParent()
 		$parentName = htmlentities($parentName, ENT_QUOTES, "UTF-8");
 		$parentSurname = $_POST['parentSurname'];
 		$parentSurname = htmlentities($parentSurname, ENT_QUOTES, "UTF-8");
-		$passwd=randomPassword();
-		if (empty($_POST['parentEmail']) || $_POST['parentEmail'] == '0'  )
+		$passwd = randomPassword();
+		if (empty($_POST['parentEmail']) || $_POST['parentEmail'] == '0')
 		{
-		$parentEmail = $parentName.$parentSurname;
-		$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
-		
-		
-		// utworzenie uchwytu do pliku
-		// tryb a umożliwia zapis na końcu pliku
-		$plik = fopen('ParentsWithoutEmail.txt','a');
+			$parentEmail = $parentName . $parentSurname;
+			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
 
-		// przypisanie zawartości do zmiennej
-		$zawartosc = "Login : ".$parentEmail." hasło : ".$passwd."\r\n";
+			// utworzenie uchwytu do pliku
+			// tryb a umożliwia zapis na końcu pliku
 
-		fwrite($plik, $zawartosc);
+			$plik = fopen('ParentsWithoutEmail.txt', 'a');
+
+			// przypisanie zawartości do zmiennej
+
+			$zawartosc = "Login : " . $parentEmail . " hasło : " . $passwd . "\r\n";
+			fwrite($plik, $zawartosc);
 		}
-		else{
-		$parentEmail = $_POST['parentEmail'];
-		$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");	
-			
+		else
+		{
+			$parentEmail = $_POST['parentEmail'];
+			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
 		}
-		//id klasy zalgodowanego skarbnika
-		$classID1=$conn->query(sprintf("SELECT id FROM class where parent_id=(SELECT id FROM parent WHERE email = '".$_SESSION['user']."' )"));
-		$classID=mysqli_fetch_array($classID1)["id"];
-		
-		
+
+		// id klasy zalgodowanego skarbnika
+
+		$classID1 = $conn->query(sprintf("SELECT id FROM class where parent_id=(SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "' )"));
+		$classID = mysqli_fetch_array($classID1) ["id"];
 		if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
-			{
+		{
 			$isUser = $result->num_rows;
 			if ($isUser <= 0)
-				{ //RODZICA NIE MA W SYSTEMIE
-				if ($result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail))))
-					{
-					echo "Record inserted successfully";
-					}
-				  else
-					{
-					echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
-					}
-					
-				
-				mail($parentEmail, "Haslo pierwszego logowania rodzica" , "Twoje hasło pierwszego logowanie to: $passwd");				
-				
-				
+			{ //RODZICA NIE MA W SYSTEMIE
+				$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
+				mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
+
 				// szukamy id nowego rodzica
-				
+
 				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
-					{
+				{
 					$details = $result->fetch_assoc();
 					$parentIDdb = $details['id'];
-					//dodanie do username
-				$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
-					if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
-						{
-						echo "Record inserted successfully";
-						}
-					  else
-						{
-						echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
-						}
-					}
+
+					// dodanie do username
+
+					$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+					$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 				}
-			  else
-				{
+			}
+			else
+			{
 
 				// RODZIC JEST JUZ W SYSTEMIE WIEC DODAJE SAMO DZIECKO
 
 				$details = $result->fetch_assoc();
 				$parentIDdb = $details['id'];
-				if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
-					{
-					echo "Record inserted successfully";
-					}
-				  else
-					{
-					echo "Error inserted record: " . $conn->error . "     " . $conn->connect_error . "     " . $conn->connect_errno;
-					}
-				}
+				$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 			}
+		}
 
 		$conn->close();
 		header('Location: treasuer_menu/addStudent.php');
-		}
 	}
+}
 
 ?>

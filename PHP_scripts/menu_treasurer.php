@@ -38,36 +38,39 @@
 session_start();
 
 if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
-$_SESSION['treasurerAsParent']=false;
+{
+	header('Location: ../index.php');
+	exit();
+}
 
-	require_once "connection.php";
-	
-	//stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
-	$conn = @new mysqli($servername, $username, $password, $dbName);
-	
-	$result=$conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
-	$isUser = $result->num_rows;
-	if ($isUser <= 0){
-	
-		$_SESSION['firstLog']=null;
-	}
-	else{
-		$_SESSION['firstLog']=true;
-		
-	}
-	
-	$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
-	$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
-	
-	if($_SESSION['amountOfChild']==1){
-		$tmp=$conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '".$_SESSION['user']."')" ));
-		$row = mysqli_fetch_array($tmp);
-		$_SESSION['choosenChild']=$row["id"];
-	}
+$_SESSION['treasurerAsParent'] = false;
+require_once "connection.php";
+
+// stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
+
+$conn = @new mysqli($servername, $username, $password, $dbName);
+$result = $conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
+$isUser = $result->num_rows;
+
+if ($isUser <= 0)
+{
+	$_SESSION['firstLog'] = null;
+}
+else
+{
+	$_SESSION['firstLog'] = true;
+}
+
+$amountOfChild = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+$_SESSION['amountOfChild'] = $amountOfChild->num_rows;
+
+if ($_SESSION['amountOfChild'] == 1)
+{
+	$tmp = $conn->query(sprintf("SELECT * FROM child WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+	$row = mysqli_fetch_array($tmp);
+	$_SESSION['choosenChild'] = $row["id"];
+}
+
 ?>
 <body>
 
@@ -148,13 +151,16 @@ $_SESSION['treasurerAsParent']=false;
 <script>
 $(document).ready(function(){
 
-	var zmienna='<?php echo $_SESSION['firstLog'];?>';
+	var zmienna='<?php
+echo $_SESSION['firstLog']; ?>';
 	
 	if (zmienna){	
 	$('#userModal').modal('show');
 		}
 
-	  //save which event edit want to edit
+
+	  // save which event edit want to edit
+
 	  $(document).on('click','.btn_editEvent',function(){
 	var id=$(this).data("id4");
 		$.ajax({
@@ -170,11 +176,13 @@ $(document).ready(function(){
 	 
            
       });
+
 	
 
 	
 	
-	//delete event
+	// delete event
+
 	$(document).on('click','.btn_deleteEvent',function(){
 	var id=$(this).data("id4");
 	if(confirm("Czy jestes pewny, ze chcesz usunąć ten event?"))  

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 30 Wrz 2018, 18:01
+-- Czas generowania: 30 Wrz 2018, 18:49
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -176,7 +176,7 @@ CREATE TABLE `class_account` (
 --
 
 INSERT INTO `class_account` (`id`, `balance`, `monthly_fee`, `expenses`, `expected_budget`, `class_id`) VALUES
-(2, 3, 3, 0, 3, 2);
+(2, 0, 3, 0, 0, 2);
 
 -- --------------------------------------------------------
 
@@ -192,13 +192,6 @@ CREATE TABLE `class_account_payment` (
   `class_account_id` int(11) NOT NULL,
   `child_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `class_account_payment`
---
-
-INSERT INTO `class_account_payment` (`id`, `amount`, `date`, `type`, `class_account_id`, `child_id`) VALUES
-(8, 3, '2018-09-30 10:01:51', 'auto', 2, NULL);
 
 --
 -- Wyzwalacze `class_account_payment`
@@ -403,8 +396,7 @@ CREATE TABLE `parent` (
 --
 
 INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
-(3, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't'),
-(4, 'Piotr', 'Pawlaczyk', 'piotr-pawlaczyk5@wp.pl', 'p');
+(3, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't');
 
 --
 -- Wyzwalacze `parent`
@@ -519,8 +511,7 @@ CREATE TABLE `username` (
 
 INSERT INTO `username` (`login`, `password`, `type`, `first_login`, `parent_id`) VALUES
 ('admin', 'admin', 'a', 0, NULL),
-('kasjozw@wp.pl', 'kasia', 't', 0, 3),
-('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0, 4);
+('kasjozw@wp.pl', 'kasia', 't', 0, 3);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -612,31 +603,31 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
 --
 ALTER TABLE `class`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account`
 --
 ALTER TABLE `class_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -654,7 +645,7 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`

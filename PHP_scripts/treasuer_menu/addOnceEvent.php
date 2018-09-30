@@ -8,10 +8,11 @@
 session_start();
 
 if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
+{
+	header('Location: ../index.php');
+	exit();
+}
+
 ?>
 <body>
 

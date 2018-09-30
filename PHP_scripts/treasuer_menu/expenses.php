@@ -1,15 +1,15 @@
 <html> 
 <head> 
-	<title>Skarbnik-wydatki</title>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
-	
-	
-	<script src="../js/jquery-2.2.4.js"></script>
+    <title>Skarbnik-wydatki</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
+    
+    
+    <script src="../js/jquery-2.2.4.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
 
-	<style>
+    <style>
 /* Modal (background) */
 .modal {
     display: none; /* Hidden by default */
@@ -33,40 +33,36 @@
     width: 80%;
 }
 </style>
-	
+    
 </head>
 <?php
 session_start();
 
-if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
+if (!isset($_SESSION['loggedIn'])) {
+    header('Location: ../index.php');
+    exit();
+}
 
 ?>
 <body>
 
 <div class="menu">
-	<a href="../menu_treasurer.php" >Strona główna</a>
-	<a href="../menu_parent.php">Moje dzieci</a>
-	<a href="expenses.php" class="active">Wydatki klasowe</a>
+    <a href="../menu_treasurer.php" >Strona główna</a>
+    <a href="../menu_parent.php">Moje dzieci</a>
+    <a href="expenses.php" class="active">Wydatki klasowe</a>
   <a href="addStudent.php">Dodaj ucznia do klasy</a>
   <a href="addOnceEvent.php">Dodaj wydarzenie</a>
   <a href="settings.php" >Ustawienia</a>
-	<a href="../logout.php"> Wyloguj się</a>
+    <a href="../logout.php"> Wyloguj się</a>
 </div>
 
 <div class="lewa_strona">
-	<h1> Wydatki klasowe </h1>
-	<h2> Lista wydatków </h2>
-		<div id="expenses_list"></div>
-		
-		<br>
-		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent">Dodaj wydatek</button>
-
-
-
+    <h1> Wydatki klasowe </h1>
+    <h2> Lista wydatków </h2>
+        <div id="expenses_list"></div>
+        
+        <br>
+        <button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent">Dodaj wydatek</button>
 </div>
 
 
@@ -77,15 +73,12 @@ if (!isset($_SESSION['loggedIn']))
    <div class="modal-content">
 
     <h2>DODAJ WYDATEK KLASOWY</h2>
-	<h3>Podaj informacje o wydatku klasowym</h3>
-	<table>
-		<tr><td>Nazwa: </td><td> <input type="text" name="expenseName"/></td></tr>
-		<tr><td>Cena: </td><td> <input type="text" name="expensePrice"/></td></tr>
-	</table>
-	<input type="submit" name="addExpense" class="btn_addExpense" value="Zatwierdz"/>
-		
-
-
+    <h3>Podaj informacje o wydatku klasowym</h3>
+    <table>
+        <tr><td>Nazwa: </td><td> <input type="text" name="expenseName"/></td></tr>
+        <tr><td>Cena: </td><td> <input type="text" name="expensePrice"/></td></tr>
+    </table>
+    <input type="submit" name="addExpense" class="btn_addExpense" value="Zatwierdz"/>
    </div>
   </form>
  </div>
@@ -100,21 +93,20 @@ if (!isset($_SESSION['loggedIn']))
 
 <script>
 $(document).ready(function(){
-	
-	function fetch_expenses_list()
-	{
-		$.ajax({
-			url:"../treasurer_helper.php",
-			method:"POST",
-			data:{function2call:'fetch_expenses_list'},
-			success:function(data){
-				$('#expenses_list').html(data);
-			}
-		});
-		
-	}
-	fetch_expenses_list();
-		
+    
+    function fetch_expenses_list()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'fetch_expenses_list'},
+            success:function(data){
+                $('#expenses_list').html(data);
+            }
+        });
+        
+    }
+    fetch_expenses_list();
+        
  }); 
   </script>
-

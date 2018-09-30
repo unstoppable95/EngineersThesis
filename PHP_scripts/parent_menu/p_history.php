@@ -13,28 +13,35 @@
 session_start();
 
 if (!isset($_SESSION['loggedIn']))
-	{
-		header('Location: ../index.php');
-		exit();
-	}
+{
+	header('Location: ../index.php');
+	exit();
+}
+
 ?>
 <body>
 
 <div class="menu">
 	<a href="../menu_parent.php" >Strona główna</a>
 	  <?php
-		if ($_SESSION['type'] =="t"){
-					$myVar='<a href="../menu_treasurer.php">Panel skarbnika</a>';
-					echo $myVar;
-				}
-  ?>
+
+if ($_SESSION['type'] == "t")
+{
+	$myVar = '<a href="../menu_treasurer.php">Panel skarbnika</a>';
+	echo $myVar;
+}
+
+?>
 
   <?php
-		if ((int)$_SESSION['amountOfChild'] > 1){
-					$myVar='<a href="p_choiceChild.php">Wybór dziecka</a>';
-					echo $myVar;
-				}
-  ?>
+
+if ((int)$_SESSION['amountOfChild'] > 1)
+{
+	$myVar = '<a href="p_choiceChild.php">Wybór dziecka</a>';
+	echo $myVar;
+}
+
+?>
   <a href="p_history.php"  class="active">Historia wpłat</a>
   <a href="p_classAccount.php">Konto klasowe</a>
   <a href="p_settings.php">Ustawienia</a>
@@ -52,12 +59,8 @@ if (!isset($_SESSION['loggedIn']))
 
 
 </div>
-
-
 </body>
 </html>
-
-
 
 <script>
 
@@ -92,10 +95,6 @@ $(document).ready(function(){
 	}
 	fetch_class_account_payment_history();
 	
-
-
  }); 
   
-
-
 </script>

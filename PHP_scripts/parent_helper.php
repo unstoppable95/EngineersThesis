@@ -492,7 +492,13 @@ function deleteFromDB()
 	$connect->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($connect, $newBalance) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
 
 	// payng for rest participations
-
+	if ($res = $connect->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
+	{
+		echo 'Pomyslnie wypisano dziecko';
+	}
+	
+	
+	
 	$child_participation = $connect->query(sprintf("SELECT p.amount_paid as amount,  e.date as datee,  e.price as price, e.id as id  FROM participation p JOIN event e ON  p.event_id=e.id  WHERE child_id=" . $_SESSION['choosenChild'] . " ORDER BY e.date ASC"));
 	if (mysqli_num_rows($child_participation) > 0)
 	{
@@ -515,15 +521,13 @@ function deleteFromDB()
 					$newBalance = 0;
 				}
 
-				$connect->query(sprintf("UPDATE account SET balance = '%s' WHERE child_id = '%s'", mysqli_real_escape_string($connect, $newBalance) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
+				$connect->query(sprintf("UPDATE account SET balance = '%s' WHERE child_id = ".$_SESSION['choosenChild'], mysqli_real_escape_string($connect, $newBalance)));
+
 			}
 		}
 	}
 
-	if ($res = $connect->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
-	{
-		echo 'Pomyslnie wypisano dziecko';
-	}
+	
 }
 
 function fetch_child_list()

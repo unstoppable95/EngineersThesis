@@ -88,10 +88,10 @@
 <!--MODAL CHANGE TR -->
 <div id="changeTrModal" class="modal fade">
  <div class="modal-dialog">
-  <form method="post" id="user_form" enctype="multipart/form-data">
+ <form method="post" id="user_form" enctype="multipart/form-data"> 
    <div class="modal-content">
 	
-	<!-- <div id="id_data"></div> -->
+	
     <h2>Zmiana skarbnika</h2>
 	<h3>Podaj dane nowego skarbnika</h3>
 	<form action="admin_helper.php" method="post">
@@ -101,15 +101,36 @@
 	<table>
 	</form>
 
-   <!---
-    <div class="modal-footer">
-     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-    </div>  -->
+
+   </div>
+ </form>
+ </div>
+</div>
+
+
+<!--MODAL CHANGE email treasurer -->
+<div id="changeEmailModal" class="modal fade">
+ <div class="modal-dialog">
+  <form method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+	
+	
+    <h2>Zmiana emaila skarbnika</h2>
+	<h3>Podaj nowy adres email skarbnika</h3>
+	<!--<form action="admin_helper.php" method="post">
+	
+		Email: <input type="text" name="trNewMail"/>
+	<input type="submit" name="changeEmailTreasuer"  value="Zatwierdź"/>
+	
+	</form>-->
+	
+	
+
+  
    </div>
   </form>
  </div>
 </div>
-
 
 	
 </body>
@@ -176,12 +197,10 @@ $(document).on('click','.btn_delete',function(){
 		$.ajax({
 			url:"admin_helper.php",
 			method:"POST",
-			data:{function2call: 'changeTreasuerr', id:id},
+			data:{function2call: 'changeTreasuer', id:id},
 			dataType:"text",
 				success:function(data){
-				//$('#parent_data').html(data);
-				//$('#id_data').html(data);
-				//console.log("wykonalem");
+				
 			
                      }      					 
                 });

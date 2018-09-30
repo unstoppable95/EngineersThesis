@@ -356,14 +356,7 @@ function makePayment(){
 			//inserting payment to class account
 			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (".$amountOfMoney.",".$class_account_id.",".$_SESSION['choosenChild'].",'".$_POST['paymentType']."')"));
 			
-			//updating class account balance
-			$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_account WHERE id =".$class_account_id));
-			$res=mysqli_fetch_array($curr_class_balance);
-			$current_class_balance = $res["balance"];
 			
-			$new_account_balance = $current_class_balance + $amountOfMoney;
-			
-			$conn->query(sprintf("UPDATE class_account SET balance='%s' WHERE id = '%s'",  mysqli_real_escape_string($conn, $new_account_balance),  mysqli_real_escape_string($conn, $class_account_id)));
 
 		}
 	

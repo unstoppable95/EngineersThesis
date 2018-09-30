@@ -213,7 +213,7 @@ function editEvent(){
 			$newEventDate  = htmlentities($newEventDate , ENT_QUOTES, "UTF-8");
 			$result=$conn->query(sprintf("update event set date='%s' where id='".$_SESSION['changeEventID']."'", mysqli_real_escape_string($conn, $newEventDate )));
 		 }	
-			//echo 'Edycja pomyślna!';  
+		
 		
 		
 		
@@ -232,13 +232,13 @@ function editEvent(){
 	</script>";
 
 			
-			//echo 'Nie możesz edytować eventu, który już się odbył!';  
+			
 		}
 
 			
 	}
 	$conn->close();
-	//header('Location: menu_treasurer.php');			
+				
 	}
 	
 	
@@ -386,7 +386,7 @@ function deleteStudent(){
 		
 		$currentMonth = date("m");
 		
-		$fee=$connect->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT class_account_id FROM class_account_payment WHERE child_id = ".$_POST["id"].")"));
+		$fee=$connect->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT distinct class_account_id FROM class_account_payment WHERE child_id = ".$_POST["id"].")"));
 		$resss=mysqli_fetch_array($fee);
 		$monthlyFee = $resss["monthly_fee"];
 		
@@ -396,7 +396,7 @@ function deleteStudent(){
 		$differenceInMonths = $currentMonth -9 +1;
 		$charge = $differenceInMonths * $monthlyFee;
 		
-		$x="x";
+		$x="start";
 		if($charge >= $paidAmount){
 			$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat';
 		}
@@ -405,7 +405,7 @@ function deleteStudent(){
 			if($res=$connect->query(sprintf("DELETE FROM child WHERE id = '".$_POST["id"]."'"))){
 				$x = 'Pomyslnie usunięto ucznia';  
 			}
-			$x ="y";
+			
 		}
 		echo $x;
 
@@ -458,9 +458,9 @@ function fetch_event_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td data-id1="'.$row["id"].'">'.$row["name"].'</td>  
-					 <td data-id1="'.$row["id"].'">'.$row["price"].'</td>
-					 <td data-id1="'.$row["id"].'">'.$row["date"].'</td>
+                     <td>'.$row["name"].'</td>  
+					 <td>'.$row["price"].'</td>
+					 <td>'.$row["date"].'</td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="'.$row["id"].'" class="btn_detailsEvent">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="'.$row["id"].'" class="btn_editEvent">Edytuj</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="'.$row["id"].'" class="btn_deleteEvent">Usuń event</button></td>
@@ -519,12 +519,12 @@ function fetch_students_list(){
            $output .= '  
                 <tr>  
                      <td>'.$row["id"].'</td>  
-                     <td data-id1="'.$row["id"].'">'.$row["name"].'</td>  
-					 <td data-id1="'.$row["id"].'">'.$row["surname"].'</td>
-					 <td data-id1="'.$row["id"].'">'.$row["date_of_birth"].'</td>
-					 <td data-id1="'.$row["id"].'">'.$parent["name"].'</td>
-					 <td data-id1="'.$row["id"].'">'.$parent["surname"].'</td>
-					 <td data-id1="'.$row["id"].'">'.$parent["email"].'</td>
+                     <td>'.$row["name"].'</td>  
+					 <td>'.$row["surname"].'</td>
+					 <td>'.$row["date_of_birth"].'</td>
+					 <td>'.$parent["name"].'</td>
+					 <td>'.$parent["surname"].'</td>
+					 <td>'.$parent["email"].'</td>
 					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_deleteStudent">Usuń ucznia</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="'.$row["id"].'" class="btn_pMailChange">Zmień maila</button></td>
 					 </tr>  

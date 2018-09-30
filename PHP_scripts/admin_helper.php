@@ -24,7 +24,7 @@ if ((isset($_POST['changeTreasuer2']))) {
         case 'fetch' : fetch();break;
         case 'delete' : deleteFromDB(); break;
 		case 'details' : showDetails(); break;
-		case 'changeTreasuerr' : changeTreasurer(); break;
+		case 'changeTreasuer' : changeTreasurer(); break;
 	}
 
 	}
@@ -191,42 +191,7 @@ function addClassTreasurer()
     header('Location: admin_menu/a_addClass.php');
     
 }
-//-------------
-/*
-function displayClass() //-------------
-{
-    //session_start();
-  
-    require_once "connection.php";
-    $conn = new mysqli($servername, $username, $password, $dbName);
-    
-    if ($conn->connect_errno != 0) {
-        echo "Blad: " . $conn->connect_errno;
-    } else { 
-        $result=$conn->query("select * from class");
-        if ( $result){
-            echo "Record updated successfully";
-			$text="";
-			while($event=mysqli_fetch_assoc($result)){
-				
-				$text= $text.$event['id']." ".$event['name']."\r\n";	
-			}
-			$_SESSION['funDisplay']=$text;
-			$_SESSION['funDisplay_1]']=true;
-	}
-						
-         else {
-            echo "Error updating record: " . $conn->error;
-        }        
-    }
-    $conn->close();
-    
-   header('Location: menu_admin.php');
-    
-}
-*/
-//---------------------------------------
-//--------------------------
+
 
 function fetch(){
 		//session_start();
@@ -241,10 +206,12 @@ function fetch(){
            <table>  
                 <tr>  
                      <th width="10%">Id</th>  
-                     <th width="25%">Nazwa</th> 
-					 <th width="25%">Usuń klasę</th>
+                     <th width="20%">Nazwa</th> 
+					 <th width="15%">Usuń klasę</th>
 					 <th width="10%">Szczegóły</th>
-					 <th width="30%">Zmień skarbnika</th>
+					 <th width="20%">Zmień email</th>
+					 <th width="25%">Zmień skarbnika</th>
+				
                 </tr>'; 
 				
 				
@@ -257,7 +224,8 @@ function fetch(){
                      <td>'.$row["id"].'</td>  
                      <td>'.$row["name"].'</td>  
 					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
-					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td> 
+					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#changeEmailModal" data-id4="'.$row["id"].'"  class="btn_trChangeXXXX">Zmień email</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="'.$row["id"].'" class="btn_trChange">Zmień skarbnika</button></td>
 				</tr>  
            ';  

@@ -23,7 +23,6 @@
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
-
 .modal-content {
     background-color: #fefefe;
     margin: auto;
@@ -84,14 +83,30 @@
  </div>
 </div>
 
+<!--MODAL CHANGE TR email -->
+<div id="changeTrEmail" class="modal fade">
+ <div class="modal-dialog">
+  <form action="admin_helper.php" method="post" enctype="multipart/form-data"">
+   <div class="modal-content">
+	
+	
+    <h2>Zmiana skarbnika</h2>
+	<h3>Podaj nowy email skarbnika </h3>
+	Email : <input type="text" name="trNewMail"/>
+	
+	<input type="submit" name="changeNewTreasurer" value="Zatwierdź"/>
+   </div>
+  </form>
+ </div>
+</div>
 
 <!--MODAL CHANGE TR -->
 <div id="changeTrModal" class="modal fade">
  <div class="modal-dialog">
- <form method="post" id="user_form" enctype="multipart/form-data"> 
+  <form method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
 	
-	
+
     <h2>Zmiana skarbnika</h2>
 	<h3>Podaj dane nowego skarbnika</h3>
 	<form action="admin_helper.php" method="post">
@@ -101,36 +116,12 @@
 	<table>
 	</form>
 
-
-   </div>
- </form>
- </div>
-</div>
-
-
-<!--MODAL CHANGE email treasurer -->
-<div id="changeEmailModal" class="modal fade">
- <div class="modal-dialog">
-  <form method="post" id="user_form" enctype="multipart/form-data">
-   <div class="modal-content">
-	
-	
-    <h2>Zmiana emaila skarbnika</h2>
-	<h3>Podaj nowy adres email skarbnika</h3>
-	<!--<form action="admin_helper.php" method="post">
-	
-		Email: <input type="text" name="trNewMail"/>
-	<input type="submit" name="changeEmailTreasuer"  value="Zatwierdź"/>
-	
-	</form>-->
-	
-	
-
-  
+   
    </div>
   </form>
  </div>
 </div>
+
 
 	
 </body>
@@ -171,8 +162,6 @@ $(document).on('click','.btn_delete',function(){
                 });  
            }  
       });  
-
-
 	$(document).on('click','.btn_details',function(){
 	var id=$(this).data("id3");
 	
@@ -189,8 +178,6 @@ $(document).on('click','.btn_delete',function(){
 	 
            
       }); 
-
-
 	$(document).on('click','.btn_trChange',function(){
 	var id=$(this).data("id3");
 	//console.log(id);
@@ -200,7 +187,9 @@ $(document).on('click','.btn_delete',function(){
 			data:{function2call: 'changeTreasuer', id:id},
 			dataType:"text",
 				success:function(data){
-				
+				//$('#xx_data').html(data);
+				//$('#id_data').html(data);
+				//console.log("wykonalem");
 			
                      }      					 
                 });
@@ -212,5 +201,4 @@ $(document).on('click','.btn_delete',function(){
 	  
  }); 
   
-
 </script>

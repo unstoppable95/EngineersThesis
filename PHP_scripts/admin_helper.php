@@ -17,6 +17,12 @@ if ((isset($_POST['changeTreasuer2']))) {
 }
 
 
+
+
+if ((isset($_POST['changeNewTreasurer']))) {
+    changeEmailTreasuer();
+}
+
 		if ((isset($_POST['function2call'])))
 	{
 		$function2call = $_POST['function2call'];	
@@ -29,7 +35,39 @@ if ((isset($_POST['changeTreasuer2']))) {
 
 	}
 
+	
+	
+function  changeEmailTreasuer(){
+	session_start();
+	 if (empty($_POST['trNewMail']) || $_POST['trNewMail'] == '0') {
+        header('Location: menu_admin.php');
+        exit();
+    }
+	
+	require_once "connection.php";
+    $conn = new mysqli($servername, $username, $password, $dbName);
+    
+    if ($conn->connect_errno != 0) {
+        echo "Blad: " . $conn->connect_errno; 
+    } else {
+		$newTreasurerEmail = $_POST['trNewMail'];
+        $newTreasurerEmail = htmlentities($newTreasurerEmail , ENT_QUOTES, "UTF-8");
+		
+		
+		
+		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from class where id='".$_SESSION['changeID']."')", mysqli_real_escape_string($conn, $newTreasurerEmail )));
+		mail($newTreasurerEmail, "Zmiana adresu email" , "Mail w systemie skarbnik klasowy został zmieniony pomyślnie. Pozdrawiamy System Skarbnik Klasowy");
+		
+	}
+	
+	  $conn->close();
+	
+    header('Location: menu_admin.php');
+	
+	
+}
 function changeTreasuer2(){
+	
 	echo "<script>console.log( 'Debug Objectss: " .$_SESSION['changeID']. "' );</script>";
 	
 	  //session_start();
@@ -47,6 +85,7 @@ function changeTreasuer2(){
         $newParentEmail  = htmlentities($newParentEmail , ENT_QUOTES, "UTF-8");
 		
 		$conn->query(sprintf("UPDATE parent SET type='p' where id=(select parent_id from class where id ='".$_SESSION['changeID']."')"));
+		
 		$conn->query(sprintf("UPDATE class SET parent_id=(select id from parent where email='%s') where id='".$_SESSION['changeID']."'", mysqli_real_escape_string($conn, $newParentEmail )));
 		$conn->query(sprintf("UPDATE parent SET type='t' where email='%s'", mysqli_real_escape_string($conn, $newParentEmail )));
 		
@@ -225,7 +264,7 @@ function fetch(){
                      <td>'.$row["name"].'</td>  
 					 <td><button type="button" data-id3="'.$row["id"].'" class="btn_delete">Usuń klasę</button></td>  
 					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="'.$row["id"].'" class="btn_details">Szczegóły</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#changeEmailModal" data-id4="'.$row["id"].'"  class="btn_trChangeXXXX">Zmień email</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="'.$row["id"].'" class="btn_trChange">Zmień email</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="'.$row["id"].'" class="btn_trChange">Zmień skarbnika</button></td>
 				</tr>  
            ';  

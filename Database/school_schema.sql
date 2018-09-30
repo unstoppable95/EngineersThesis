@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 30 Wrz 2018, 12:34
+-- Czas generowania: 30 Wrz 2018, 18:01
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -101,7 +101,7 @@ DECLARE charge,monthlyFee INTEGER;
 DECLARE classaccountID INTEGER;
 
 select MONTH(CURDATE()) into currentMonth from dual;
-select sum(amount) into sumPayment from class_account_payment where child_id=OLD.id;
+select IFNULL(sum(amount),0) into sumPayment from class_account_payment where child_id=OLD.id;
 select monthly_fee into monthlyFee from class_account where id =(select distinct class_account_id from class_account_payment where child_id=OLD.id);
 
 select id into classaccountID from class_account where id =(select distinct class_account_id from class_account_payment where child_id=OLD.id);
@@ -509,17 +509,18 @@ CREATE TABLE `username` (
   `login` varchar(100) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `type` varchar(1) COLLATE utf8_polish_ci NOT NULL,
-  `first_login` tinyint(1) NOT NULL
+  `first_login` tinyint(1) NOT NULL,
+  `parent_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `username`
 --
 
-INSERT INTO `username` (`login`, `password`, `type`, `first_login`) VALUES
-('admin', 'admin', 'a', 0),
-('kasjozw@wp.pl', 'kasia', 't', 0),
-('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0);
+INSERT INTO `username` (`login`, `password`, `type`, `first_login`, `parent_id`) VALUES
+('admin', 'admin', 'a', 0, NULL),
+('kasjozw@wp.pl', 'kasia', 't', 0, 3),
+('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0, 4);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -600,7 +601,8 @@ ALTER TABLE `payment`
 -- Indeksy dla tabeli `username`
 --
 ALTER TABLE `username`
-  ADD PRIMARY KEY (`login`);
+  ADD PRIMARY KEY (`login`),
+  ADD KEY `username_parent_FK` (`parent_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -610,31 +612,31 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
 --
 ALTER TABLE `class`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account`
 --
 ALTER TABLE `class_account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -652,7 +654,7 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
@@ -714,6 +716,12 @@ ALTER TABLE `participation`
 --
 ALTER TABLE `payment`
   ADD CONSTRAINT `payment_account_FK` FOREIGN KEY (`account_id`) REFERENCES `account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `username`
+--
+ALTER TABLE `username`
+  ADD CONSTRAINT `username_parent_FK` FOREIGN KEY (`parent_id`) REFERENCES `parent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

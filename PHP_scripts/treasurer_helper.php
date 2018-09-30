@@ -94,7 +94,7 @@ function addExpense(){
 	window.location.href='treasuer_menu/expenses.php';
 	</script>";
 	}
-	//header('Location: treasuer_menu/expenses.php');	
+	
 	
 }
 	
@@ -334,7 +334,7 @@ function changeParentMail(){
 	session_start();
 	echo "<script>console.log( 'Zmieniasz maila rodzicowi o id dziecka:  " .$_SESSION['changeEmailChildID']. "' );</script>";
 	
-	  //session_start();
+	
     if (empty($_POST['newParentMail']) || $_POST['newParentMail'] == '0') {
         header('Location: treasuer_menu/settings.php');
         exit();
@@ -375,7 +375,7 @@ function btn_pMailChange(){
 	
 	
 function deleteStudent(){
-		//session_start();
+		
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		
@@ -811,8 +811,7 @@ function addChildParent()
 					
 				
 				mail($parentEmail, "Haslo pierwszego logowania rodzica" , "Twoje hasło pierwszego logowanie to: $passwd");				
-				//dodanie do username
-				$conn->query(sprintf("insert into username (login,password,type,first_login) values ('%s' , '$passwd' ,'p',TRUE)", mysqli_real_escape_string($conn, $parentEmail)));
+				
 				
 				// szukamy id nowego rodzica
 				
@@ -820,6 +819,8 @@ function addChildParent()
 					{
 					$details = $result->fetch_assoc();
 					$parentIDdb = $details['id'];
+					//dodanie do username
+				$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
 					if ($result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate))))
 						{
 						echo "Record inserted successfully";

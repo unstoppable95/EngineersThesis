@@ -49,11 +49,5 @@ if (!isset($_SESSION['loggedIn']))
 </div>
 
 
-
-
-
-
-
-
 </body>
 </html>

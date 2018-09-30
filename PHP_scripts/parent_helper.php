@@ -46,7 +46,6 @@ function fetch_paid_months(){
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  
-			//echo("Dupa");
 		$sum=$connect->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = ".$_SESSION['choosenChild']));
 		$r=$sum->fetch_assoc();
 		$amount_of_paid_money = $r["s"];
@@ -54,9 +53,7 @@ function fetch_paid_months(){
 		$monthly_f = $connect->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =".$_SESSION['choosenChild'].")"));
 		$x = $monthly_f->fetch_assoc();
 		$monthly_fee = $x["m"];
-		//echo("Wplacono: ".$amount_of_paid_money.", Miesieczny czynsz: ".$monthly_fee);
-		
-		
+			
 		
  $output .= '  
       <div>  
@@ -326,7 +323,7 @@ function makePayment(){
 		
 		if($_POST['typeOfAccount']=="normal"){ //if parent make normal (cash) payment
 				$curr=$conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =".$_SESSION['choosenChild']));
-				//$currentBalanceTmp=mysqli_fetch_array($curr);
+				
 				$res=mysqli_fetch_array($curr);
 				$currentBalance = $res["b"];
 
@@ -355,9 +352,6 @@ function makePayment(){
 		
 			//inserting payment to class account
 			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (".$amountOfMoney.",".$class_account_id.",".$_SESSION['choosenChild'].",'".$_POST['paymentType']."')"));
-			
-			
-
 		}
 	
 
@@ -366,13 +360,7 @@ function makePayment(){
 	
 	$conn->close();
 	header('Location: menu_parent.php');
-		
-		
-		
-		
-		
-
-	
+			
 }
 
 function changePassword()
@@ -574,7 +562,6 @@ function fetch_child_list(){
 				</tr>  
            ';  
       }  
-	  // href="menu_parent.php"
  
  }  
  else  
@@ -614,10 +601,7 @@ function choose(){
 	session_start();
 	$_SESSION['choosenChild']=$_POST["id"];
 	$ale="Wybrales dziecko o id: ".$_SESSION['choosenChild'];
-	echo $ale;
-	//header('Location: menu_parent.php');
-	//exit();
-	
+	echo $ale;	
 }
 
 function fetch_balance(){

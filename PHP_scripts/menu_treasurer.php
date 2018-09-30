@@ -126,9 +126,7 @@ $_SESSION['treasurerAsParent']=false;
     <form action="treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
    <div class="modal-content">
     
-		<h2>Edycja</h2>
-		<!--<div id="event_edit"></div>		-->
-	
+		<h2>Edycja</h2>	
 		<table>
 		<tr><td>Nazwa: </td><td><input type="text" name="newEventName"/></td></tr> 
 		<tr><td>Cena: </td><td><input type="text" name="newEventPrice" /></td></tr> 
@@ -143,12 +141,6 @@ $_SESSION['treasurerAsParent']=false;
  </div>
 </div>
 
-
-
-
-
-
-
 </body>
 </html>
 
@@ -161,8 +153,6 @@ $(document).ready(function(){
 	if (zmienna){	
 	$('#userModal').modal('show');
 		}
-	
-
 
 	  //save which event edit want to edit
 	  $(document).on('click','.btn_editEvent',function(){

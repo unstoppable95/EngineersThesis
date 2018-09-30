@@ -180,21 +180,14 @@ $(document).on('click','.btn_delete',function(){
       }); 
 	$(document).on('click','.btn_trChange',function(){
 	var id=$(this).data("id3");
-	//console.log(id);
 		$.ajax({
 			url:"admin_helper.php",
 			method:"POST",
 			data:{function2call: 'changeTreasuer', id:id},
 			dataType:"text",
-				success:function(data){
-				//$('#xx_data').html(data);
-				//$('#id_data').html(data);
-				//console.log("wykonalem");
-			
+				success:function(data){			
                      }      					 
-                });
-	 
-           
+                });         
       });
 	  
 	  

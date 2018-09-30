@@ -70,7 +70,7 @@ function changeTreasuer2(){
 	
 	echo "<script>console.log( 'Debug Objectss: " .$_SESSION['changeID']. "' );</script>";
 	
-	  //session_start();
+	  
     if (empty($_POST['trMail']) || $_POST['trMail'] == '0') {
         header('Location: menu_admin.php');
         exit();
@@ -189,13 +189,15 @@ function addClassTreasurer()
 				$passwd=randomPassword();
 				mail($email, "Haslo pierwszego logowania skarbnika" , "Twoje hasło pierwszego logowanie to: $passwd");
 				
-				//dodanie do username
-				$conn->query(sprintf("insert into username (login,password,type,first_login) values ('%s' , '$passwd' ,'t',TRUE)", mysqli_real_escape_string($conn, $email)));
+				
 				// szukamy id nowego rodzica
 				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $email))))
 					{
 					$details = $result->fetch_assoc();
 					$parentIDdb = $details['id'];
+					//dodanie do username
+					$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'t',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $email)));
+					
 					if ($result = $conn->query(sprintf("insert into class (name,parent_id) values ('%s' ,'$parentIDdb')", mysqli_real_escape_string($conn, $className))))
 						{
 						echo "Record inserted successfully";
@@ -285,7 +287,6 @@ function fetch(){
 }
 
 function deleteFromDB(){
-		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		if($res=$connect->query(sprintf("DELETE FROM class WHERE id = '".$_POST["id"]."'"))){
@@ -297,7 +298,6 @@ function deleteFromDB(){
 
 
 function showDetails(){
-		//session_start();
 		require_once "connection.php";
 		$connect = new mysqli($servername, $username, $password, $dbName);
 		$output = '';  

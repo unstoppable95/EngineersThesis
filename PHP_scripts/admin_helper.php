@@ -25,6 +25,11 @@ if ((isset($_POST['changeNewTreasurer'])))
 	changeEmailTreasuer();
 }
 
+if ((isset($_POST['sendPassword'])))
+{
+	sendPassword();
+}
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -46,6 +51,38 @@ if ((isset($_POST['function2call'])))
 		changeTreasurer();
 		break;
 	}
+}
+
+function sendPassword()
+{
+	session_start();
+	if (empty($_POST['myMail']) || $_POST['myMail'] == '0')
+	{
+		header('Location: index.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		$myEmail = $_POST['myMail'];
+		$myEmail = htmlentities($myEmail, ENT_QUOTES, "UTF-8");
+		$isLogin = ($conn->query(sprintf("SELECT * FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->num_rows;
+		if($isLogin > 0)
+		{
+			$psswd = ($conn->query(sprintf("SELECT password FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->fetch_assoc();
+			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: ".$psswd["password"]);
+		}
+	}
+
+	$conn->close();
+	header('Location: index.php');
 }
 
 function changeEmailTreasuer()

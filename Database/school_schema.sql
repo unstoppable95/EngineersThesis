@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 30 Wrz 2018, 18:49
+-- Czas generowania: 01 Paź 2018, 09:27
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -165,7 +165,7 @@ DELIMITER ;
 CREATE TABLE `class_account` (
   `id` int(11) NOT NULL,
   `balance` int(11) DEFAULT NULL,
-  `monthly_fee` int(11) NOT NULL DEFAULT '0',
+  `monthly_fee` int(11) NOT NULL DEFAULT '4',
   `expenses` int(11) DEFAULT NULL,
   `expected_budget` int(11) DEFAULT '0',
   `class_id` int(11) NOT NULL
@@ -627,7 +627,7 @@ ALTER TABLE `class_account`
 -- AUTO_INCREMENT dla tabeli `class_account_payment`
 --
 ALTER TABLE `class_account_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `event`
@@ -645,7 +645,7 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`

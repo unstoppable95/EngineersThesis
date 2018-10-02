@@ -111,10 +111,9 @@ require_once "admin_helper.php";
     <h2>Zmiana skarbnika</h2>
 	<h3>Podaj dane nowego skarbnika</h3>
 	<form action="admin_helper.php" method="post">
-	<table>
-		<tr><td>Email: </td><td><input type="text" name="trMail"/></td></tr>
-	<tr><td colspan="2"><input type="submit" name="changeTreasuer2" class="btn_commitChange" value="Zatwierdź"/></td></tr>
-	<table>
+	Email: <input type="text" name="trMail"/><br>
+	<input type="submit" name="changeTreasuer2" class="btn_commitChange" value="Zatwierdź"/>
+	
 	</form>
 
    
@@ -122,6 +121,39 @@ require_once "admin_helper.php";
   </form>
  </div>
 </div>	
+
+
+<!--MODAL ADD STUDENT-->
+<div id="addStudentModal" class="modal fade">
+ <div class="modal-dialog">
+  <form method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+	
+	<form action="admin_helper.php" method="post">
+		<h1> Dodaj ucznia do klasy</h1> 
+		<h3> Dane ucznia </h3>
+		<table>
+			<tr><td>Imię: </td><td><input type="text" name="childName"/></td></tr> 
+			<tr><td>Nazwisko: </td><td><input type="text" name="childSurname" /></td></tr> 
+			<tr><td>Data urodzenia: </td><td><input type="date" name="childBirthdate" /> </td></tr> 
+			<tr><td> </td><td> </td></tr> 
+			<tr><td><h3> Dane rodzica </h3></td></tr> 
+			<tr><td>Imię: </td><td><input type="text" name="parentName" /></td></tr>  
+			<tr><td>Nazwisko: </td><td><input type="text" name="parentSurname" /></td></tr> 
+			<tr><td>Mail: </td><td><input type="text" name="parentEmail" /></td></tr> 
+			<tr><td colspan="2"><input type="submit" name="addStudent" class="btn_add" value="Zatwierdz" /></td></tr>
+	<table>
+	</form>
+
+   
+   </div>
+  </form>
+ </div>
+</div>
+
+
+
+
 </body>
 </html>
 
@@ -161,7 +193,9 @@ $(document).on('click','.btn_delete',function(){
                      }  
                 });  
            }  
-      });  
+      }); 
+
+	  
 	$(document).on('click','.btn_details',function(){
 	var id=$(this).data("id3");
 	
@@ -178,12 +212,28 @@ $(document).on('click','.btn_delete',function(){
 	 
            
       }); 
+	  
+	  
 	$(document).on('click','.btn_trChange',function(){
 	var id=$(this).data("id3");
 		$.ajax({
 			url:"admin_helper.php",
 			method:"POST",
 			data:{function2call: 'changeTreasuer', id:id},
+			dataType:"text",
+				success:function(data){			
+                     }      					 
+                });         
+      });
+	  
+	  
+	  
+	$(document).on('click','.btn_addStudent',function(){
+	var id=$(this).data("id3");
+		$.ajax({
+			url:"admin_helper.php",
+			method:"POST",
+			data:{function2call: 'addStudent2', id:id},
 			dataType:"text",
 				success:function(data){			
                      }      					 

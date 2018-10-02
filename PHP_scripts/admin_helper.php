@@ -30,6 +30,11 @@ if ((isset($_POST['sendPassword'])))
 	sendPassword();
 }
 
+if ((isset($_POST['addStudent'])))
+{
+	addStudent();
+}
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -50,8 +55,113 @@ if ((isset($_POST['function2call'])))
 	case 'changeTreasuer':
 		changeTreasurer();
 		break;
+		
+		
+	case 'addStudent2':
+		addStudent2();
+		break;
+		
+		
 	}
 }
+
+function addStudent()
+{
+	session_start();
+	if (empty($_POST['childName']) || $_POST['childName'] == '0' || empty($_POST['childSurname']) || $_POST['childSurname'] == '0' || empty($_POST['childBirthdate']) || $_POST['childBirthdate'] == '0' || empty($_POST['parentName']) || $_POST['parentName'] == '0' || empty($_POST['parentSurname']) || $_POST['parentSurname'] == '0')
+	{
+		header('Location: menu_admin.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		$childName = $_POST['childName'];
+		$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
+		$childSurname = $_POST['childSurname'];
+		$childSurname = htmlentities($childSurname, ENT_QUOTES, "UTF-8");
+		$childBirthdate = $_POST['childBirthdate'];
+		$childBirthdate = htmlentities($childBirthdate, ENT_QUOTES, "UTF-8");
+		$parentName = $_POST['parentName'];
+		$parentName = htmlentities($parentName, ENT_QUOTES, "UTF-8");
+		$parentSurname = $_POST['parentSurname'];
+		$parentSurname = htmlentities($parentSurname, ENT_QUOTES, "UTF-8");
+		$passwd = randomPassword();
+		if (empty($_POST['parentEmail']) || $_POST['parentEmail'] == '0')
+		{
+			$parentEmail = $parentName . $parentSurname;
+			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
+
+			// utworzenie uchwytu do pliku
+			// tryb a umożliwia zapis na końcu pliku
+
+			$plik = fopen('ParentsWithoutEmail.txt', 'a');
+
+			// przypisanie zawartości do zmiennej
+
+			$zawartosc = "Login : " . $parentEmail . " hasło : " . $passwd . "\r\n";
+			fwrite($plik, $zawartosc);
+		}
+		else
+		{
+			$parentEmail = $_POST['parentEmail'];
+			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
+		}
+
+		
+		$classID = $_SESSION['classToAdd'];
+		if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
+		{
+			$isUser = $result->num_rows;
+			if ($isUser <= 0)
+			{ //RODZICA NIE MA W SYSTEMIE
+				$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
+				mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
+
+				// szukamy id nowego rodzica
+
+				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
+				{
+					$details = $result->fetch_assoc();
+					$parentIDdb = $details['id'];
+
+					// dodanie do username
+
+					$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+					$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
+				}
+			}
+			else
+			{
+
+				// RODZIC JEST JUZ W SYSTEMIE WIEC DODAJE SAMO DZIECKO
+
+				$details = $result->fetch_assoc();
+				$parentIDdb = $details['id'];
+				$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
+			}
+		}
+
+		$conn->close();
+		header('Location: menu_admin.php');
+	}
+	
+}
+
+function addStudent2()
+{
+	session_start();
+	$_SESSION['classToAdd'] = $_POST["id"];
+	echo "<script>console.log( 'Id:  " . $_SESSION['classToAdd'] . "' );</script>";
+}
+
 
 function sendPassword()
 {
@@ -281,12 +391,13 @@ function fetch()
       <div>  
            <table>  
                 <tr>  
-                     <th width="10%">Id</th>  
-                     <th width="20%">Nazwa</th> 
+                     <th width="5%">Id</th>  
+                     <th width="15%">Nazwa</th> 
 					 <th width="15%">Usuń klasę</th>
-					 <th width="10%">Szczegóły</th>
-					 <th width="20%">Zmień email</th>
-					 <th width="25%">Zmień skarbnika</th>
+					 <th width="15%">Szczegóły</th>
+					 <th width="15%">Zmień email</th>
+					 <th width="15%">Zmień skarbnika</th>
+					 <th width="20%">Dodaj ucznia do klasy</th>
 				
                 </tr>';
 	if (mysqli_num_rows($result) > 0)
@@ -301,6 +412,7 @@ function fetch()
 					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details">Szczegóły</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień email</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień skarbnika</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent">Dodaj ucznia</button></td>
 				</tr>  
            ';
 		}

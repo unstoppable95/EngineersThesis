@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 01 Paź 2018, 09:27
+-- Czas generowania: 02 Paź 2018, 16:24
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -34,6 +34,14 @@ CREATE TABLE `account` (
   `balance` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
+--
+-- Zrzut danych tabeli `account`
+--
+
+INSERT INTO `account` (`id`, `child_id`, `balance`) VALUES
+(2, 2, 0),
+(3, 3, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -48,6 +56,14 @@ CREATE TABLE `child` (
   `parent_id` int(11) DEFAULT NULL,
   `class_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `child`
+--
+
+INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
+(2, 'Piotr', 'Test', '2018-10-01', 4, 2),
+(3, 'Anna', 'Test', '2018-10-01', 3, 2);
 
 --
 -- Wyzwalacze `child`
@@ -120,6 +136,7 @@ update class_account set expected_budget=expected_budget-10*monthlyFee+charge wh
 
 insert into class_account_payment (amount,type,class_account_id) values (charge,"auto",classaccountID);
 
+
 delete from account where child_id=OLD.id;
 end
 $$
@@ -176,7 +193,7 @@ CREATE TABLE `class_account` (
 --
 
 INSERT INTO `class_account` (`id`, `balance`, `monthly_fee`, `expenses`, `expected_budget`, `class_id`) VALUES
-(2, 0, 3, 0, 0, 2);
+(2, 0, 3, 0, 60, 2);
 
 -- --------------------------------------------------------
 
@@ -396,7 +413,8 @@ CREATE TABLE `parent` (
 --
 
 INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
-(3, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't');
+(3, 'Kasia', 'Jozwiak', 'kasjozw@wp.pl', 't'),
+(4, 'Piotr', 'Pawlaczyk', 'piotr-pawlaczyk5@wp.pl', 'p');
 
 --
 -- Wyzwalacze `parent`
@@ -511,7 +529,8 @@ CREATE TABLE `username` (
 
 INSERT INTO `username` (`login`, `password`, `type`, `first_login`, `parent_id`) VALUES
 ('admin', 'admin', 'a', 0, NULL),
-('kasjozw@wp.pl', 'kasia', 't', 0, 3);
+('kasjozw@wp.pl', 'kasia', 't', 0, 3),
+('piotr-pawlaczyk5@wp.pl', 'piciu', 'p', 0, 4);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -558,7 +577,8 @@ ALTER TABLE `class_account_payment`
 -- Indeksy dla tabeli `event`
 --
 ALTER TABLE `event`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `event_class_FK` (`class_id`);
 
 --
 -- Indeksy dla tabeli `expense`
@@ -603,13 +623,13 @@ ALTER TABLE `username`
 -- AUTO_INCREMENT dla tabeli `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -645,7 +665,7 @@ ALTER TABLE `expense`
 -- AUTO_INCREMENT dla tabeli `parent`
 --
 ALTER TABLE `parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT dla tabeli `payment`
@@ -688,6 +708,12 @@ ALTER TABLE `class_account`
 ALTER TABLE `class_account_payment`
   ADD CONSTRAINT `class_account_payment_child_FK` FOREIGN KEY (`child_id`) REFERENCES `child` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `class_account_payment_class_account_FK` FOREIGN KEY (`class_account_id`) REFERENCES `class_account` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ograniczenia dla tabeli `event`
+--
+ALTER TABLE `event`
+  ADD CONSTRAINT `event_class_FK` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `expense`

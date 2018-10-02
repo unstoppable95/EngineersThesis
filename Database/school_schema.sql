@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 02 Paź 2018, 16:24
+-- Czas generowania: 02 Paź 2018, 17:44
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -245,7 +245,7 @@ CREATE TABLE `event` (
 --
 
 INSERT INTO `event` (`id`, `name`, `price`, `date`, `class_id`) VALUES
-(1, 'Wycieczka Egipt', 1000, '2018-10-06', 2);
+(2, 'Kino - seans', 100, '2018-10-27', 2);
 
 --
 -- Wyzwalacze `event`
@@ -390,9 +390,17 @@ CREATE TABLE `expense` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `price` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date` date NOT NULL,
   `class_account_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Wyzwalacze `expense`
+--
+DELIMITER $$
+CREATE TRIGGER `addExpensesetDate` BEFORE INSERT ON `expense` FOR EACH ROW set NEW.date=NOW()
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -439,6 +447,14 @@ CREATE TABLE `participation` (
   `child_id` int(11) NOT NULL,
   `amount_paid` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
+
+--
+-- Zrzut danych tabeli `participation`
+--
+
+INSERT INTO `participation` (`event_id`, `child_id`, `amount_paid`) VALUES
+(2, 2, 0),
+(2, 3, 0);
 
 -- --------------------------------------------------------
 
@@ -629,7 +645,7 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT dla tabeli `child`
 --
 ALTER TABLE `child`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT dla tabeli `class`
@@ -653,13 +669,13 @@ ALTER TABLE `class_account_payment`
 -- AUTO_INCREMENT dla tabeli `event`
 --
 ALTER TABLE `event`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `expense`
 --
 ALTER TABLE `expense`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT dla tabeli `parent`

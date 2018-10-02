@@ -243,7 +243,7 @@ function editEvent()
 		else
 		{
 			echo "<script>
-	alert('Nie możesz edytować wydarzenia, które się odbyło!');
+	alert('Nie możesz edytować zbiórki, która się odbyło!');
 	window.location.href='menu_treasurer.php';
 	</script>";
 		}
@@ -266,12 +266,12 @@ function deleteEvent()
 	{
 		if ($res = $connect->query(sprintf("DELETE FROM event WHERE id = '" . $_POST["id"] . "'")))
 		{
-			echo 'Pomyslnie usunięto event';
+			echo 'Pomyslnie usunięto zbiórkę.';
 		}
 	}
 	else
 	{
-		echo 'Nie możesz usunąć eventu, który już się odbył!';
+		echo 'Nie możesz usunąć zbiórki, która już się zakończyła!';
 	}
 }
 
@@ -283,12 +283,12 @@ function fetch_event_details()
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	$output = '';
 	$result = ($connect->query(sprintf("select count(*) as total from participation where event_id ='" . $_POST["id"] . "' ")))->fetch_assoc();
-	$output.= "Liczba uczestników eventu: " . $result["total"] . "";
+	$output.= "Liczba uczestników zbiórki: " . $result["total"] . "";
 	$resultAmount = ($connect->query(sprintf("select price from event where id ='" . $_POST["id"] . "' ")))->fetch_assoc();
 	$totalAmount = $resultAmount["price"] * $result["total"];
 	$resultAmountPaid = ($connect->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_POST["id"] . "' ")))->fetch_assoc();
 	$totalAmountPaid = $resultAmountPaid["totalPaid"];
-	$output.= "<br /> Całkowity koszt eventu: " . $totalAmount . "<br /> Suma wpłat uczestników: " . $totalAmountPaid . "";
+	$output.= "<br /> Całkowity koszt zbiórki: " . $totalAmount . "<br /> Suma wpłat uczestników: " . $totalAmountPaid . "";
 	$output.= "<br /><br />";
 	$result = $connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_POST["id"] . "' order by idx asc"));
 	$output.= ' 
@@ -332,7 +332,7 @@ function fetch_event_details()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
+                          <td colspan="4">Nie dodano jeszcze zbiórek do tej klasy</td>  
                      </tr>';
 	}
 
@@ -466,7 +466,7 @@ function fetch_event_list()
 					 <td>' . $row["date"] . '</td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent">Edytuj</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent">Usuń event</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent">Usuń zbiórkę</button></td>
 				</tr>  
            ';
 		}
@@ -474,7 +474,7 @@ function fetch_event_list()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze wydarzeń do tej klasy</td>  
+                          <td colspan="4">Nie dodano jeszcze zbiórek do tej klasy</td>  
                      </tr>';
 	}
 
@@ -673,7 +673,7 @@ function addEvent()
 				$conn->query(sprintf("UPDATE account SET balance='%s' where child_id='%s'", mysqli_real_escape_string($conn, $newAccountBalance) , mysqli_real_escape_string($conn, $row["id"])));
 				$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', '%s')", mysqli_real_escape_string($conn, $eventID) , mysqli_real_escape_string($conn, $row["id"]) , mysqli_real_escape_string($conn, $toBePaid)));
 				$parent = ($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='" . $row["id"] . "')")))->fetch_assoc();
-				mail($parent["email"], "Dodano nowe wydarzenie: $eventName", "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiło się nowe wydarzenie o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");
+				mail($parent["email"], "Dodano nową zbiórkę: $eventName", "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiła się nowa zbiórka o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");
 			}
 		}
 		else

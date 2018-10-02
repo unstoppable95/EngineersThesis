@@ -268,7 +268,7 @@ function fetch_child_name()
 			$row = mysqli_fetch_array($result);
 			$class = $connect->query(sprintf("SELECT * FROM class WHERE id=" . $row["class_id"]));
 			$classrow = mysqli_fetch_array($class);
-			$output = '<h3> Bierzące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h3>';
+			$output = '<h3> Bieżące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h3>';
 		}
 	}
 	else

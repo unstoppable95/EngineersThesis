@@ -1,6 +1,6 @@
 <html> 
 <head> 
-	<title>Skarbnik-dodaj wydarzenie</title>
+	<title>Skarbnik-dodaj zbiórkę</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
 </head>
@@ -21,13 +21,13 @@ if (!isset($_SESSION['loggedIn']))
 	<a href="../menu_parent.php">Moje dzieci</a>
 	<a href="expenses.php">Wydatki klasowe</a>
   <a href="addStudent.php" >Dodaj ucznia do klasy</a>
-  <a href="addOnceEvent.php" class="active">Dodaj wydarzenie</a>
+  <a href="addOnceEvent.php" class="active">Dodaj zbiórkę</a>
   <a href="settings.php" >Ustawienia</a>
   <a href="../logout.php"> Wyloguj się</a>
 </div> 
 
 <div class="lewa_strona">
-	<h1> Dodaj pojednycze wydarzenie </h1>
+	<h1> Dodaj pojedyńczą zbiórkę </h1>
 	<form action="../treasurer_helper.php" method="post">
 	<table>
 		<tr><td>Nazwa: </td><td><input type="text" name="eventName"/></td></tr> 

@@ -79,7 +79,7 @@ if ($_SESSION['amountOfChild'] == 1)
 	<a href="menu_parent.php">Moje dzieci</a>
 	<a href="treasuer_menu/expenses.php">Wydatki klasowe</a>
   <a href="treasuer_menu/addStudent.php">Dodaj ucznia do klasy</a>
-  <a href="treasuer_menu/addOnceEvent.php">Dodaj wydarzenie</a>
+  <a href="treasuer_menu/addOnceEvent.php">Dodaj zbiórkę</a>
   <a href="treasuer_menu/settings.php">Ustawienia</a>
 	<a href="logout.php"> Wyloguj się</a>
 </div>
@@ -87,7 +87,7 @@ if ($_SESSION['amountOfChild'] == 1)
 <div class="lewa_strona">
 	<div class="naglowek" >
 		<div id="class_name"></div>
-		<h3> Wydarzenia klasy</h3>
+		<h3> Zbiórki klasy</h3>
 		<div id="class_event"></div>
 	</div>
 

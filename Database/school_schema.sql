@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 02 Paź 2018, 17:44
+-- Czas generowania: 03 Paź 2018, 10:04
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -63,7 +63,7 @@ CREATE TABLE `child` (
 
 INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `class_id`) VALUES
 (2, 'Piotr', 'Test', '2018-10-01', 4, 2),
-(3, 'Anna', 'Test', '2018-10-01', 3, 2);
+(3, 'Kasia', 'test', '2016-09-15', 3, 2);
 
 --
 -- Wyzwalacze `child`
@@ -109,7 +109,7 @@ end
 $$
 DELIMITER ;
 DELIMITER $$
-CREATE TRIGGER `delAccountChildChagneClassAccount` BEFORE DELETE ON `child` FOR EACH ROW begin
+CREATE TRIGGER `delAccountChildChangeClassAccount` BEFORE DELETE ON `child` FOR EACH ROW begin
 DECLARE differenceInMonths INTEGER;
 DECLARE currentMonth  INTEGER;
 DECLARE sumPayment INTEGER;
@@ -117,20 +117,21 @@ DECLARE charge,monthlyFee INTEGER;
 DECLARE classaccountID INTEGER;
 
 select MONTH(CURDATE()) into currentMonth from dual;
-select IFNULL(sum(amount),0) into sumPayment from class_account_payment where child_id=OLD.id;
-select monthly_fee into monthlyFee from class_account where id =(select distinct class_account_id from class_account_payment where child_id=OLD.id);
 
-select id into classaccountID from class_account where id =(select distinct class_account_id from class_account_payment where child_id=OLD.id);
+select sum(IFNULL(amount,0)) into sumPayment from class_account_payment where child_id=OLD.id;
+
+select monthly_fee into monthlyFee from class_account where class_id =OLD.class_id;
+
+
+select id into classaccountID from class_account where class_id =OLD.class_id;
 
 if currentMonth >=1 and currentMonth <=6 THEN
 set currentMonth=currentMonth+12;
 end if;
 set differenceInMonths = currentMonth -8;
-set charge= differenceInMonths *monthlyFee;
+set charge= differenceInMonths*monthlyFee;
 
 delete from class_account_payment where child_id=OLD.id;
-
-
 
 update class_account set expected_budget=expected_budget-10*monthlyFee+charge where class_id=classaccountID;
 
@@ -398,7 +399,7 @@ CREATE TABLE `expense` (
 -- Wyzwalacze `expense`
 --
 DELIMITER $$
-CREATE TRIGGER `addExpensesetDate` BEFORE INSERT ON `expense` FOR EACH ROW set NEW.date=NOW()
+CREATE TRIGGER `addExpenseSetDate` BEFORE INSERT ON `expense` FOR EACH ROW set NEW.date=NOW()
 $$
 DELIMITER ;
 
@@ -474,53 +475,8 @@ CREATE TABLE `payment` (
 -- Wyzwalacze `payment`
 --
 DELIMITER $$
-CREATE TRIGGER `payForEventPayment` AFTER INSERT ON `payment` FOR EACH ROW begin
-
-DECLARE vc_amount ,vc_id, vc_price , v_count , v_loop_counter, v_balance INTEGER;
-DECLARE vc_date DATE;
-DECLARE old_child_id INTEGER;
-DECLARE my_cursor cursor for select p.amount_paid,e.date,e.price, e.id from participation p join event e on  p.event_id=e.id  where child_id=(select child_id from account where id=NEW.account_id) order by e.date asc;
-
-Select child_id into old_child_id from account where id = NEW.account_id;
-Select count(*) into v_count from participation where child_id=old_child_id;
-Select balance into v_balance from account where child_id=old_child_id;
-
-SET v_loop_counter=0;
-
-if v_count >0 THEN
- open my_cursor;
- 
- myLOOP: LOOP
- SET v_loop_counter =v_loop_counter+1;
- fetch my_cursor into vc_amount,vc_date,vc_price,vc_id;
- 
- IF(vc_amount<vc_price and v_balance>0 ) THEN
-
-	
-    if (v_balance>=vc_price-vc_amount) THEN
-    update participation set amount_paid=vc_price where event_id=vc_id and child_id=old_child_id;
-    set v_balance=v_balance-(vc_price-vc_amount);
-	set vc_amount=vc_price;
-	end if;
-  
-    if (v_balance<vc_price-vc_amount) THEN
-	update participation set amount_paid=amount_paid+v_balance where event_id=vc_id and child_id=old_child_id;
-	set v_balance=0;
-	end if;
-    
-	update account set balance=v_balance where id=NEW.account_id;
-	
-	
-    end if;
-
-IF v_loop_counter=v_count THEN
-       leave myLOOP;
-   END IF; 
-   
- end loop myLOOP;
- close my_cursor;
-end IF;
-
+CREATE TRIGGER `updateAccountBalance` AFTER INSERT ON `payment` FOR EACH ROW begin   
+update account set balance=balance+NEW.amount where id=NEW.account_id;
 end
 $$
 DELIMITER ;
@@ -675,7 +631,7 @@ ALTER TABLE `event`
 -- AUTO_INCREMENT dla tabeli `expense`
 --
 ALTER TABLE `expense`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `parent`

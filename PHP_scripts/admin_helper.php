@@ -61,8 +61,41 @@ if ((isset($_POST['function2call'])))
 		addStudent2();
 		break;
 		
+	case 'addStudentsFile':
+		addStudentsFile();
+		break;
+		
 		
 	}
+}
+
+//$_POST["id"]
+//$_POST["filename"]
+
+function addStudentsFile(){
+	session_start();
+	require_once "connection.php";
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	$fileName=$_POST["filename"];
+	//$fp = fopen($fileName, "r");
+	//$fp = fopen($_FILES[$fileName]["tmp_name"], 'r');
+//$content = fread($fp, filesize($fileName));
+//$lines = explode("\n", $content);
+//fclose($fp);
+//$x=print_r($lines);
+	/*$query = <<<eof
+    LOAD DATA INFILE '$fileName'
+     INTO TABLE tableName
+     FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY '"'
+     LINES TERMINATED BY '\n'
+    (field1,field2,field3,etc)
+eof;*/
+echo $fileName;
+
+//$conn->query($query);
+$conn->close();
+
+//header('Location: menu_admin.php');
 }
 
 function addStudent()
@@ -393,11 +426,12 @@ function fetch()
                 <tr>  
                      <th width="5%">Id</th>  
                      <th width="15%">Nazwa</th> 
-					 <th width="15%">Usuń klasę</th>
-					 <th width="15%">Szczegóły</th>
+					 <th width="10%">Usuń klasę</th>
+					 <th width="10%">Szczegóły</th>
 					 <th width="15%">Zmień email</th>
 					 <th width="15%">Zmień skarbnika</th>
 					 <th width="20%">Dodaj ucznia do klasy</th>
+					 <th width="10%">Dodaj uczniów z pliku</th>
 				
                 </tr>';
 	if (mysqli_num_rows($result) > 0)
@@ -413,6 +447,9 @@ function fetch()
 					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień email</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień skarbnika</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent">Dodaj ucznia</button></td>
+					<td><input type="file"  data-id3="' . $row["id"] . '" name="chooseFile" id="chooseFile"></input></td>
+					<td><button type="button"  data-id3="' . $row["id"] . '" class="btn_addStudentsFile">Dodaj uczniów</button></td>
+					
 				</tr>  
            ';
 		}

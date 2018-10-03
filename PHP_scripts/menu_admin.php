@@ -63,10 +63,12 @@ require_once "admin_helper.php";
 	<form action="admin_helper.php" method="post">
 		
 			<div id="class_list"></div>
-
+			
 	</form>
-
+	<div id="xxx"></div>
 </div>
+
+
 
 <!--MODAL DETAILS -->
 <div id="userModal" class="modal fade">
@@ -194,7 +196,28 @@ $(document).on('click','.btn_delete',function(){
                 });  
            }  
       }); 
-
+	  
+	  //load from csv
+$(document).on('click','.btn_addStudentsFile',function(){
+	var id=$(this).data("id3");
+	var filename=$('#chooseFile')[0].files[0]['name'];
+	
+	
+	//$_FILES["UploadFileName"]; 
+	//var filename = $('#chooseFile').val();
+	$.ajax({
+		url:"admin_helper.php",
+		method:"POST",
+		data:{function2call: 'addStudentsFile', id:id,filename:filename },
+		dataType:"text",
+		success:function(data){
+			
+		$('#xxx').html(data);
+			
+                     }  
+                });  
+             
+      }); 
 	  
 	$(document).on('click','.btn_details',function(){
 	var id=$(this).data("id3");

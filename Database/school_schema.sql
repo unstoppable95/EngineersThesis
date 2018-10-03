@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 03 Paź 2018, 10:04
+-- Czas generowania: 03 Paź 2018, 14:48
 -- Wersja serwera: 10.1.34-MariaDB
 -- Wersja PHP: 7.2.8
 
@@ -252,6 +252,59 @@ INSERT INTO `event` (`id`, `name`, `price`, `date`, `class_id`) VALUES
 -- Wyzwalacze `event`
 --
 DELIMITER $$
+CREATE TRIGGER `addBalanceUpdateEvent` AFTER UPDATE ON `event` FOR EACH ROW begin 
+DECLARE v_childID,v_amountPaid,v_balance, v_count,v_loop_counter INTEGER;
+DECLARE childs_details cursor for select p.child_id,p.amount_paid,a.balance  from participation p join account a on p.child_id=a.child_id where p.event_id=NEW.id;
+
+Select count(*) into v_count from participation where event_id=NEW.id;
+
+SET v_loop_counter=0;
+
+if v_count >0 THEN
+open childs_details;
+
+ myLOOP: LOOP
+ SET v_loop_counter =v_loop_counter+1;
+
+ fetch childs_details into v_childID,v_amountPaid,v_balance;
+ 
+ if (NEW.price<OLD.price ) then
+	
+	if (OLD.price=v_amountPaid) then
+	update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+	update account set balance=balance+(OLD.price-NEW.price) where child_id=v_childID;
+	end if;
+	
+	if (OLD.price>v_amountPaid) then
+		
+		if(NEW.price<v_amountPaid) then
+		update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
+		update account set balance=balance+(v_amountPaid-NEW.price) where child_id=v_childID;
+		end if;
+				
+		
+	end if;
+	
+	
+ end if;
+ 
+ 
+ 
+IF v_loop_counter=v_count THEN
+       leave myLOOP;
+   END IF; 
+   
+ end loop myLOOP;
+
+
+end if;
+close childs_details;
+
+
+end
+$$
+DELIMITER ;
+DELIMITER $$
 CREATE TRIGGER `delParticipationAfterDelEvent` BEFORE DELETE ON `event` FOR EACH ROW begin 
  DECLARE curDate DATE; 
  DECLARE eventDate DATE;
@@ -293,91 +346,6 @@ END IF;
  end if;
  
  end
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `payForEventAfterUpdateEvent` AFTER UPDATE ON `event` FOR EACH ROW begin 
-DECLARE v_childID,v_amountPaid,v_balance, v_count,v_loop_counter INTEGER;
-DECLARE childs_details cursor for select p.child_id,p.amount_paid,a.balance  from participation p join account a on p.child_id=a.child_id where p.event_id=NEW.id;
-
-Select count(*) into v_count from participation where event_id=NEW.id;
-
-SET v_loop_counter=0;
-
-if v_count >0 THEN
-open childs_details;
-
- myLOOP: LOOP
- SET v_loop_counter =v_loop_counter+1;
-
- fetch childs_details into v_childID,v_amountPaid,v_balance;
- 
- if (NEW.price<OLD.price ) then
-	
-	if (OLD.price=v_amountPaid) then
-	update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
-	update account set balance=balance+(OLD.price-NEW.price) where child_id=v_childID;
-	end if;
-	
-	if (OLD.price>v_amountPaid) then
-		
-		if(NEW.price<v_amountPaid) then
-		update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
-		update account set balance=balance+(v_amountPaid-NEW.price) where child_id=v_childID;
-		end if;
-		
-		if(NEW.price>v_amountPaid) then
-			
-			if(v_amountPaid+v_balance>=NEW.price) then
-			update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
-			update account set balance=balance+(NEW.price-v_amountPaid) where child_id=v_childID;
-			end if;
-			
-			
-			if (v_amountPaid+v_balance<NEW.price) then
-			update participation set amount_paid=v_balance+v_amountPaid where child_id=v_childID and event_id=NEW.id;
-			update account set balance=0 where child_id=v_childID;
-			end if;
-		
-		end if;
-		
-		
-	end if;
-	
-	
- end if;
- 
- if (NEW.price > OLD.price) then
-	
-	if (v_amountPaid+v_balance>=NEW.price) then
-	update participation set amount_paid=NEW.price where child_id=v_childID and event_id=NEW.id;
-	update account set balance=balance-(NEW.price-v_amountPaid) where child_id=v_childID;
-	end if;
- 
- 
-	if  (v_amountPaid+v_balance<NEW.price) then
-	update participation set amount_paid=v_amountPaid+v_balance where child_id=v_childID and event_id=NEW.id;
-	update account set balance=0 where child_id=v_childID;
-	end if ;
- 
- end if;
- 
- 
- 
- 
- 
-IF v_loop_counter=v_count THEN
-       leave myLOOP;
-   END IF; 
-   
- end loop myLOOP;
-
-
-end if;
-close childs_details;
-
-
-end
 $$
 DELIMITER ;
 

@@ -328,7 +328,7 @@ function sendPassword()
 			$psswd = ($conn->query(sprintf("SELECT password FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->fetch_assoc();
 			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $psswd["password"]);
 			echo "<script>
-"#@%+=FEFGT6R3987EFDF86347GR=+%@#"		alert('Twoje hasło zostało wysłane na podany adres email!');
+			alert('Twoje hasło zostało wysłane na podany adres email!');
 			window.location.href='index.php';
 			</script>";
 		}

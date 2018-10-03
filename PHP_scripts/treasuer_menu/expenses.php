@@ -60,9 +60,10 @@ if (!isset($_SESSION['loggedIn'])) {
     <h1> Wydatki klasowe </h1>
     <h2> Lista wydatków </h2>
         <div id="expenses_list"></div>
-        
         <br>
         <button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent">Dodaj wydatek</button>
+		<h2> Lista stanów wpłat uczniów</h2>
+		<div id="students_balances_list"></div>
 </div>
 
 
@@ -81,6 +82,22 @@ if (!isset($_SESSION['loggedIn'])) {
     <input type="submit" name="addExpense" class="btn_addExpense" value="Zatwierdz"/>
    </div>
   </form>
+ </div>
+</div>
+
+
+
+<!--MODAL STUDENT DETAILS -->
+<div id="classAccBalanceDetails" class="modal fade">
+ <div class="modal-dialog">
+ <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data"> 
+   <div class="modal-content">
+
+    <h2>WPŁATY NA KONTO KLASOWE UCZNIA</h2>
+    <div id="details"></div>
+    
+   </div>
+   </form> 
  </div>
 </div>
 
@@ -107,6 +124,35 @@ $(document).ready(function(){
         
     }
     fetch_expenses_list();
+	
+	
+	function students_balances_list()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'students_balances_list'},
+            success:function(data){
+                $('#students_balances_list').html(data);
+            }
+        });
+        
+    }
+    students_balances_list();
+
+	
+	$(document).on('click','.btn_detailsClassAccBalance',function(){
+	var id=$(this).data("id3");
+	$.ajax({
+		url:"../treasurer_helper.php",
+		method:"POST",
+		data:{function2call: 'student_class_acc_payment_details', id:id},
+		dataType:"text",
+		success:function(data){
+			$('#details').html(data);
+                     }  
+                });  
+      }); 
         
  }); 
   </script>

@@ -67,10 +67,6 @@ if ((isset($_POST['RequiredNewPasswordAccept'])))
 	changePassword();
 }
 
-if ((isset($_POST['MakePayment'])))
-{
-	makePayment();
-}
 
 function fetch_paid_months()
 {
@@ -320,62 +316,6 @@ function fetch_payment_history()
 	echo $output;
 }
 
-// call when parent want to transfer money to child account. It increment child's account and then it automatically pay for event (chronological), as long as the account balance allows it
-
-function makePayment()
-{
-	session_start();
-	if (empty($_POST['amountOfMoney']) || $_POST['amountOfMoney'] == '0')
-	{
-		header('Location: parent_menu/p_settings.php');
-		exit();
-	}
-
-	require_once "connection.php";
-
-	$conn = new mysqli($servername, $username, $password, $dbName);
-	if ($conn->connect_errno != 0)
-	{
-		echo "Blad: " . $conn->connect_errno;
-	}
-	else
-	{
-		$amountOfMoney = $_POST['amountOfMoney'];
-		$amountOfMoney = htmlentities($amountOfMoney, ENT_QUOTES, "UTF-8");
-		$child = $_SESSION['choosenChild'];
-		if ($_POST['typeOfAccount'] == "normal")
-		{ //if parent make normal (cash) payment
-			$curr = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['choosenChild']));
-			$res = mysqli_fetch_array($curr);
-			$currentBalance = $res["b"];
-			$newBalance = $currentBalance + $amountOfMoney;
-			if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
-			{
-				$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['choosenChild']));
-				$res = mysqli_fetch_array($account_idTMP);
-				$accountID = $res["id"];
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				echo "Record updated successfully";
-			}
-		}
-		else
-		{ //if parent want to transfer money to class account
-
-			// fetch class account id
-
-			$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")"));
-			$ress = $class_acc_id->fetch_assoc();
-			$class_account_id = $ress["id"];
-
-			// inserting payment to class account
-
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['choosenChild'] . ",'" . $_POST['paymentType'] . "')"));
-		}
-	}
-
-	$conn->close();
-	header('Location: menu_parent.php');
-}
 
 function changePassword()
 {
@@ -491,42 +431,10 @@ function deleteFromDB()
 	$newBalance = $currentBalance + $amount_paid;
 	$connect->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($connect, $newBalance) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
 
-	// payng for rest participations
 	if ($res = $connect->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
 	{
 		echo 'Pomyslnie wypisano dziecko';
 	}
-	
-	
-	
-	$child_participation = $connect->query(sprintf("SELECT p.amount_paid as amount,  e.date as datee,  e.price as price, e.id as id  FROM participation p JOIN event e ON  p.event_id=e.id  WHERE child_id=" . $_SESSION['choosenChild'] . " ORDER BY e.date ASC"));
-	if (mysqli_num_rows($child_participation) > 0)
-	{
-		while ($row = mysqli_fetch_array($child_participation))
-		{
-			$amount = $row["amount"];
-			$price = $row["price"];
-			if ($amount < $price and $newBalance > 0)
-			{
-				if ($newBalance >= $price - $amount)
-				{
-					$connect->query(sprintf("UPDATE participation SET amount_paid='%s' WHERE event_id = '%s' AND child_id = '%s'", mysqli_real_escape_string($connect, $price) , mysqli_real_escape_string($connect, $row["id"]) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
-					$newBalance = $newBalance - ($price - $amount);
-					$amount = $price;
-				}
-
-				if ($newBalance < $price - $amount)
-				{
-					$connect->query(sprintf("UPDATE participation SET amount_paid=amount_paid +'%s' WHERE event_id = '%s' AND child_id = '%s'", mysqli_real_escape_string($connect, $newBalance) , mysqli_real_escape_string($connect, $row["id"]) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
-					$newBalance = 0;
-				}
-
-				$connect->query(sprintf("UPDATE account SET balance = '%s' WHERE child_id = ".$_SESSION['choosenChild'], mysqli_real_escape_string($connect, $newBalance)));
-
-			}
-		}
-	}
-
 	
 }
 

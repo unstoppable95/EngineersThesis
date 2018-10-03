@@ -105,6 +105,35 @@ if (!isset($_SESSION['loggedIn'])) {
   </form>
  </div>
 </div>
+
+
+<!--MODAL MAKE PAYMENT -->
+<div id="makePaymentModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h3> Dokonaj wpłaty </h3>
+		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+				Kwota: <input type="text" name="amountOfMoney" /> <br /><br />
+				
+				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
+				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />
+				<br />
+				 <select name="paymentType">
+					<option value="gotowka">Gotówka</option>
+					<option value="konto">Na konto</option>
+				</select>
+				<br /><br />
+				<input type="submit" value="Wpłać" name="makePayment2"/>
+		</form>
+		
+   </div>
+  </form>
+ </div>
+</div>
+
+
 </body>
 </html>
 
@@ -166,6 +195,22 @@ function fetch_students_list()
             url:"../treasurer_helper.php",
             method:"POST",
             data:{function2call: 'btn_pMailChange', id:id},
+            dataType:"text",
+                success:function(data){
+                     }                          
+                });
+    
+          
+      });
+	  
+	  
+	  
+	$(document).on('click','.btn_makePayment',function(){
+    var id=$(this).data("id3");
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call: 'makePayment', id:id},
             dataType:"text",
                 success:function(data){
                      }                          

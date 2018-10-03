@@ -130,26 +130,8 @@ if ((int)$_SESSION['amountOfChild'] > 1)
 		<table>
 			<tr><td>Stan konta dziecka:  </td><td><div id="accont_balance"></div></td></tr> 
 		</table>
-		</form>
-		
-		<h3> Dokonaj wpłaty </h3>
-		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
-				Kwota: <input type="text" name="amountOfMoney" /> <br /><br />
-				
-				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
-				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />
-				<br />
-				 <select name="paymentType">
-					<option value="gotowka">Gotówka</option>
-					<option value="konto">Na konto</option>
-				</select>
-				<br /><br />
-				<input type="submit" value="Wpłać" name="MakePayment"/>
-		</form>
-		
+		</form>	
 	</div>
-
-	
 </div>
 
 <!--MODAL CHANGE PASSWORD -->

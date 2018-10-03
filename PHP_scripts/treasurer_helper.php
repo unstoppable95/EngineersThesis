@@ -40,6 +40,13 @@ if ((isset($_POST['addExpense'])))
 	addExpense();
 }
 
+if ((isset($_POST['makePayment2'])))
+{
+	makePayment2();
+}
+
+
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -84,11 +91,221 @@ if ((isset($_POST['function2call'])))
 	case 'fetch_expenses_list':
 		fetch_expenses_list();
 		break;
+		
+	case 'makePayment':
+		makePayment();
+		break;
+	
+	case 'students_balances_list':
+		students_balances_list();
+		break;
+	
+	case 'student_class_acc_payment_details':
+		student_class_acc_payment_details();
+		break;
+		
 	}
 }
 
-// button "Dodaj wydatek" in expenses.php
 
+function student_class_acc_payment_details()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$sum = $connect->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_POST['id']));
+	$r = $sum->fetch_assoc();
+	$amount_of_paid_money = $r["s"];
+	$monthly_f = $connect->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_POST['id'] . ")"));
+	$x = $monthly_f->fetch_assoc();
+	$monthly_fee = $x["m"];
+	$output.= '
+<h3> Opłacone miesiące </h3>	
+      <div>  
+           <table>  
+                <tr>  
+                     <th width="50%">Miesiąc</th> 
+					 <th width="50%">Wpłacona kwota</th>
+                </tr>';
+	if ($amount_of_paid_money > 0)
+	{
+		$months = array(
+			'wrzesień',
+			'październik',
+			'listopad',
+			'grudzień',
+			'styczeń',
+			'luty',
+			'marzec',
+			'kwiecień',
+			'maj',
+			'czerwiec'
+		);
+		$topay = 0;
+		$fild_color = '#66ff66';
+		$fully_paid_months = floor($amount_of_paid_money / $monthly_fee);
+		for ($i = 0; $i < 10; $i++)
+		{
+			if ($i < $fully_paid_months)
+			{
+				$topay = $monthly_fee;
+			}
+			else
+			{
+				if ($i == $fully_paid_months)
+				{
+					$topay = - (($i) * $monthly_fee) + $amount_of_paid_money;
+					$fild_color = '#FF5050';
+				}
+				else
+				{
+					$topay = 0;
+				}
+			}
+
+			$output.= '  
+						<tr>  
+							<td bgcolor=' . $fild_color . ' >' . $months[$i] . '</td> 
+							<td bgcolor=' . $fild_color . '  >' . $topay . '</td> 
+						</tr>  
+				   ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
+								  <td colspan="4">Nie znaleziono wpłat</td>  
+							 </tr>';
+	}
+
+	$surcharge = $amount_of_paid_money - 10* $monthly_fee;
+	if($surcharge<0){
+		$surcharge=0;
+	}
+	$output.= '</table>  
+			  </div>
+			  <h3> Informacje o koncie</h3>
+			  Na koncie klasowym dziecka po opłaceniu składek miesięcznych pozostało: '.$surcharge;
+			  
+	
+	
+	echo $output;
+}
+
+function students_balances_list()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$result = $connect->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "')"));
+	$output.= '  
+      <div>  
+           <table>  
+                <tr>  
+                     <th width="5%">Id</th>  
+                     <th width="25%">Imię</th> 
+					 <th width="25%">Nazwisko</th>
+					 <th width="20%">Stan konta klasowego</th>
+					 <th width="20%">Szczegóły</th>
+					 
+                </tr>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$class_account_balanceTMP = $connect->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = ".$row["id"] ));
+			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
+			
+			$output.= '  
+                <tr>  
+                     <td>' . $row["id"] . '</td>  
+                     <td>' . $row["name"] . '</td>  
+					 <td>' . $row["surname"] . '</td>
+					 <td>' . $class_account_balance["x"] . '</td>
+					 <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance">Szczegóły</button></td>
+				</tr>  
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
+                     </tr>';
+	}
+
+	$output.= '</table>  
+      </div>';
+	echo $output;
+}
+
+function makePayment2()
+{
+	session_start();
+	if (empty($_POST['amountOfMoney']) || $_POST['amountOfMoney'] == '0')
+	{
+		header('Location: treasuer_menu/settings.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		$amountOfMoney = $_POST['amountOfMoney'];
+		$amountOfMoney = htmlentities($amountOfMoney, ENT_QUOTES, "UTF-8");
+		$child = $_SESSION['childWhoMakePayment'];
+		if ($_POST['typeOfAccount'] == "normal")
+		{ //if treasuer make normal (cash) payment
+			$curr = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			$res = mysqli_fetch_array($curr);
+			$currentBalance = $res["b"];
+			$newBalance = $currentBalance + $amountOfMoney;
+			if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
+			{
+				$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['choosenChild']));
+				$res = mysqli_fetch_array($account_idTMP);
+				$accountID = $res["id"];
+				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
+				echo "Record updated successfully";
+			}
+		}
+		else
+		{ //if treasuer want to transfer money to child's class account
+
+			// fetch class account id
+
+			$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['childWhoMakePayment'] . ")"));
+			$ress = $class_acc_id->fetch_assoc();
+			$class_account_id = $ress["id"];
+
+			// inserting payment to class account
+
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['choosenChild'] . ",'" . $_POST['paymentType'] . "')"));
+		}
+	}
+
+	$conn->close();
+	header('Location: treasuer_menu/settings.php');
+}
+
+
+function makePayment()
+{
+	session_start();
+	$_SESSION['childWhoMakePayment'] = $_POST["id"];	
+}
+
+// button "Dodaj wydatek" in expenses.php
 function addExpense()
 {
 	session_start();
@@ -499,14 +716,16 @@ function fetch_students_list()
            <table>  
                 <tr>  
                      <th width="5%">Id</th>  
-                     <th width="10%">Imię</th> 
-					 <th width="10%">Nazwisko</th>
+                     <th width="5%">Imię</th> 
+					 <th width="5%">Nazwisko</th>
 					 <th width="10%">Data urodzenia</th>
 					 <th width="10%">Imię rodzica</th>
 					 <th width="10%">Nazwisko rodzica</th>
 					 <th width="10%">Mail rodzica</th>
+					 <th width="10%">Stan konta dziecka</th>
 					 <th width="10%">Usuń ucznia</th>
 					 <th width="10%">Zmień maila rodzica</th>
+					 <th width="10%">Wpłać</th>
                 </tr>';
 	if (mysqli_num_rows($result) > 0)
 	{
@@ -514,6 +733,9 @@ function fetch_students_list()
 		{
 			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = " . $row["id"] . ")"));
 			$parent = mysqli_fetch_array($parentTMP);
+			
+			$accountBalanceTmp = $connect->query(sprintf("SELECT * FROM account WHERE child_id = " . $row["id"]));
+			$accountBalance = mysqli_fetch_array($accountBalanceTmp);
 			$output.= '  
                 <tr>  
                      <td>' . $row["id"] . '</td>  
@@ -523,8 +745,10 @@ function fetch_students_list()
 					 <td>' . $parent["name"] . '</td>
 					 <td>' . $parent["surname"] . '</td>
 					 <td>' . $parent["email"] . '</td>
+					 <td>' . $accountBalance["balance"] . '</td>
 					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent">Usuń ucznia</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange">Zmień maila</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment">Wpłać</button></td>
 					 </tr>  
            ';
 		}

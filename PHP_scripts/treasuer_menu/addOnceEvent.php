@@ -33,7 +33,7 @@ if (!isset($_SESSION['loggedIn']))
 		<tr><td>Nazwa: </td><td><input type="text" name="eventName"/></td></tr> 
 		<tr><td>Cena: </td><td><input type="text" name="eventPrice" /></td></tr> 
 		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="eventDate" /> </td></tr> 
-		<tr><td colspan="2"><input type="submit" name="addEvent" class="btn_add" value="Zatwierdz"  onclick="return validate(this.form);"/></td></tr>
+		<tr><td colspan="2"><input type="submit" name="addEvent" class="btn_add" value="Zatwierdz" /></td></tr>
 	<table>
 	</form>
 </div>

@@ -45,6 +45,11 @@ if ((isset($_POST['makePayment2'])))
 	makePayment2();
 }
 
+if ((isset($_POST['payForChildEvent'])))
+{
+	payForEvent();
+}
+
 
 
 if ((isset($_POST['function2call'])))
@@ -104,9 +109,102 @@ if ((isset($_POST['function2call'])))
 		student_class_acc_payment_details();
 		break;
 		
+	case 'payForEventTmp':
+		payForEventTmp();
+		break;
+		
+		
+		
 	}
 }
 
+
+function payForEventTmp()
+{
+	session_start();
+	$_SESSION['eventToBePaid'] = $_POST["eventID"];
+	$_SESSION['childToBePaid'] = $_POST["childID"];
+}
+ 
+
+
+function payForEvent()
+{
+	session_start();
+	require_once "connection.php";
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	
+	$pricex = $connect->query(sprintf("SELECT price FROM event WHERE id = ".$_SESSION['eventToBePaid'] ));
+	$x = mysqli_fetch_array($pricex);
+	$price = $x["price"];
+
+	$alreadyPaidx = $connect->query(sprintf("SELECT amount_paid FROM participation WHERE event_id = ".$_SESSION['eventToBePaid']." AND child_id =".$_SESSION['childToBePaid'] ));
+	$y = mysqli_fetch_array($alreadyPaidx);
+	$alreadyPaid = $y["amount_paid"];	
+	
+	$wantPay = $_POST["amount"];
+	
+	$leftToPay = $price - $alreadyPaid;
+	
+	
+	$payAll=0;
+	if(isset($_POST['payAll'])){
+		$payAll = 1;
+	}
+	else{
+		$payAll = 0;
+	}
+	if($wantPay == $leftToPay){
+		$payAll = 1;
+	}
+	
+	$accountBalancex = $connect->query(sprintf("SELECT balance FROM account WHERE child_id = ".$_SESSION['childToBePaid']));
+	$z = mysqli_fetch_array($accountBalancex);
+	$accountBalance = $z["balance"];	
+	
+	$willBePaid =0;
+	
+	if($payAll == 1){
+		if($accountBalance < $leftToPay){
+			$willBePaid = $accountBalance;
+			$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
+		}
+		else{
+			$willBePaid = $leftToPay;
+			$echoo = "Wydarzenie zostało w pełni opłacone!";
+		}
+			
+		
+	}
+	else{ //if treasuer want to pay other amount than all
+		if($wantPay > $leftToPay){
+			if($accountBalance >= $wantPay){
+				$willBePaid = $leftToPay;
+				$echoo = "Żądana kwota jest większa niż kwota pozostała do zapłąty. Wydarzenie zostało w pełni opłacone!!";
+			}
+			else{
+				$willBePaid = $accountBalance;
+				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
+			}
+		}
+			
+		if($wantPay < $leftToPay){
+			if($accountBalance >= $wantPay){
+				$willBePaid = $wantPay;
+				$echoo = "Wydarzenie zostało opłacone żądaną kwotą!";
+			}
+			else{
+				$willBePaid = $accountBalance;
+				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
+			}
+		}
+	}
+	
+	$connect->query(sprintf("UPDATE participation SET amount_paid =amount_paid+".$willBePaid." WHERE child_id =".$_SESSION['childToBePaid']." AND event_id=".$_SESSION['eventToBePaid']));
+	$connect->query(sprintf("UPDATE account SET balance = balance - ".$willBePaid." WHERE child_id=".$_SESSION['childToBePaid']));
+	header('Location: menu_treasurer.php');
+	
+} 
 
 function student_class_acc_payment_details()
 {
@@ -262,7 +360,6 @@ function makePayment2()
 	else
 	{
 		$amountOfMoney = $_POST['amountOfMoney'];
-		$amountOfMoney = htmlentities($amountOfMoney, ENT_QUOTES, "UTF-8");
 		$child = $_SESSION['childWhoMakePayment'];
 		if ($_POST['typeOfAccount'] == "normal")
 		{ //if treasuer make normal (cash) payment
@@ -270,14 +367,14 @@ function makePayment2()
 			$res = mysqli_fetch_array($curr);
 			$currentBalance = $res["b"];
 			$newBalance = $currentBalance + $amountOfMoney;
-			if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
-			{
-				$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['choosenChild']));
+			//if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
+			//{
+				$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
 				$res = mysqli_fetch_array($account_idTMP);
 				$accountID = $res["id"];
 				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
 				echo "Record updated successfully";
-			}
+			//}
 		}
 		else
 		{ //if treasuer want to transfer money to child's class account
@@ -290,7 +387,7 @@ function makePayment2()
 
 			// inserting payment to class account
 
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['choosenChild'] . ",'" . $_POST['paymentType'] . "')"));
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['childWhoMakePayment'] . ",'" . $_POST['paymentType'] . "')"));
 		}
 	}
 
@@ -507,16 +604,17 @@ function fetch_event_details()
 	$totalAmountPaid = $resultAmountPaid["totalPaid"];
 	$output.= "<br /> Całkowity koszt zbiórki: " . $totalAmount . "<br /> Suma wpłat uczestników: " . $totalAmountPaid . "";
 	$output.= "<br /><br />";
-	$result = $connect->query(sprintf("select ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_POST["id"] . "' order by idx asc"));
+	$result = $connect->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_POST["id"] . "' order by idx asc"));
 	$output.= ' 
 		<div>  
            <table>  
-                <tr>  
-                     <th width="30%">Imie</th>  
-                     <th width="40%">Nazwisko</th> 
-				
-					 <th width="15%">Kwota wpłacona</th>
+                <tr> 
+					<th width="05%">Id</th>
+                    <th width="30%">Imie</th>  
+                    <th width="30%">Nazwisko</th> 
+					<th width="15%">Kwota wpłacona</th>
 					<th width="15%">Koszt</th>
+					<th width="10%">Opłać</th>
 					 
                 </tr>';
 	if (mysqli_num_rows($result) > 0)
@@ -525,7 +623,6 @@ function fetch_event_details()
 		{
 
 			// green color for fully paid events
-
 			if ($row["amount_paid"] == $resultAmount["price"])
 			{
 				$color = ' bgcolor = #66ff66 ';
@@ -537,11 +634,13 @@ function fetch_event_details()
 
 			$output.= '  
                 <tr>  
-                  
+					<td ' . $color . '>' . $row["childID"] . '</td>
                      <td ' . $color . '>' . $row["name"] . '</td>  
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
+					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_POST["id"] . '" class="btn_payForEvent">Oplac</button></td>
+
 				</tr>  
            ';
 		}
@@ -877,25 +976,9 @@ function addEvent()
 		{
 			while ($row = mysqli_fetch_array($result))
 			{
-				$acc_bal = ($conn->query(sprintf("SELECT balance FROM account WHERE child_id='%s'", mysqli_real_escape_string($conn, $row["id"]))))->fetch_assoc();
-				$account_balance = $acc_bal['balance'];
 				$eventPrice = $_POST['eventPrice'];
-				if ($account_balance > $eventPrice)
-				{
-					$toBePaid = $eventPrice;
-					$newAccountBalance = $account_balance - $eventPrice;
-				}
 
-				if ($account_balance <= $eventPrice)
-				{
-					$toBePaid = $account_balance;
-					$newAccountBalance = 0;
-				}
-
-				// update balance
-
-				$conn->query(sprintf("UPDATE account SET balance='%s' where child_id='%s'", mysqli_real_escape_string($conn, $newAccountBalance) , mysqli_real_escape_string($conn, $row["id"])));
-				$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', '%s')", mysqli_real_escape_string($conn, $eventID) , mysqli_real_escape_string($conn, $row["id"]) , mysqli_real_escape_string($conn, $toBePaid)));
+				$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', 0)", mysqli_real_escape_string($conn, $eventID) , mysqli_real_escape_string($conn, $row["id"]) ));
 				$parent = ($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='" . $row["id"] . "')")))->fetch_assoc();
 				mail($parent["email"], "Dodano nową zbiórkę: $eventName", "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiła się nowa zbiórka o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");
 			}

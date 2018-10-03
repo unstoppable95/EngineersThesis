@@ -93,7 +93,7 @@ if ($_SESSION['amountOfChild'] == 1)
 
 </div>
 
-<!--MODAL DETAILS -->
+<!--MODAL CHANGE PASSWORD -->
 <div id="userModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
@@ -123,6 +123,26 @@ if ($_SESSION['amountOfChild'] == 1)
  </div>
 </div>
 
+
+
+<!--PAY FOR EVENT -->
+<div id="payForEventModal" class="modal fade" >
+ <div class="modal-dialog">
+    <form action="treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
+   <div class="modal-content">
+    
+		<h2>Opłać wydarzenie</h2>
+			Wprowadż kwotę, jaką chcesz opłacić: <input type="text" name="amount"/>
+			<br>
+			<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
+			<br>
+			<input type="submit" name="payForChildEvent"  class="btn_pay" value="Opłać"/>
+		
+   </div>
+  </form>
+ </div>
+</div>
+
 <!--EVENT EDIT -->
 <div id="eventEditModal" class="modal fade" >
  <div class="modal-dialog">
@@ -143,6 +163,10 @@ if ($_SESSION['amountOfChild'] == 1)
   </form>
  </div>
 </div>
+
+
+
+
 
 </body>
 </html>
@@ -218,6 +242,9 @@ echo $_SESSION['firstLog']; ?>';
                      }      					 
                 });   
       });
+	  
+	  
+
 	
 	
 	function fetch_event_list()
@@ -248,7 +275,20 @@ echo $_SESSION['firstLog']; ?>';
 	}
 	fetch_class_name();
 
+	$(document).on('click','.btn_payForEvent',function(){
+	var childID=$(this).data("id3");
+	var eventID=$(this).data("id4");
 
+	
+		$.ajax({
+			url:"treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'payForEventTmp', childID:childID, eventID:eventID},
+			dataType:"text",
+				success:function(data){
+                     }      					 
+                });   
+      });
  
 
 		

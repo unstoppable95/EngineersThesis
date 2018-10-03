@@ -1,4 +1,4 @@
- <?php
+<?php
 
 if ((isset($_POST['changePassword'])))
 {
@@ -35,6 +35,11 @@ if ((isset($_POST['addStudent'])))
 	addStudent();
 }
 
+if ((isset($_POST['addStudentsFile'])))
+{
+	addStudentsFile();
+}
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -55,47 +60,151 @@ if ((isset($_POST['function2call'])))
 	case 'changeTreasuer':
 		changeTreasurer();
 		break;
-		
-		
+
 	case 'addStudent2':
 		addStudent2();
 		break;
-		
-	case 'addStudentsFile':
-		addStudentsFile();
+
+	case 'saveClassID':
+		saveClassID();
 		break;
-		
-		
 	}
 }
 
-//$_POST["id"]
-//$_POST["filename"]
-
-function addStudentsFile(){
+function saveClassID()
+{
 	session_start();
+	$_SESSION['classIDCSV'] = $_POST["id"];
+}
+
+function addStudentsFile()
+{
+
+	// UPLOAD PLIKU na SERWER
+
+	session_start();
+	$target_dir = "\uploadsCSV\\";
+	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	$uploadOk = 1;
+	$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+	$uploadOk = 1;
+
+	// Check if file already exists
+
+	if (file_exists($target_file))
+	{
+		echo "Sorry, file already exists.";
+		$uploadOk = 0;
+	}
+
+	// Check file size
+
+	if ($_FILES["fileToUpload"]["size"] > 500000)
+	{
+		echo "Sorry, your file is too large.";
+		$uploadOk = 0;
+	}
+
+	// Allow certain file formats
+
+	if ($imageFileType != "csv")
+	{
+		echo "Sorry, only csv files are allowed.";
+		$uploadOk = 0;
+	}
+
+	// Check if $uploadOk is set to 0 by an error
+
+	if ($uploadOk == 0)
+	{
+		echo "Sorry, your file was not uploaded.";
+
+		// if everything is ok, try to upload file
+
+	}
+	else
+	{
+		define('SITE_ROOT', realpath(dirname(__FILE__)));
+		if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], SITE_ROOT . $target_file))
+		{
+			echo "The file " . basename($_FILES["fileToUpload"]["name"]) . " has been uploaded.";
+		}
+		else
+		{
+			echo "Sorry, there was an error uploading your file.";
+		}
+	}
+
+	// odczytanie i insert do bazy danych  -> nazwa pliku
+
 	require_once "connection.php";
+
 	$conn = new mysqli($servername, $username, $password, $dbName);
-	$fileName=$_POST["filename"];
-	//$fp = fopen($fileName, "r");
-	//$fp = fopen($_FILES[$fileName]["tmp_name"], 'r');
-//$content = fread($fp, filesize($fileName));
-//$lines = explode("\n", $content);
-//fclose($fp);
-//$x=print_r($lines);
-	/*$query = <<<eof
-    LOAD DATA INFILE '$fileName'
-     INTO TABLE tableName
-     FIELDS TERMINATED BY '|' OPTIONALLY ENCLOSED BY '"'
-     LINES TERMINATED BY '\n'
-    (field1,field2,field3,etc)
-eof;*/
-echo $fileName;
+	$filename = "." . $target_file;
+	if ($_FILES["fileToUpload"]["size"] > 0)
+	{
+		$file = fopen($filename, "r");
+		while (($getData = fgetcsv($file, 10000, ",")) !== FALSE)
+		{
 
-//$conn->query($query);
-$conn->close();
+			// pobieranie danych z pliku csv
 
-//header('Location: menu_admin.php');
+			$childName = $getData[3];
+			$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
+			$childSurname = $getData[4];
+			$childSurname = htmlentities($childSurname, ENT_QUOTES, "UTF-8");
+			$childBirthdate = $getData[5];
+			$childBirthdate = htmlentities($childBirthdate, ENT_QUOTES, "UTF-8");
+			$parentName = $getData[0];
+			$parentName = htmlentities($parentName, ENT_QUOTES, "UTF-8");
+			$parentSurname = $getData[1];
+			$parentSurname = htmlentities($parentSurname, ENT_QUOTES, "UTF-8");
+			$parentEmail = $getData[2];
+			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
+			$passwd = randomPassword();
+			$classID = $_SESSION['classIDCSV'];
+			if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
+			{
+				$isUser = $result->num_rows;
+				if ($isUser <= 0)
+				{ //RODZICA NIE MA W SYSTEMIE
+					$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
+					mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
+
+					// szukamy id nowego rodzica
+
+					if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
+					{
+						$details = $result->fetch_assoc();
+						$parentIDdb = $details['id'];
+
+						// dodanie do username
+
+						$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+						$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
+					}
+					else
+					{
+
+						// RODZIC JEST JUZ W SYSTEMIE WIEC DODAJE SAMO DZIECKO
+
+						$details = $result->fetch_assoc();
+						$parentIDdb = $details['id'];
+						$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
+					}
+				}
+			}
+		}
+
+		fclose($file);
+	}
+
+	$conn->close();
+
+	// usuniecie pliku z serwera
+
+	unlink($filename);
+	header('Location: menu_admin.php');
 }
 
 function addStudent()
@@ -148,7 +257,6 @@ function addStudent()
 			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
 		}
 
-		
 		$classID = $_SESSION['classToAdd'];
 		if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
 		{
@@ -185,7 +293,6 @@ function addStudent()
 		$conn->close();
 		header('Location: menu_admin.php');
 	}
-	
 }
 
 function addStudent2()
@@ -194,7 +301,6 @@ function addStudent2()
 	$_SESSION['classToAdd'] = $_POST["id"];
 	echo "<script>console.log( 'Id:  " . $_SESSION['classToAdd'] . "' );</script>";
 }
-
 
 function sendPassword()
 {
@@ -217,15 +323,17 @@ function sendPassword()
 		$myEmail = $_POST['myMail'];
 		$myEmail = htmlentities($myEmail, ENT_QUOTES, "UTF-8");
 		$isLogin = ($conn->query(sprintf("SELECT * FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->num_rows;
-		if($isLogin > 0)
+		if ($isLogin > 0)
 		{
 			$psswd = ($conn->query(sprintf("SELECT password FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->fetch_assoc();
-			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: ".$psswd["password"]);
+			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $psswd["password"]);
 			echo "<script>
-			alert('Twoje hasło zostało wysłane na podany adres email!');
+"#@%+=FEFGT6R3987EFDF86347GR=+%@#"		alert('Twoje hasło zostało wysłane na podany adres email!');
 			window.location.href='index.php';
 			</script>";
-		}else {
+		}
+		else
+		{
 			echo "<script>
 			alert('Nie istnieje taki login w systemie!');
 			window.location.href='index.php';
@@ -234,7 +342,6 @@ function sendPassword()
 	}
 
 	$conn->close();
-	
 }
 
 function changeEmailTreasuer()
@@ -447,9 +554,7 @@ function fetch()
 					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień email</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień skarbnika</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent">Dodaj ucznia</button></td>
-					<td><input type="file"  data-id3="' . $row["id"] . '" name="chooseFile" id="chooseFile"></input></td>
-					<td><button type="button"  data-id3="' . $row["id"] . '" class="btn_addStudentsFile">Dodaj uczniów</button></td>
-					
+					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV">Dodaj</button></td>
 				</tr>  
            ';
 		}

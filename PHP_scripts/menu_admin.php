@@ -124,6 +124,22 @@ require_once "admin_helper.php";
  </div>
 </div>	
 
+<!--MODAL ADD STUDENTs csv-->
+<div id="addStudentCSVModal" class="modal fade">
+ <div class="modal-dialog">
+
+   <div class="modal-content">
+			<form action="admin_helper.php" method="post" enctype="multipart/form-data">
+					<h1>Załaduj plik CSV z danymi</h1>
+					<input type="file"   name="fileToUpload" id="fileToUpload">
+					<input type="submit"  name="addStudentsFile"  value="Dodaj uczniów"/>
+				</form>
+
+   
+   </div>
+
+ </div>
+</div>
 
 <!--MODAL ADD STUDENT-->
 <div id="addStudentModal" class="modal fade">
@@ -152,9 +168,6 @@ require_once "admin_helper.php";
   </form>
  </div>
 </div>
-
-
-
 
 </body>
 </html>
@@ -197,22 +210,17 @@ $(document).on('click','.btn_delete',function(){
            }  
       }); 
 	  
-	  //load from csv
-$(document).on('click','.btn_addStudentsFile',function(){
+	  //save classID to load date from CSV
+$(document).on('click','.btn_addStudentsCSV',function(){
 	var id=$(this).data("id3");
-	var filename=$('#chooseFile')[0].files[0]['name'];
-	
-	
-	//$_FILES["UploadFileName"]; 
-	//var filename = $('#chooseFile').val();
 	$.ajax({
 		url:"admin_helper.php",
 		method:"POST",
-		data:{function2call: 'addStudentsFile', id:id,filename:filename },
+		data:{function2call: 'saveClassID', id:id },
 		dataType:"text",
 		success:function(data){
 			
-		$('#xxx').html(data);
+	
 			
                      }  
                 });  

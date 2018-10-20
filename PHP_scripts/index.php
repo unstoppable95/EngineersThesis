@@ -2,15 +2,13 @@
 <head>
 <title>System skarbnik klasowy-panel logowania</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<script src="js/jquery-2.2.4.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="index_style.css" title="Arkusz stylów CSS">
+<!--<style>
 
-
-	<script src="js/jquery-2.2.4.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-<style>
-/* Modal (background) */
 .modal {
   display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -25,13 +23,13 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 .modal-content {
-    background-color: #fefefe;
+    background-color: #red;
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
 }
-</style>
+</style>-->
 
 
 
@@ -61,33 +59,30 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
 ?>
 </head>
 
-<body>
-<div>
-<div class="container">
-	<div class="vertical-al">
-	<form action="login.php" method="post">
+<body class="text-center">
+	<form action="login.php" method="post" class="form-signin">
 	
-		<h2> Zaloguj się </h2>
-		<p>
-		Login: <br /> <input type="text" name="login" /> <br /> 
-		Hasło: <br /> <input type="password" name="password" /> <br /><br />
-		<input type="submit" value="Zaloguj się" /> <br><br>
-		
-		</p>
-		
-		
+		<div class="form-group">
+		 <label for="login">Login</label>
+		<input type="text" name="login" class="form-control" id="login" placeholder="Enter email"/>
+		</div>
+		<div class="form-group">
+		<label for="password">Hasło</label>
+		<input type="password" name="password" class="form-control" id="password" placeholder="Password"/>
+		</div>
+		<button type="submit" class="btn btn-primary btn-block">Zaloguj się</button>
+
 		<?php
 			if (isset($_SESSION['error']))
 			{
 				echo $_SESSION['error'];
 			}
 		?>
-	
+	<p class="help-block">
+	<a class="pull-right text-muted" data-toggle="modal" data-target="#mailReminder"><small>Zapomniałeś hasła?</small></a>
+	</p>
 	</form>
-	<button type="button" data-toggle="modal" data-target="#mailReminder" class="btn_remindPasswd">Przypomnij hasło</button>
-	</div>
-	</div>
-</div>	
+	
 	
 <!--MODAL REMIND PASSWORD -->
 <div id="mailReminder" class="modal fade" >
@@ -104,6 +99,3 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
   </form>
  </div>
 </div>
-
-</body>
-</html>

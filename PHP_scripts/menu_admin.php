@@ -2,13 +2,14 @@
 <head>
 	<title>ADMIN-panel glowny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" type="text/css" href="admin_menu/a_style.css" title="Arkusz stylów CSS">
 
 	<script src="js/jquery-2.2.4.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  -->
+	<link rel="stylesheet" type="text/css" href="admin_menu/a_style.css" title="Arkusz stylów CSS">
 
-<style>
+<!--<style>
 /* Modal (background) */
 .modal {
     display: none; /* Hidden by default */
@@ -30,7 +31,7 @@
     border: 1px solid #888;
     width: 80%;
 }
-</style>	
+</style>-->	
 	
 </head>
 <?php
@@ -48,25 +49,30 @@ require_once "admin_helper.php";
 	
 <body>
 
-	<div class="menu">
-		<a href="#" class="active">Strona główna</a>
-		<a href="admin_menu/a_addClass.php">Dodaj klasę</a>
-		<a href="admin_menu/a_settings.php">Ustawienia</a>
-		<a href="logout.php">Wyloguj się</a>
-	</div>	
-		
-	
-<div class="lewa_strona">
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Konto administratora</a>
+		</div>
 
-	<h1>Konto administratora</h1>
-	<h3>Lista klas w szkole</h3>
-	<form action="admin_helper.php" method="post">
-		
-			<div id="class_list"></div>
-			
-	</form>
-	<div id="xxx"></div>
-</div>
+		<ul class="nav navbar-nav">
+			<li class="active"><a href="#">Strona główna</a></li>
+			<li><a href="admin_menu/a_addClass.php">Dodaj klasę</a></li>
+		    <li><a href="admin_menu/a_settings.php">Ustawienia</a></li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="logout.php"><span class="glyphicon glyphicon-log-out"></span>Wyloguj się</a></li>  
+		</ul>
+	</div>
+</nav>	
+	
+
+<h3>Lista klas w szkole</h3>
+
+<form action="admin_helper.php" method="post">
+	<div id="class_list" class="container-fluid "></div>
+</form>
+
 
 
 

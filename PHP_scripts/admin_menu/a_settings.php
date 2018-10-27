@@ -2,7 +2,10 @@
 <head>
     <title>ADMIN-ustawienia</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
+	<script src="../js/jquery-2.2.4.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+ 	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
 </head>
 <?php
 session_start();
@@ -20,30 +23,43 @@ if (isset($_SESSION['funChange'])) {
     $_SESSION['funChange'] = null;
 }
 ?>
-   
+
 <body>
 
-    <div class="menu">
-        <a href="../menu_admin.php">Strona główna</a>
-        <a href="a_addClass.php" >Dodaj klasę</a>
-        <a href="a_settings.php" class="active">Ustawienia</a>
-        <a href="../logout.php">Wyloguj się</a>
-    </div>    
-        
-    
-<div class="lewa_strona">
-            
-    
-    <h1>Konto administratora</h1>
-    <h3>Zmiana hasła</h3>
-    <form action="../admin_helper.php" method="post">
-        <table>
-                <tr><td>Nowe hasło dostępu:</td><td><input type="password" name="newPassword" /></td></tr>
-        </table>
-        <input type="submit" name="changePassword" value=" Zatwierdz"/>    
-    </form>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Konto administratora</a>
+    </div>
 
+	<ul class="nav navbar-nav">
+	<li><a href="../menu_admin.php">Strona główna</a></li>
+			  <li><a href="a_addClass.php" >Dodaj klasę</a></li>
+		   <li class="active"><a href="a_settings.php">Ustawienia</a></li>
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+		<li><a href="../logout.php"><span class="glyphicon glyphicon-log-out"></span>Wyloguj się</a></li>  
+	</ul>
+	<div>	
+</nav>
+	    
+
+   
+<h3>Zmiana hasła</h3>
+<div class="container new-class-form">
+
+<form action="../admin_helper.php" class="form-vertical" method="post">
+	<div class="form-group row">
+<div class="col-md-4 col-centered">
+        <label for="className">Nowe hasło dostępu</label>  
+		<input type="password" name="newPassword" class="form-control" />
+	</div>
+	</div>
+	 <div class="text-center row">
+		<button type="submit" name="changePassword" class="btn btn-primary">Zatwierdz</button>
 </div>
-    
+		</form>
+</div>
+
 </body>
 </html>

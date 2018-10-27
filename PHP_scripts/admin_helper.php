@@ -528,34 +528,39 @@ function fetch()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * from class"));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">  
+           <table class="table table-striped">  
+		     <thead class="thead-dark">
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="15%">Nazwa</th> 
-					 <th width="10%">Usuń klasę</th>
-					 <th width="10%">Szczegóły</th>
-					 <th width="15%">Zmień email</th>
-					 <th width="15%">Zmień skarbnika</th>
-					 <th width="20%">Dodaj ucznia do klasy</th>
-					 <th width="10%">Dodaj uczniów z pliku</th>
+                     <th scope="col">Id</th>  
+                     <th scope="col">Nazwa</th> 
+					 <th scope="col">Usuń klasę</th>
+					 <th scope="col">Szczegóły</th>
+					 <th scope="col">Zmień email</th>
+					 <th scope="col">Zmień skarbnika</th>
+					 <th scope="col">Dodaj ucznia do klasy</th>
+					 <th scope="col">Dodaj uczniów z pliku</th>
 				
-                </tr>';
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
-			$output.= '  
+			$output.= '
+			<tbody>			
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+				
+                     <th scope="row">' . $row["id"] . '</th>  
                      <td>' . $row["name"] . '</td>  
-					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete">Usuń klasę</button></td>  
-					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details">Szczegóły</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień email</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange">Zmień skarbnika</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent">Dodaj ucznia</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV">Dodaj</button></td>
+					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Usuń klasę</button></td>  
+					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details btn btn-default">Szczegóły</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień email</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień skarbnika</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Dodaj ucznia</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Dodaj</button></td>
 				</tr>  
+				<tbody>
            ';
 		}
 	}

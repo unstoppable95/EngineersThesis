@@ -2,7 +2,10 @@
 <head>
     <title>ADMIN-dodaj klase</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
+	<script src="../js/jquery-2.2.4.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
 </head>
 
 <?php
@@ -25,29 +28,54 @@ if (isset($_SESSION['funAddClass'])) {
    
 <body>
 
-    <div class="menu">
-        <a href="../menu_admin.php">Strona główna</a>
-        <a href="a_addClass.php" class="active" >Dodaj klasę</a>
-        <a href="a_settings.php">Ustawienia</a>
-        <a href="../logout.php">Wyloguj się</a>
-    </div>    
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Konto administratora</a>
+    </div>
+
+	<ul class="nav navbar-nav">
+		<li><a href="../menu_admin.php">Strona główna</a></li>
+		<li class="active"><a href="a_addClass.php" >Dodaj klasę</a></li>
+		<li><a href="a_settings.php">Ustawienia</a></li>
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+		<li><a href="../logout.php"><span class="glyphicon glyphicon-log-out"></span>Wyloguj się</a></li>  
+	</ul>
+	<div>	
+</nav>  
         
     
-<div class="lewa_strona">
-
-    <h1>Dodaj klasę i skarbnika</h1>
-    <form action="../admin_helper.php" method="post">
-        <table>
-            <tr><td><h4>Klasa: </h4></td><td></td></tr>
-            <tr><td>Nazwa klasy: </td><td> <input  name="className" /></td></tr>
-            <br>
-            <tr><td><h4>Skarbnik: </h4></td><td></td></tr>
-            <tr><td>Imię:  </td><td><input  name="name" /> </td></tr>
-            <tr><td>Nazwisko: </td><td><input  name="surname" /></td></tr>
-            <tr><td>Email: </td><td><input  name="email" /></td></tr>
-        </table>
-        <input type="submit" name="addClassTreasurer" value=" Zatwierdz"/>
-    </form>
+<h3>Dodaj klasę i skarbnika</h3>
+<div class="container new-class-form">
+<form action="../admin_helper.php" class="form-vertical" method="post">
+	<div class="form-group row"><div class="col-md-7 col-centered">
+		<label for="className">Nazwa klasy</label> 
+		
+		<input type="text" name="className" class="form-control"/>
+		</div>
+    </div>
+	<div class="row">
+	<h5>Dane skarbnika klasy</h5>
+	</div>
+	<div class="form-group row">
+		<div class="col-md-7 col-centered">
+		<label for="name">Imię</label> 
+        <input type="text" name="name" class="form-control"/>
+		</div><div class="col-md-7 col-centered">
+		<label for="name">Nazwisko</label> 
+		
+        <input type="text" name="surname" class="form-control"/>
+		</div><div class="col-md-7 col-centered">
+		<label for="email">Email</label> 
+        
+		<input type="text" name="email" class="form-control"/>
+     </div>
+	 </div>
+	 <div class="text-center row">
+	 <button type="submit" name="addClassTreasurer" class="btn btn-primary">Zatwierdz</button>
+	</div>
+	 </form>
 </div>
     
 </body>

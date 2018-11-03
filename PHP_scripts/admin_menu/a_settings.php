@@ -1,12 +1,13 @@
 <html>
-<head>
-    <title>ADMIN-ustawienia</title>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<script src="../js/jquery-2.2.4.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
- 	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
-</head>
+	<head>
+		<title>ADMIN-ustawienia</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<script src="../js/jquery-2.2.4.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
+	</head>
+
 <?php
 session_start();
 
@@ -27,25 +28,25 @@ if (isset($_SESSION['funChange'])) {
 <body>
 
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Konto administratora</a>
-    </div>
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Konto administratora</a>
+		</div>
 
-	<ul class="nav navbar-nav">
-	<li><a href="../menu_admin.php">Strona główna</a></li>
-			  <li><a href="a_addClass.php" >Dodaj klasę</a></li>
-		   <li class="active"><a href="a_settings.php">Ustawienia</a></li>
-	</ul>
-	<ul class="nav navbar-nav navbar-right">
-		<li><a href="../logout.php"><span class="glyphicon glyphicon-log-out"></span>Wyloguj się</a></li>  
-	</ul>
-	<div>	
+		<ul class="nav navbar-nav">
+			<li><a href="../menu_admin.php">Strona główna</a></li>
+			<li><a href="a_addClass.php" >Dodaj klasę</a></li>
+			<li class="active"><a href="a_settings.php">Ustawienia</a></li>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="../logout.php"><span class="glyphicon glyphicon-log-out"></span>Wyloguj się</a></li>
+		</ul>
+	</div>
 </nav>
-	    
+
 
    
-<h3>Zmiana hasła</h3>
+<h3 class="text-center">Zmiana hasła</h3>
 <div class="container new-class-form">
 
 <form action="../admin_helper.php" class="form-vertical" method="post">

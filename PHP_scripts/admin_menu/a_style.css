@@ -1,18 +1,11 @@
-* { font-family: Tahoma }
+* {
+	font-family: Tahoma ;
+}
 
 html, body {
   height: 100%;
 }
 
-h3 {
-    text-align: center;
-    text-transform: uppercase;
-}
-
-h5 {
-    text-align: center;
-    text-transform: uppercase;
-}
 
 .navbar {
       margin-bottom: 0;
@@ -20,19 +13,24 @@ h5 {
 }
 
 @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
+    .sidenav {
+		height: auto;
         padding: 15px;
-      }
-.row.content {height:auto;}
+    }
+	.row.content {
+		height: auto;
+	}
 } 
-.new-class-form{
+
+.new-class-form {
     padding: 60px 50px;
 }
-.col-centered{
+
+.col-centered {
     float: none;
     margin: 0 auto;
 }
+
 body {
   /*display: -ms-flexbox;
   display: flex;
@@ -44,7 +42,7 @@ body {
 }
 
 .form-vertical input[type="text"] {
-  margin-bottom: -1px;
+  margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }

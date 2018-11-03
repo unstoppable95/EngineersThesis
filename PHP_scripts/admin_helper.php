@@ -528,19 +528,18 @@ function fetch()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * from class"));
 	$output.= '  
-      <div class="table-responsive">  
-           <table class="table table-striped">  
+      <div class="table-responsive">
+           <table class="table table-striped">
 		     <thead class="thead-dark">
-                <tr>  
-                     <th scope="col">Id</th>  
-                     <th scope="col">Nazwa</th> 
-					 <th scope="col">Usuń klasę</th>
-					 <th scope="col">Szczegóły</th>
-					 <th scope="col">Zmień email</th>
-					 <th scope="col">Zmień skarbnika</th>
-					 <th scope="col">Dodaj ucznia do klasy</th>
-					 <th scope="col">Dodaj uczniów z pliku</th>
-				
+                <tr>
+					<th scope="col">Id</th>
+                    <th scope="col">Nazwa</th>
+					<th scope="col">Usuń klasę</th>
+					<th scope="col">Szczegóły</th>
+					<th scope="col">Zmień email</th>
+					<th scope="col">Zmień skarbnika</th>
+					<th scope="col">Dodaj ucznia do klasy</th>
+					<th scope="col">Dodaj uczniów z pliku</th>
                 </tr>
 				<thead>';
 	if (mysqli_num_rows($result) > 0)
@@ -583,7 +582,7 @@ function deleteFromDB()
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	if ($res = $connect->query(sprintf("DELETE FROM class WHERE id = '" . $_POST["id"] . "'")))
 	{
-		echo 'Pomyslnie usunięto klasę';
+		echo 'Pomyślnie usunięto klasę';
 	}
 }
 
@@ -598,11 +597,11 @@ function showDetails()
 	$studentsList = $connect->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "'"));
 	$res = mysqli_fetch_array($result);
 	$output.= '<h2>Szczegóły klasy: ' . mysqli_fetch_array($className) ["name"] . '</h2>
-		   <h3>Dane skarbnika</h3>
+		   <h3 class="text-center">Dane skarbnika</h3>
 		   Imię: ' . $res["name"] . ' <br />
 		   Nazwisko: ' . $res["surname"] . ' <br />
 		   Email: ' . $res["email"] . ' <br />
-		   <h3>Lista uczniów</h3>
+		   <h3 class="text-center">Lista uczniów</h3>
 		   ';
 	$output.= '  
       <div>  

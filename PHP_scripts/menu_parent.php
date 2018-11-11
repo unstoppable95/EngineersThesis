@@ -2,37 +2,19 @@
 <head> 
 	<title>Rodzic-panel głowny</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<!-- Our CSS -->
 	<link rel="stylesheet" type="text/css" href="parent_menu/p_style.css" title="Arkusz stylów CSS">
 
+	<!-- Example of icons -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 	
-	<script src="js/jquery-2.2.4.js"></script>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> 
-	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  
-	<style>
-/* Modal (background) */
-.modal {
-  display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-}
-</style>
 
 <?php
 session_start();
@@ -86,36 +68,53 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 <body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+		<a class="navbar-brand">Konto rodzica</a>
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Strona główna <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<?php
+					if ($_SESSION['type'] == "t")
+					{
+						$myVar = '<a class="nav-link" href="menu_treasurer.php">Panel skarbnika</a>';
+						$_SESSION['treasurerAsParent'] = true;
+						echo $myVar;
+					}
+					?>
+				</li>
+				<li class="nav-item">
+					 <?php
+					if ((int)$_SESSION['amountOfChild'] > 1)
+					{
+						$myVar = '<a class="nav-link" href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
+						echo $myVar;
+					}
+					?>
+				</li>				
+				<li class="nav-item">
+					<a class="nav-link" href="parent_menu/p_history.php">Historia wpłat</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="parent_menu/p_classAccount.php">Konto klasowe</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="parent_menu/p_settings.php">Ustawienia</a>
+				</li>
+			</ul>
 
-<div class="menu">
-	<a href="#" class="active">Strona główna</a>
-	  <?php
-
-if ($_SESSION['type'] == "t")
-{
-	$myVar = '<a href="menu_treasurer.php">Panel skarbnika</a>';
-	$_SESSION['treasurerAsParent'] = true;
-	echo $myVar;
-}
-
-?>
-  
-  <?php
-
-if ((int)$_SESSION['amountOfChild'] > 1)
-{
-	$myVar = '<a href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
-	echo $myVar;
-}
-
-?>
-  
-	<a href="parent_menu/p_history.php">Historia wpłat</a>
-  <a href="parent_menu/p_classAccount.php">Konto klasowe</a>
-  <a href="parent_menu/p_settings.php">Ustawienia</a>
-  <a href="logout.php"> Wyloguj się</a>
-</div>
-
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
+			</li>
+			</ul>
+	  </div>
+	</nav>  
 
 
 <div class="lewa_strona">
@@ -165,7 +164,9 @@ if ((int)$_SESSION['amountOfChild'] > 1)
   </form>
  </div>
 </div>
-
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
 </body>
 </html>

@@ -1,31 +1,14 @@
+* {
+	font-family: Tahoma ;
+}
+
+html, body {
+  height: 100%;
+}
+
+
 body {
-	font-family: Verdana;
-	background-color: #ccccff;
-}
-.lewa_strona {
-	float: left;
-	width: 85vh;
-}
 
-.menu {
-	float: right;
-    width: 200px;/*200px; /* Set a width if you like */
-}
-
-.menu a {
-    background-color: #9999ff; /* Grey background color */
-    color: black; /* Black text color */
-    display: block; /* Make the links appear below each other */
-    padding: 12px; /* Add some padding */
-    text-decoration: none; /* Remove underline from links */
-}
-
-.menu a:hover {
-    background-color: #9999cc; /* Dark grey background on mouse-over */
-}
-
-.menu a.active {
-    background-color: #6666cc; /* Add a green color to the "active/current" link */
-    color: white;
+  background-color: #f5f5f5;
 }
 

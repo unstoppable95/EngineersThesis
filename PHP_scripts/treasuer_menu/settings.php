@@ -60,36 +60,75 @@ if (!isset($_SESSION['loggedIn'])) {
 	  </div>
 </nav>    
 
-<div class="lewa_strona">
-    <h1> Ustawienia </h1>
-    <h2> Informacja o klasie </h2>
-    <h4> Lista uczniów </h4>
-    
-    <div id="students_list"></div>
-    
-    <h4> Dane skarbnika </h4>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-3 text-center">
+			  <h5> Lista uczniów:</h5>
+		</div>
+	</div>
+ </div>
+ 
+<div class="container-fluid"> 
+	<div id="students_list"></div>
+</div>
 
-    <div id="treasuer_data"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
+			  <h5>Dane skarbnika:</h5>
+		</div>
+	</div>
+</div>
+<div class="container"> 
+	<div id="treasuer_data"></div>
+</div>
 
-    <br>
-    <h2> Zmien hasło </h2>
-    
-    <form action="../treasurer_helper.php" method="post" id="form1">
-    <table>
-        <tr><td>Nowe hasło: </td><td><input type="password" name="newPassword" /></td></tr> 
-        <tr><td colspan="2"><input type="submit"  name="changePassword" value="Zatwierdz"/></td></tr>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
+			  <h5>Zmiana hasła:</h5>
+		</div>
+	</div>
+</div> 
 
-    <table>
+
+<div class="container">
+    <form action="../treasurer_helper.php" method="post" id="form1"  class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-6 offset-sm-3">
+				<label for="newPassword" class="text-center col-form-label">Nowe hasło:</label>
+				<input type="password" name="newPassword" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="changePassword" class="btn_add btn">Zatwierdź</button>
+			 </div>
+		</div>
     </form>
-    
-    <br>
-    <h2> Zmień kwotę miesięcznej składki klasowej </h2>
-    <form action="../treasurer_helper.php" method="post" id="form1">
-    <table>
-        <tr><td>Nowe miesięczna składka: </td><td><input type="monthly_fee" name="newMonthlyFee" /></td></tr> 
-        <tr><td colspan="2"><input type="submit"  name="changeMonthlyFee" value="Zatwierdz"/></td></tr>
+</div>
 
-    <table>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
+			  <h5> Zmień kwotę miesięcznej składki klasowej</h5>
+		</div>
+	</div>
+</div> 
+
+<div class="container">
+    <form action="../treasurer_helper.php" method="post" id="form1"  class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-6 offset-sm-3">
+				<label for="newMonthlyFee" class="text-center col-form-label">Nowe miesięczna składka:</label>
+				<input type="monthly_fee" name="newMonthlyFee" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="changeMonthlyFee" class="btn_add btn">Zatwierdź</button>
+			 </div>
+		</div>
     </form>
 </div>
 

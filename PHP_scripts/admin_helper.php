@@ -529,10 +529,10 @@ function fetch()
 	$result = $connect->query(sprintf("SELECT * from class"));
 	$output.= '  
       <div class="table-responsive">
-           <table class="table table-striped">
+           <table class="table table-striped table-bordered">
 		     <thead class="thead-dark">
                 <tr>
-					<th scope="col">Id</th>
+					<!--<th scope="col">Id</th>-->
                     <th scope="col">Nazwa</th>
 					<th scope="col">Usuń klasę</th>
 					<th scope="col">Szczegóły</th>
@@ -549,8 +549,7 @@ function fetch()
 			$output.= '
 			<tbody>			
                 <tr>  
-				
-                     <th scope="row">' . $row["id"] . '</th>  
+                  <!--   <th scope="row">' . $row["id"] . '</th>  -->
                      <td>' . $row["name"] . '</td>  
 					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Usuń klasę</button></td>  
 					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details btn btn-default">Szczegóły</button></td>
@@ -559,7 +558,7 @@ function fetch()
 					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Dodaj ucznia</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Dodaj</button></td>
 				</tr>  
-				<tbody>
+			<tbody>
            ';
 		}
 	}

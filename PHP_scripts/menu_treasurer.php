@@ -91,16 +91,18 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-
-
-<div class="lewa_strona">
-	<div class="naglowek" >
-		<div id="class_name"></div>
-		<h3> Zbiórki klasy</h3>
-		<div id="class_event"></div>
+<div class="container">
+	<div class="row">
+		<div id="class_name" class="col-md-12 text-center"></div>
 	</div>
-
+	<div class="row text-center">
+		<h5 class="col-md-12" >Lista zbiórek:</h5>
+	</div>
 </div>
+
+<div id="class_event" class="container-fluid "></div>
+
+
 
 <!--MODAL CHANGE PASSWORD -->
 <div id="userModal" class="modal fade" >

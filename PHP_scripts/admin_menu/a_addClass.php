@@ -59,44 +59,40 @@ if (isset($_SESSION['funAddClass'])) {
 	  </div>
 	</nav>    
 		
-	<h3 class="text-center">Dodaj klasę i skarbnika</h3>
-
+<h3 class="text-center">Dodaj klasę i skarbnika</h3>
 	
-		<div class="container">
-		<form action="../admin_helper.php" class="form-vertical justify-content-center" method="post">
-			<div class="form-group row">
-				<div class="col-md-10 offset-sm-1">
-					<label for="className" class="text-center col-form-label">Nazwa klasy:</label>
-					<input type="text" name="className" class="form-control"/>
-				</div>
+<div class="container">
+	<form action="../admin_helper.php" class="form-vertical justify-content-center" method="post">
+		<div class="form-group row">
+			<div class="col-md-10 offset-sm-1">
+				<label for="className" class="text-center col-form-label">Nazwa klasy:</label>
+				<input type="text" name="className" class="form-control"/>
 			</div>
-			<div class="row text-center">
-				<h5 class="col-sm-10 offset-sm-1">Dane skarbnika klasy</h5>
+		</div>
+		<div class="row text-center">
+			<h5 class="col-sm-10 offset-sm-1">Dane skarbnika klasy</h5>
+		</div>
+		<div class="form-group row">
+			<div class="col-md-10 offset-sm-1">
+				<label for="name" class="text-center col-form-label">Imię:</label>
+				<input type="text" name="name" class="form-control"/>
 			</div>
-			<div class="form-group row">
-				
-				<div class="col-md-10 offset-sm-1">
-					<label for="name" class="text-center col-form-label">Imię:</label>
-					<input type="text" name="name" class="form-control"/>
-				</div>
-				
-				<div class="col-md-10 offset-sm-1">
-					<label for="name" class="text-center col-form-label">Nazwisko:</label>
-					<input type="text" name="surname" class="form-control"/>
-				</div>
-					
-				<div class="col-md-10 offset-sm-1">
-					<label for="email" class="text-center col-form-label">Email:</label>
-					<input type="text" name="email" class="form-control"/>
-				</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="name" class="text-center col-form-label">Nazwisko:</label>
+				<input type="text" name="surname" class="form-control"/>
 			</div>
-			<div class="row text-center">
-			 <div class="offset-sm-1 col-sm-10">
+			<div class="col-md-10 offset-sm-1">
+				<label for="email" class="text-center col-form-label">Email:</label>
+				<input type="text" name="email" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
 				<button type="submit" name="addClassTreasurer" class="btn">Zatwierdź</button>
 			 </div>
-			</div>
-		</form>
-		
+		</div>
+	</form>
+</div>
 	</div>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

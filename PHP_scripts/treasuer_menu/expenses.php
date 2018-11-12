@@ -59,15 +59,28 @@ if (!isset($_SESSION['loggedIn'])) {
 	  </div>
 </nav>    
 
-<div class="lewa_strona">
-    <h1> Wydatki klasowe </h1>
-    <h2> Lista wydatków </h2>
-        <div id="expenses_list"></div>
-        <br>
-        <button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent">Dodaj wydatek</button>
-		<h2> Lista stanów wpłat uczniów</h2>
-		<div id="students_balances_list"></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			  <h5> Lista wydatków </h5>
+		</div>
+	</div>
+ </div>
+ 
+<div class="container"> 
+	<div id="expenses_list"></div>
+	
 </div>
+        
+<div class="row">
+		<div class="col-md-12 text-center">
+			 	<h5> Lista stanów wpłat uczniów</h5>
+		</div>
+	</div>
+</div>
+	
+<div id="students_balances_list" class="container "></div>
+
 
 
 <!--MODAL ADD EXPENSE -->

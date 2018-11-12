@@ -301,16 +301,18 @@ function students_balances_list()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "')"));
 	$output.= '  
-      <div>  
-           <table>  
+ <div class="table-responsive ">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark">
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="25%">Imię</th> 
-					 <th width="25%">Nazwisko</th>
-					 <th width="20%">Stan konta klasowego</th>
-					 <th width="20%">Szczegóły</th>
+                     <!--<th scope="col">Id</th>-->  
+                     <th scope="col">Imię</th> 
+					 <th scope="col">Nazwisko</th>
+					 <th scope="col">Stan konta klasowego</th>
+					 <th scope="col">Szczegóły</th>
 					 
-                </tr>';
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
@@ -319,13 +321,15 @@ function students_balances_list()
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
 			
 			$output.= '  
+			<tbody>		
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+                  <!--   <td>' . $row["id"] . '</td> --> 
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["surname"] . '</td>
 					 <td>' . $class_account_balance["x"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance">Szczegóły</button></td>
-				</tr>  
+					 <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance  btn btn-default">Szczegóły</button></td>
+				</tr> 
+			<tbody>						
            ';
 		}
 	}
@@ -451,24 +455,27 @@ function fetch_expenses_list()
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
 	$result = $connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . "))"));
 	$output.= '  
-      <div>  
-           <table>  
+		<div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark">
                 <tr>  
-                     <th width="33%">Nazwa</th>  
-                     <th width="33%">Cena</th> 
-					 <th width="34%">Data</th>
+                     <th  scope="col">Nazwa</th>  
+                     <th  scope="col">Cena</th> 
+					 <th  scope="col">Data</th>
                 </tr>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
 			$output.= '  
+			<tbody>	
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+                    <!-- <td>' . $row["id"] . '</td>-->  
                      <td >' . $row["name"] . '</td>  
-					 <td >' . $row["price"] . '</td>
+					 <td >' . $row["price"] . ' zł</td>
 					 <td >' . $row["date"] . '</td>
-				</tr>  
+				</tr> 
+			<tbody>				
            ';
 		}
 	}
@@ -488,12 +495,15 @@ function fetch_expenses_list()
 	$x = mysqli_fetch_array($curr_exp);
 	$currentExpenses = $x["s"];
 	$availableMoney = $exceptedBalance - $currentExpenses;
-	$output.= '</table>  
-	 <h2> Stan konta klasowego </h2>
+	$output.= '</table>
+	<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent btn btn-default">Dodaj wydatek</button>
+	</div> 
+	<div class="container">  
+	<h5 class="text-center"> Stan konta klasowego </h5>
 
-	 Ilość pieniędzy zebranyc na koncie klasowym: ' . $balance . '
-	 <br /> Przewidywana cała kwota budżetu: ' . $exceptedBalance . '
-	 <br /> Ilość pozostałego budżetu: ' . $availableMoney . '
+	 <p>Ilość pieniędzy zebranyc na koncie klasowym: ' . $balance . ' zł</p>
+	 <p> Przewidywana cała kwota budżetu: ' . $exceptedBalance . ' zł</p>
+	 <p> Ilość pozostałego budżetu: ' . $availableMoney . ' zł</p>
 		  </div>';
 	echo $output;
 }
@@ -745,7 +755,7 @@ function fetch_class_name()
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	$result = $connect->query(sprintf("SELECT name FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
 	$res = mysqli_fetch_array($result);
-	$output = "<h1> Konto klasy " . $res['name'] . "</h1>";
+	$output = "<h3>Konto klasy " . $res['name'] ."</h3>";
 	echo $output;
 }
 
@@ -758,32 +768,35 @@ function fetch_event_list()
 	$output = '';
 	$result = $connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "')"));
 	$output.= '  
-      <div>  
-           <table>  
+		<div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="20%">Nazwa</th> 
-					 <th width="15%">Cena</th>
-					 <th width="15%">Data</th>
-					 <th width="15%">Szczegóły</th>
-					 <th width="15%">Edycja</th>
-					 <th width="15%">Usuwanie</th>
-					 
-                </tr>';
+                   <!--  <th scope="col">Id</th>-->  
+                     <th scope="col">Nazwa</th> 
+					 <th scope="col">Cena</th>
+					 <th scope="col">Data</th>
+					 <th scope="col">Szczegóły</th>
+					 <th scope="col">Edycja</th>
+					 <th scope="col">Usuwanie</th> 
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
-			$output.= '  
+			$output.= ' 
+			<tbody>				
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+                    <!-- <td>' . $row["id"] . '</td>  -->
                      <td>' . $row["name"] . '</td>  
-					 <td>' . $row["price"] . '</td>
+					 <td>' . $row["price"] . ' zł</td>
 					 <td>' . $row["date"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent">Szczegóły</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent">Edytuj</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent">Usuń zbiórkę</button></td>
-				</tr>  
+					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default">Szczegóły</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent btn btn-default">Edytuj</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Usuń zbiórkę</button></td>
+				</tr>
+			<tbody>				
            ';
 		}
 	}
@@ -811,21 +824,23 @@ function fetch_students_list()
 	$_SESSION['userID'] = $id["id"];
 	$result = $connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")"));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="5%">Imię</th> 
-					 <th width="5%">Nazwisko</th>
-					 <th width="10%">Data urodzenia</th>
-					 <th width="10%">Imię rodzica</th>
-					 <th width="10%">Nazwisko rodzica</th>
-					 <th width="10%">Mail rodzica</th>
-					 <th width="10%">Stan konta dziecka</th>
-					 <th width="10%">Usuń ucznia</th>
-					 <th width="10%">Zmień maila rodzica</th>
-					 <th width="10%">Wpłać</th>
-                </tr>';
+                  <!--   <th scope="col">Id</th>  -->
+                     <th scope="col">Imię</th> 
+					 <th scope="col">Nazwisko</th>
+					 <th scope="col">Data urodzenia</th>
+					 <th scope="col">Imię rodzica</th>
+					 <th scope="col">Nazwisko rodzica</th>
+					 <th scope="col">Mail rodzica</th>
+					 <th scope="col">Stan konta dziecka</th>
+					 <th scope="col">Zmień maila rodzica</th>
+					 <th scope="col">Wpłać</th>
+					 <th scope="col">Usuń ucznia</th>
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
@@ -836,8 +851,9 @@ function fetch_students_list()
 			$accountBalanceTmp = $connect->query(sprintf("SELECT * FROM account WHERE child_id = " . $row["id"]));
 			$accountBalance = mysqli_fetch_array($accountBalanceTmp);
 			$output.= '  
+			<tbody>	
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+                  <!--   <td>' . $row["id"] . '</td>  -->
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["surname"] . '</td>
 					 <td>' . $row["date_of_birth"] . '</td>
@@ -845,10 +861,11 @@ function fetch_students_list()
 					 <td>' . $parent["surname"] . '</td>
 					 <td>' . $parent["email"] . '</td>
 					 <td>' . $accountBalance["balance"] . '</td>
-					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent">Usuń ucznia</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange">Zmień maila</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment">Wpłać</button></td>
-					 </tr>  
+					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange btn btn-default">Zmień maila</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment btn btn-default">Wpłać</button></td>
+					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent btn btn-default">Usuń ucznia</button></td>
+				</tr>  
+			<tbody>
            ';
 		}
 	}
@@ -875,11 +892,16 @@ function fetch_treasurer_data()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM parent WHERE id =" . $_SESSION['userID']));
 	$res = mysqli_fetch_array($result);
-	$output.= '<table>
+	$output.= '
+	 <div class="table-responsive">
+		<table class="table table-bordered">
+		<tbody>
 		<tr><td>Imię: </td><td>' . $res["name"] . '</td></tr> 
 		<tr><td>Nazwisko: </td><td>' . $res["surname"] . '</td></tr> 
 		<tr><td>Email: </td><td>' . $res["email"] . '</td></tr> 
+		<tbody>
 	<table>
+	</div>
 		   ';
 	echo $output;
 }

@@ -60,15 +60,32 @@ if (!isset($_SESSION['loggedIn']))
 			</ul>
 	  </div>
 </nav>    
-<div class="lewa_strona">
-	<h1> Dodaj pojedyńczą zbiórkę </h1>
-	<form action="../treasurer_helper.php" method="post">
-	<table>
-		<tr><td>Nazwa: </td><td><input type="text" name="eventName"/></td></tr> 
-		<tr><td>Cena: </td><td><input type="text" name="eventPrice" /></td></tr> 
-		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="eventDate" /> </td></tr> 
-		<tr><td colspan="2"><input type="submit" name="addEvent" class="btn_add" value="Zatwierdz" /></td></tr>
-	<table>
+<div class="container">
+	<div class="row text-center">
+		<h5 class="col-md-12">Dodaj jednorazową zbiórkę</h5>
+	</div>
+</div>
+<div class="container">
+	<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-10 offset-sm-1">
+				<label for="eventName" class="text-center col-form-label">Nazwa zbiórki:</label>
+				<input type="text" name="eventName" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="eventPrice" class="text-center col-form-label">Cena na ucznia:</label>
+				<input type="text" name="eventPrice" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="eventDate" class="text-center col-form-label">Data wydarzenia: </label>
+				<input type="date" name="eventDate" class="form-control" />
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="addEvent" class="btn_add btn">Zatwierdź</button>
+			 </div>
+		</div>
 	</form>
 </div>
 

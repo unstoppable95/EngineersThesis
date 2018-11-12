@@ -60,25 +60,58 @@ if (!isset($_SESSION['loggedIn']))
 	  </div>
 </nav>    
 
-<div class="lewa_strona">
-	<h1> Dodaj ucznia do klasy</h1> 
-	<h3> Dane ucznia </h3>
-	<form action="../treasurer_helper.php" method="post">
-	<table>
-		<tr><td>Imię: </td><td><input type="text" name="childName"/></td></tr> 
-		<tr><td>Nazwisko: </td><td><input type="text" name="childSurname" /></td></tr> 
-		<tr><td>Data urodzenia: </td><td><input type="date" name="childBirthdate" /> </td></tr> 
-		<tr><td> </td><td> </td></tr> 
-		<tr><td><h3> Dane rodzica </h3></td></tr> 
-		<tr><td>Imię: </td><td><input type="text" name="parentName" /></td></tr>  
-		<tr><td>Nazwisko: </td><td><input type="text" name="parentSurname" /></td></tr> 
-		<tr><td>Mail: </td><td><input type="text" name="parentEmail" /></td></tr> 
-		<tr><td colspan="2"><input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/></td></tr>
-	<table>
-	</form>
-
-
+<div class="container">
+	<div class="row text-center">
+		<h5 class="col-md-12" >Dane nowego ucznia:</h5>
+	</div>
 </div>
+
+
+<div class="container">
+	<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-10 offset-sm-1">
+				<label for="childName" class="text-center col-form-label">Imię:</label>
+				<input type="text" name="childName" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="childSurname" class="text-center col-form-label">Nazwisko:</label>
+				<input type="text" name="childSurname" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="childBirthdate" class="text-center col-form-label">Data urodzenia: </label>
+				<input type="date" name="childBirthdate" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<h5 class="col-sm-10 offset-sm-1">Dane rodzica:</h5>
+		</div>
+		
+		<div class="form-group row">
+			<div class="col-md-10 offset-sm-1">
+				<label for="parentName" class="text-center col-form-label">Imię:</label>
+				<input type="text" name="parentName" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="parentSurname" class="text-center col-form-label">Nazwisko:</label>
+				<input type="text" name="parentSurname" class="form-control"/>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+				<label for="parentEmail" class="text-center col-form-label">Email:</label>
+				<input type="text" name="parentEmail" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="addChildParent" class="btn_add btn" onclick="return validate(this.form);">Zatwierdź</button>
+			 </div>
+		</div>
+		<!--<input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/>-->
+
+	</form>
+</div>
+
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

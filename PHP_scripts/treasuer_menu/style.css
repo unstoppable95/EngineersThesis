@@ -11,3 +11,9 @@ body {
   background-color: #f5f5f5;
 }
 
+.table td{
+   text-align: center;   
+}
+.table th{
+   text-align: center;   
+}

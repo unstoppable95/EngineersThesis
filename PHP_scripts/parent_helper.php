@@ -82,11 +82,12 @@ function fetch_paid_months()
 	$x = $monthly_f->fetch_assoc();
 	$monthly_fee = $x["m"];
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="50%">Miesiąc</th> 
-					 <th width="50%">Wpłacona kwota</th>
+                     <th scope="col"">Miesiąc</th> 
+					 <th scope="col">Wpłacona kwota</th>
                 </tr>';
 	if ($amount_of_paid_money > 0)
 	{
@@ -125,11 +126,12 @@ function fetch_paid_months()
 			}
 
 			$output.= '  
+			<tbody>
 						<tr>  
 							<td bgcolor=' . $fild_color . ' >' . $months[$i] . '</td> 
-							<td bgcolor=' . $fild_color . '  >' . $topay . '</td> 
+							<td bgcolor=' . $fild_color . '  >' . $topay . ' zł</td> 
 						</tr>  
-				   ';
+			<tbody> ';
 		}
 	}
 	else
@@ -153,23 +155,27 @@ function fetch_class_account_payment_history()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild'] . " ORDER BY date"));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="33%">Kwota</th> 
-					 <th width="33%">Data</th>
-                     <th width="34%">Typ wpłaty</th>
-                </tr>';
+                     <th scope="col">Kwota</th> 
+					 <th scope="col">Data</th>
+                     <th scope="col">Sposób płatności</th>
+                </tr>
+			<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
-			$output.= '  
+			$output.= ' 
+			<tbody>			
                 <tr>  
-                    <td>' . $row["amount"] . '</td> 
+                    <td>' . $row["amount"] . ' zł</td> 
 					<td>' . $row["date"] . '</td>  					 
                     <td>' . $row["type"] . '</td>
                 </tr>  
+			<tbody>	
            ';
 		}
 	}
@@ -194,23 +200,27 @@ function fetch_class_expenses_list()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")) ORDER BY date"));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark">  
                 <tr>  
-                     <th width="33%">Nazwa</th> 
-					 <th width="33%">Cena</th>
-                     <th width="34%">Data</th>
-                </tr>';
+                     <th scope="col">Nazwa</th> 
+					 <th scope="col">Cena</th>
+                     <th scope="col">Data</th>
+                </tr>
+			<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
 			$output.= '  
+				<tbody>	
 						<tr>  
 							 <td>' . $row["name"] . '</td> 
-							<td>' . $row["price"] . '</td>  					 
+							<td>' . $row["price"] . ' zł</td>  					 
 							 <td>' . $row["date"] . '</td>
 						</tr>  
+				<tbody>	
 				   ';
 		}
 	}
@@ -241,12 +251,8 @@ function fetch_class_account_data()
 	$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_account WHERE id =" . $class_account_id));
 	$res = mysqli_fetch_array($curr_class_balance);
 	$current_class_balance = $res["balance"];
-	$output = '<form>
-		<table>
-			<tr><td>Ilość pieniędzy wpłaconych na konto klasowe dziecka:  </td><td>' . $amount_of_paid_money . '</td></tr> 
-			<tr><td>Suma pieniędzy na koncie klasowym całej klasy:  </td><td>' . $current_class_balance . '</td></tr> 
-		</table>
-	</form>';
+	$output = '<p  class="text-center">Ilość pieniędzy wpłaconych na konto klasowe dziecka: ' . $amount_of_paid_money . ' zł</p>
+			<p  class="text-center">Suma pieniędzy na koncie klasowym całej klasy: ' . $current_class_balance . ' zł</p>';
 	echo $output;
 }
 
@@ -264,7 +270,7 @@ function fetch_child_name()
 			$row = mysqli_fetch_array($result);
 			$class = $connect->query(sprintf("SELECT * FROM class WHERE id=" . $row["class_id"]));
 			$classrow = mysqli_fetch_array($class);
-			$output = '<h3> Bieżące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h3>';
+			$output = '<h5> Bieżące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h5>';
 		}
 	}
 	else
@@ -284,23 +290,27 @@ function fetch_payment_history()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM payment WHERE account_id =(SELECT id FROM account WHERE child_id = " . $_SESSION['choosenChild'] . ") ORDER BY date"));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="33%">Kwota</th> 
-					 <th width="33%">Data</th>
-                     <th width="34%">Typ wpłaty</th>
-                </tr>';
+                     <th scope="col">Kwota</th> 
+					 <th scope="col">Data</th>
+                     <th scope="col">Sposób płatności</th>
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
 			$output.= '  
+			<tbody>
                 <tr>  
-                     <td>' . $row["amount"] . '</td> 
+                     <td>' . $row["amount"] . ' zł</td> 
 					<td>' . $row["date"] . '</td>  					 
                      <td>' . $row["type"] . '</td>
                 </tr>  
+			<tbody>
            ';
 		}
 	}
@@ -357,16 +367,18 @@ function fetch()
 	{
 		$result = $connect->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") order by sortx desc"));
 		$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="35%">Nazwa</th> 
-					 <th width="15%">Wpłacono</th>
-                     <th width="15%">Cena</th>  
-                     <th width="20%">Data</th>  
-					 <th width="10%">Wypisz dziecko</th>
-                </tr>';
+                  <!--   <th width="5%">Id</th>  -->
+                     <th scope="col">Nazwa</th> 
+					 <th scope="col">Wpłacono</th>
+                     <th scope="col">Cena</th>  
+                     <th scope="col">Data</th>  
+					 <th scope="col">Wypisz dziecko</th>
+                </tr>
+			<thead>';
 		if (mysqli_num_rows($result) > 0)
 		{
 			while ($row = mysqli_fetch_array($result))
@@ -383,15 +395,17 @@ function fetch()
 				$payedTmp = $connect->query(sprintf("SELECT * FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . " AND event_id=" . $row["id"]));
 				$res = mysqli_fetch_array($payedTmp);
 				$paid = $res["amount_paid"];
-				$output.= '  
+				$output.= ' 
+			<tbody>					
                 <tr>  
-                    <td' . $color . '>' . $row["id"] . '</td>  
+                <!--    <td' . $color . '>' . $row["id"] . '</td>  -->
                     <td ' . $color . '>' . $row["name"] . '</td> 
 					<td ' . $color . '>' . $paid . '</td>  					 
-                    <td ' . $color . '>' . $row["price"] . '</td>  
+                    <td ' . $color . '>' . $row["price"] . ' zł</td>  
                     <td ' . $color . '>' . $row["date"] . '</td>
-					<td ' . $color . '><button type="button"data-id3="' . $row["id"] . '" class="btn_delete">Wypisz</button></td>
+					<td ' . $color . '><button type="button"data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Wypisz</button></td>
                 </tr>  
+			<tbody>
            ';
 			}
 		}
@@ -451,27 +465,31 @@ function fetch_child_list()
 	$_SESSION['userID'] = $res["id"];
 	$result = $connect->query(sprintf("SELECT * from child WHERE parent_id = " . $_SESSION['userID']));
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+		<table class="table table-striped table-bordered">
+		    <thead class="thead-dark"> 
                 <tr>  
-                     <th width="5%">Id</th>  
-                     <th width="20%">Imię</th> 
-					 <th width="30%">Nazwisko</th>
-					 <th width="30%">Data urodzenia</th>
-					 <th width="15%">Wybierz</th>
-                </tr>';
+                   <!--  <th width="5%">Id</th>  -->
+                     <th scope="col">Imię</th> 
+					 <th scope="col">Nazwisko</th>
+					 <th scope="col">Data urodzenia</th>
+					 <th scope="col">Wybierz</th>
+                </tr>
+			<thead>';
 	if ($result && mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
 			$output.= '  
+			<tbody>
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
+                    <!-- <td>' . $row["id"] . '</td>  -->
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["surname"] . '</td>
 					 <td>' . $row["date_of_birth"] . '</td>
-					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_choose">Wybierz</button></td>  
-				</tr>  
+					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_choose btn btn-default">Wybierz</button></td>  
+				</tr>
+			<tbody>
            ';
 		}
 	}
@@ -496,10 +514,15 @@ function fetch_parent_data()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT * FROM parent WHERE id =" . $_SESSION['userID']));
 	$res = mysqli_fetch_array($result);
-	$output.= '<table>
+	$output.= '	 <div class="table-responsive">
+		<table class="table table-bordered">
+		<tbody>
 		<tr><td>Imię: </td><td>' . $res["name"] . '</td></tr> 
 		<tr><td>Nazwisko: </td><td>' . $res["surname"] . '</td></tr> 
 		<tr><td>Email: </td><td>' . $res["email"] . '</td></tr> 
+	<tbody>
+	<table>
+	</div>
 	<table>
 		   ';
 	echo $output;
@@ -524,7 +547,7 @@ function fetch_balance()
 		$output = '';
 		$result = $connect->query(sprintf("SELECT balance FROM account WHERE child_id =" . $_SESSION['choosenChild']));
 		$res = mysqli_fetch_array($result);
-		$output.= $res["balance"];
+		$output.='<p class="text-center">Stan konta dziecka: '. $res["balance"] .'</p>';
 	}
 	else
 	{

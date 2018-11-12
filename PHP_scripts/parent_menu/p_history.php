@@ -75,15 +75,24 @@ if (!isset($_SESSION['loggedIn']))
 			</ul>
 	  </div>
 	</nav>  
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Wpłaty na konto dziecka:</h5>
+	</div>
+</div>
+<div class="container mt-2">
+	<div id="payment_history"></div>
+</div>
 
-<div class="lewa_strona">
-	<h1> Historia wpłat </h1>
-	<h3> Wpłaty na konto dziecka </h3>
-		<div id="payment_history"></div>
-		
-			<h3> Wpłaty na konto klasowe </h3>
-		<div id="class_account_payment_history"></div>
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Wpłaty na konto klasowe:</h5>
+	</div>
+</div>		
 
+<div class="container mt-2">
+	<div id="class_account_payment_history"></div>
+</div>
 
 </div>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>

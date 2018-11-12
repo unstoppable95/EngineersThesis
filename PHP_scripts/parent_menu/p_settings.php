@@ -71,27 +71,38 @@ if (!isset($_SESSION['loggedIn']))
 			</ul>
 	  </div>
 	</nav> 
-<div class="lewa_strona">
-	<h1> Ustawienia </h1>
-	<h2> Informacja </h2>
-	
-	<h4> Dane rodzica </h4>
-	
-	<form name="parent_data">
-	
-	<div id="parent_data"></div>
-	</form>
-	<br />
-	<h2> Zmien hasło </h2>
-	
-	<form action="../parent_helper.php" method="post">
-	<table>
-		<tr><td>Podaj nowe hasło: </td><td><input type="password" name="newPassword"/></td></tr> 
-	
-		<tr><td colspan="2"><input type="submit" name="changePassword" class="btn_commit" value="Zatwierdz"/></td></tr>
-	<table>
-	</form>
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Twoje dane:</h5>
+	</div>
 </div>
+
+<div class="container">
+	<div id="parent_data"></div>
+</div>
+
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Zmiana hasła</h5>
+	</div>
+</div>
+
+<div class="container">
+    <form action="../parent_helper.php" method="post" class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-6 offset-sm-3">
+				<label for="newPassword" class="text-center col-form-label">Nowe hasło:</label>
+				<input type="password" name="newPassword" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="changePassword" class="btn_commit btn">Zatwierdź</button>
+			 </div>
+		</div>
+    </form>
+</div>
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

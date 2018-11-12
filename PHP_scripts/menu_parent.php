@@ -65,8 +65,6 @@ if ($_SESSION['amountOfChild'] == 1)
 
 ?>  
 </head>
-
-
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,22 +114,25 @@ if ($_SESSION['amountOfChild'] == 1)
 	  </div>
 	</nav>  
 
-
-<div class="lewa_strona">
-	<div class="naglowek" >
-		<h1> Konto rodzica </h1>
-		<div id="child_name"></div>
-		<div id="live_data"></div>
-		
-		<h3> Stan konta </h3>
-		
-		<form>
-		<table>
-			<tr><td>Stan konta dziecka:  </td><td><div id="accont_balance"></div></td></tr> 
-		</table>
-		</form>	
+<div class="container">
+	<div class="row">
+		<div id="child_name" class="mt-2 col-md-12 text-center"></div>
 	</div>
 </div>
+	
+<div id="live_data" class="container-fluid"></div>
+
+<!--<div class="container">
+	<div class="row">
+		<div class="col-md-12 text-center">
+			  <h5>Stan konta</h5>
+		</div>
+	</div>
+ </div>		-->
+		
+<div id="accont_balance" class="container"></div> 
+
+
 
 <!--MODAL CHANGE PASSWORD -->
 <div id="userModal" class="modal fade" >

@@ -74,19 +74,38 @@ if (!isset($_SESSION['loggedIn']))
 	  </div>
 	</nav>  
 
-<div class="lewa_strona">
-	<h1> Konto klasowe </h1>
-	<h3> Stan konta klasowego dziecka </h3>
-	<div id="class_account_data"></div>
-
-	<h3> Wydatki z konta klasowego </h3>
-		<div id="class_expenses_list"></div>
-	<h3> Opłacone miesiące pieniędzy klasowych </h3>
-		<div id="paid_months"></div>
-	
-
-
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Stan konta klasowego dziecka:</h5>
+	</div>
 </div>
+
+<div class="container mt-2">
+<div id="class_account_data" class="container"></div>
+</div>
+
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Wydatki z konta klasowego:</h5>
+	</div>
+</div>
+
+<div class="container mt-2">
+<div id="class_expenses_list"></div>
+</div>
+
+<div class="container">
+	<div class="row text-center">
+		<h5 class="mt-2 col-md-12">Opłacone miesiące pieniędzy klasowych:</h5>
+	</div>
+</div>
+
+<div class="container mt-2">
+<div id="paid_months"></div>
+</div>
+
+
+
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

@@ -68,8 +68,18 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
 				<div class="form-group">
 				<label for="password">Hasło</label>
 				<input type="password" name="password" class="form-control" id="password" placeholder="Hasło"/>
+				<div class="col-md-8 offset-sm-2 text-center text-danger" >
+				<?php
+					if (isset($_SESSION['error']))
+					{
+						echo $_SESSION['error'];
+					}
+				?>
+				</div>
 				</div>
 			</div>
+
+			
 		</div>
 		<div class="row" style="padding-top: 1rem">
             <div class="col-md-3"></div>
@@ -79,12 +89,9 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
 			</div>
 		</div>
 	</div>
-		<?php
-			if (isset($_SESSION['error']))
-			{
-				echo $_SESSION['error'];
-			}
-		?>
+	<div>
+		
+		</div>
 	<!--<p class="help-block">
 		<a class="btn btn-link" data-toggle="modal" data-target="#mailReminder"><small>Zapomniałeś hasła?</small></a>
 	</p>-->

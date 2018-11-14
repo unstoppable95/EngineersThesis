@@ -88,7 +88,8 @@ function fetch_paid_months()
                 <tr>  
                      <th scope="col"">Miesiąc</th> 
 					 <th scope="col">Wpłacona kwota</th>
-                </tr>';
+                </tr>
+				<thead>';
 	if ($amount_of_paid_money > 0)
 	{
 		$months = array(

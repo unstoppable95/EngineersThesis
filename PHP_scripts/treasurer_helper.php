@@ -221,12 +221,14 @@ function student_class_acc_payment_details()
 	$monthly_fee = $x["m"];
 	$output.= '
 <h3> Opłacone miesiące </h3>	
-      <div>  
-           <table>  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
                 <tr>  
                      <th width="50%">Miesiąc</th> 
 					 <th width="50%">Wpłacona kwota</th>
-                </tr>';
+                </tr>
+			<thead>';
 	if ($amount_of_paid_money > 0)
 	{
 		$months = array(
@@ -263,12 +265,12 @@ function student_class_acc_payment_details()
 				}
 			}
 
-			$output.= '  
+			$output.= ' <tbody> 
 						<tr>  
 							<td bgcolor=' . $fild_color . ' >' . $months[$i] . '</td> 
 							<td bgcolor=' . $fild_color . '  >' . $topay . '</td> 
 						</tr>  
-				   ';
+				  <tbody> ';
 		}
 	}
 	else
@@ -616,17 +618,19 @@ function fetch_event_details()
 	$output.= "<br /><br />";
 	$result = $connect->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_POST["id"] . "' order by idx asc"));
 	$output.= ' 
-		<div>  
-           <table>  
-                <tr> 
-					<th width="05%">Id</th>
-                    <th width="30%">Imie</th>  
-                    <th width="30%">Nazwisko</th> 
-					<th width="15%">Kwota wpłacona</th>
-					<th width="15%">Koszt</th>
-					<th width="10%">Opłać</th>
+      <div class="table-responsive">
+		<table class="table table-striped table-bordered">
+		    <thead class="thead-dark"> 
+                <tr>  
+					<th scope="col">Id</th>
+                    <th scope="col">Imie</th>  
+                    <th scope="col">Nazwisko</th> 
+					<th scope="col">Kwota wpłacona</th>
+					<th scope="col">Koszt</th>
+					<th scope="col">Opłać</th>
 					 
-                </tr>';
+                </tr>
+			<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
@@ -643,15 +647,17 @@ function fetch_event_details()
 			}
 
 			$output.= '  
+			<tbody>
                 <tr>  
 					<td ' . $color . '>' . $row["childID"] . '</td>
                      <td ' . $color . '>' . $row["name"] . '</td>  
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_POST["id"] . '" class="btn_payForEvent">Oplac</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_POST["id"] . '" class="btn_payForEvent btn btn-default">Oplac</button></td>
 
 				</tr>  
+			<tbody>
            ';
 		}
 	}

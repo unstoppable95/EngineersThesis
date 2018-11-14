@@ -525,8 +525,9 @@ function fetch()
 	require_once "connection.php";
 
 	$connect = new mysqli($servername, $username, $password, $dbName);
+	
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * from class"));
+	$result = $connect->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -534,12 +535,19 @@ function fetch()
                 <tr>
 					<!--<th scope="col">Id</th>-->
                     <th scope="col">Nazwa</th>
-					<th scope="col">Usuń klasę</th>
-					<th scope="col">Szczegóły</th>
-					<th scope="col">Zmień email</th>
+					<th scope="col">Lista uczniów</th>
+					
+					<th scope="col" colspan="2">Skarbnik</th>
+					<th scope="col" colspan="2">Dodaj</th>
+					
+					<!--<th scope="col">Zmień email</th>
 					<th scope="col">Zmień skarbnika</th>
+					
 					<th scope="col">Dodaj ucznia do klasy</th>
-					<th scope="col">Dodaj uczniów z pliku</th>
+					<th scope="col">Dodaj uczniów z pliku</th>-->
+					
+					<th scope="col">Usuń klasę</th>
+
                 </tr>
 				<thead>';
 	if (mysqli_num_rows($result) > 0)
@@ -550,13 +558,14 @@ function fetch()
 			<tbody>			
                 <tr>  
                   <!--   <th scope="row">' . $row["id"] . '</th>  -->
-                     <td>' . $row["name"] . '</td>  
-					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Usuń klasę</button></td>  
-					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details btn btn-default">Szczegóły</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień email</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień skarbnika</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Dodaj ucznia</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Dodaj</button></td>
+                     <td>' . $row["class_name"] . '</td>  
+					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details btn btn-default">Wyświetl</button></td>
+					<td>' . $row["parent_name"] .' '. $row["surname"].'</td>
+					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień email</button>
+					<button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień skarbnika</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Ucznia</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Z pliku</button></td>
+					<td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Usuń</button></td> 
 				</tr>  
 			<tbody>
            ';
@@ -585,6 +594,21 @@ function deleteFromDB()
 	}
 }
 
+function showTreasuerData(){
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$result = $connect->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
+	$res = mysqli_fetch_array($result);
+	$output.= '
+		   Imię: ' . $res["name"] . '
+		   Nazwisko: ' . $res["surname"] . ' 
+		   ';
+	echo $output;
+}
+
+
 function showDetails()
 {
 	require_once "connection.php";
@@ -593,35 +617,33 @@ function showDetails()
 	$output = '';
 	$result = $connect->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
 	$className = $connect->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
-	$studentsList = $connect->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "'"));
+	$studentsList = $connect->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
 	$res = mysqli_fetch_array($result);
 	$output.= '<h2>Szczegóły klasy: ' . mysqli_fetch_array($className) ["name"] . '</h2>
-		   <h3 class="text-center">Dane skarbnika</h3>
-		   Imię: ' . $res["name"] . ' <br />
-		   Nazwisko: ' . $res["surname"] . ' <br />
-		   Email: ' . $res["email"] . ' <br />
-		   <h3 class="text-center">Lista uczniów</h3>
+
 		   ';
 	$output.= '  
-      <div>  
-           <table>  
+      <div class="table-responsive">
+		<table class="table table-striped table-bordered">
+		    <thead class="thead-dark"> 
                 <tr>  
-                     <th width="10%">Id</th>  
-                     <th width="40%">Imię</th> 
-					 <th width="40%">Nazwisko</th>
-					 <th width="10%">Data urodzenia</th>
-                </tr>';
+                     <th scope="col">Imię</th> 
+					 <th scope="col">Nazwisko</th>
+					 <th scope="col">Data urodzenia</th>
+                </tr>
+			</thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($studentsList))
 		{
 			$output.= '  
+			<tbody>
                 <tr>  
-                     <td>' . $row["id"] . '</td>  
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["surname"] . '</td>
 					 <td>' . $row["date_of_birth"] . '</td>
                 </tr>  
+			<tbody>
            ';
 		}
 	}

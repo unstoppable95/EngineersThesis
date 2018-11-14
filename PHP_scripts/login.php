@@ -82,7 +82,7 @@ else
 		}
 		else
 		{
-			$_SESSION['error'] = '<span style="color:red">Nieprawidłowy login lub hasło!</span>';
+			$_SESSION['error'] = 'Nieprawidłowy login lub hasło!';
 			header('Location: index.php');
 		}
 	}

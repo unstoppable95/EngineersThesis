@@ -74,14 +74,14 @@ require_once "admin_helper.php";
 		<form method="post" id="user_form" enctype="multipart/form-data">
 			<div class="modal-content">
 			<div class="modal-header">
-				<h3 class="modal-title">Listowanie</h3>
+				<h3 class="modal-title">Szczegóły</h3>
 			</div>
 			<div class="modal-body">
 			<div id="parent_data"></div>
 			</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
 				</div>
 			</div>
 		</form>
@@ -303,5 +303,6 @@ $(document).on('click','.btn_addStudentsCSV',function(){
 	  
 	  
  }); 
+ 
   
 </script>

@@ -72,15 +72,8 @@ if (!isset($_SESSION['loggedIn'])) {
 	
 </div>
         
-<div class="row">
-		<div class="col-md-12 text-center">
-			 	<h5> Lista stanów wpłat uczniów</h5>
-		</div>
-	</div>
-</div>
-	
-<div id="students_balances_list" class="container "></div>
 
+	
 
 
 <!--MODAL ADD EXPENSE -->

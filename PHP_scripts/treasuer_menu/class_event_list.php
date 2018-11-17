@@ -91,26 +91,20 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-<div class="container-fluid">
+<div class="container">
 	<div class="row">
 		<div id="class_name" class="col-md-12 text-center"></div>
 	</div>
-		<div class="row">
-		<div class="ml-3" id ="accounts_amount">
-		</div>
-	</div>
 	<div class="row text-center">
-		<h5 class="col-md-12" >Stan kont dzieci:</h5>
+		<h5 class="col-md-12" >Lista zbiórek:</h5>
 	</div>
 </div>
 
-<div id="students_balances_list" class="container-fluid"></div>
-
-<!--<div id="class_event" class="container-fluid "></div>-->
+<div id="class_event" class="container-fluid "></div>
 
 
 
-<!--MODAL CHANGE PASSWORD --><!--
+<!--MODAL CHANGE PASSWORD -->
 <div id="userModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
@@ -127,7 +121,7 @@ if ($_SESSION['amountOfChild'] == 1)
  </div>
 </div>
 
-<!--EVENT DETAILS 
+<!--EVENT DETAILS -->
 <div id="eventDetailsModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
@@ -142,7 +136,7 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-<!--PAY FOR EVENT 
+<!--PAY FOR EVENT -->
 <div id="payForEventModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
@@ -160,7 +154,7 @@ if ($_SESSION['amountOfChild'] == 1)
  </div>
 </div>
 
-<!--EVENT EDIT 
+<!--EVENT EDIT -->
 <div id="eventEditModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
@@ -181,7 +175,7 @@ if ($_SESSION['amountOfChild'] == 1)
  </div>
 </div>
 
--->
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -220,34 +214,8 @@ echo $_SESSION['firstLog']; ?>';
            
       });
 
-	 
-    function fetch_accounts_amount()
-    {
-        $.ajax({
-            url:"treasurer_helper.php",
-            method:"POST",
-            data:{function2call:'fetch_accounts_amount'},
-            success:function(data){
-                $('#accounts_amount').html(data);
-            }
-        });
-        
-    }
-    fetch_accounts_amount();
 	
-	function students_balances_list()
-    {
-        $.ajax({
-            url:"treasurer_helper.php",
-            method:"POST",
-            data:{function2call:'students_balances_list'},
-            success:function(data){
-                $('#students_balances_list').html(data);
-            }
-        });
-        
-    }
-    students_balances_list();
+
 	
 	
 	// delete event

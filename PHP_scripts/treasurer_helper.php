@@ -327,6 +327,7 @@ function students_balances_list()
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
 			$account_balanceTMP = $connect->query(sprintf("SELECT balance FROM account WHERE child_id = ".$row["id"] ));
 			$account_balance = mysqli_fetch_array($account_balanceTMP);
+			//TODO
 			$month_count = $connect->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(year(curdate()),'-09-01'),CURDATE()) as date FROM DUAL"));
 			$months=mysqli_fetch_array($month_count);
 			$monthly_fee = $connect->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
@@ -380,17 +381,35 @@ function makePayment2()
 		$child = $_SESSION['childWhoMakePayment'];
 		if ($_POST['typeOfAccount'] == "normal")
 		{ //if treasuer make normal (cash) payment
-			$curr = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-			$res = mysqli_fetch_array($curr);
-			$currentBalance = $res["b"];
-			$newBalance = $currentBalance + $amountOfMoney;
+			$curr_balance = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			$res_balance = mysqli_fetch_array($curr_balance);
+			$currentBalance = $res_balance["b"];
+			$curr_cash = $conn->query(sprintf("SELECT cash as c FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			$res_cash = mysqli_fetch_array($curr_cash);
+			$currentCash = $res_cash["c"];
+			$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			$res = mysqli_fetch_array($account_idTMP);
+			$accountID = $res["id"];
+			if($_POST['paymentType'] == "gotowka")
+			{
+				$newBalance = $currentCash + $amountOfMoney;
+				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
+				$conn->query(sprintf("UPDATE account SET cash=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+				echo "Record updated successfully";
+			}
+			else
+			{
+				$newBalance = $currentBalance + $amountOfMoney;
+				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
+				$conn->query(sprintf("UPDATE account SET balance=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+				echo "Record updated successfully";
+			}
+			
+			
 			//if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
 			//{
-				$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-				$res = mysqli_fetch_array($account_idTMP);
-				$accountID = $res["id"];
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				echo "Record updated successfully";
+			
+			
 			//}
 		}
 		else
@@ -403,8 +422,27 @@ function makePayment2()
 			$class_account_id = $ress["id"];
 
 			// inserting payment to class account
-
 			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['childWhoMakePayment'] . ",'" . $_POST['paymentType'] . "')"));
+			
+			$curr_balance = $conn->query(sprintf("SELECT balance as b,cash as c FROM class_account WHERE id =". $class_account_id));
+			$res_balance = mysqli_fetch_array($curr_balance);
+			$currentBalance = $res_balance["b"];
+			$currentCash = $res_balance["c"];
+			
+			if($_POST['paymentType'] == "gotowka")
+			{
+				$newBalance = $currentCash + $amountOfMoney;
+				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
+				$conn->query(sprintf("UPDATE class_account SET cash=" . $newBalance . " WHERE id =".$class_account_id));
+				echo "Record updated successfully";
+			}
+			else
+			{
+				$newBalance = $currentBalance + $amountOfMoney;
+				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
+				$conn->query(sprintf("UPDATE class_account SET balance=" . $newBalance . " WHERE id =".$class_account_id));
+				echo "Record updated successfully";
+			}
 		}
 	}
 
@@ -892,6 +930,7 @@ function fetch_students_list()
 			
 			$accountBalanceTmp = $connect->query(sprintf("SELECT * FROM account WHERE child_id = " . $row["id"]));
 			$accountBalance = mysqli_fetch_array($accountBalanceTmp);
+			$countBalance=doubleval($accountBalance["balance"])+doubleval($accountBalance["cash"]);
 			$output.= '  
 			<tbody>	
                 <tr>  
@@ -902,7 +941,7 @@ function fetch_students_list()
 					 <td>' . $parent["name"] . '</td>
 					 <td>' . $parent["surname"] . '</td>
 					 <td>' . $parent["email"] . '</td>
-					 <td>' . $accountBalance["balance"] . '</td>
+					 <td>' . $countBalance . '</td>
 					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange btn btn-default">Zmień maila</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment btn btn-default">Wpłać</button></td>
 					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent btn btn-default">Usuń ucznia</button></td>

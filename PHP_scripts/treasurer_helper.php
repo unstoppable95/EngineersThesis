@@ -113,10 +113,21 @@ if ((isset($_POST['function2call'])))
 		payForEventTmp();
 		break;
 		
+	case 'fetch_class_account_information':
+		fetch_class_account_information();
+		break;
+		
 	case 'fetch_accounts_amount':
 		fetch_accounts_amount();
 		break;
 		
+	case 'fetch_children_account_information':
+		fetch_children_account_information();
+		break;
+		
+	case 'fetch_students_list_payments':
+		fetch_students_list_payments();
+		break;
 	}
 }
 
@@ -307,7 +318,7 @@ function students_balances_list()
 
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname"));
+	$result = $connect->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname desc"));
 	$output.= '  
 		<div class="table-responsive ">
            <table class="table table-striped table-bordered">
@@ -325,7 +336,7 @@ function students_balances_list()
 		{
 			$class_account_balanceTMP = $connect->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = ".$row["id"] ));
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
-			$account_balanceTMP = $connect->query(sprintf("SELECT balance FROM account WHERE child_id = ".$row["id"] ));
+			$account_balanceTMP = $connect->query(sprintf("SELECT (cash+balance) as account_balance FROM account WHERE child_id = ".$row["id"] ));
 			$account_balance = mysqli_fetch_array($account_balanceTMP);
 			//TODO
 			$month_count = $connect->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(year(curdate()),'-09-01'),CURDATE()) as date FROM DUAL"));
@@ -340,7 +351,7 @@ function students_balances_list()
 			$expected_value = intval($months["date"]) * intval($fee["fee"]); 
 			$child_class_account = intval($class_account_balance["x"]) - $expected_value;
 			$output.='		 <td>'. $child_class_account .' zł </td>
-					 <td>' . $account_balance["balance"] . ' zł</td>
+					 <td>' . $account_balance["account_balance"] . ' zł</td>
 					<!-- <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance  btn btn-default">Szczegóły</button></td>-->
 				</tr> 
 			<tbody>						
@@ -504,18 +515,20 @@ function fetch_expenses_list()
 	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
-	$result = $connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . "))"));
-	$output.= '<div class="container">
-		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent btn btn-default">Dodaj wydatek</button> 
+	$result = $connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . ")) order by date desc"));
+	$output.= '
+	<div class="col-md-2  float-md-right p-3" >
+		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent btn btn-default btn-block">Dodaj wydatek</button> 
 		</div>
 		<div class="table-responsive">
            <table class="table table-striped table-bordered">
 		     <thead class="thead-dark">
                 <tr>  
-                     <th  scope="col">Nazwa</th>  
-                     <th  scope="col">Cena</th> 
-					 <th  scope="col">Data</th>
-                </tr>';
+					<th  scope="col">Data</th>
+                    <th  scope="col">Nazwa</th>  
+                    <th  scope="col">Cena</th> 
+                </tr>
+				<thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($result))
@@ -523,10 +536,9 @@ function fetch_expenses_list()
 			$output.= '  
 			<tbody>	
                 <tr>  
-                    <!-- <td>' . $row["id"] . '</td>-->  
+					 <td >' . $row["date"] . '</td>
                      <td >' . $row["name"] . '</td>  
 					 <td >' . $row["price"] . ' zł</td>
-					 <td >' . $row["date"] . '</td>
 				</tr> 
 			<tbody>				
            ';
@@ -535,17 +547,68 @@ function fetch_expenses_list()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze wydatków w tej klasie</td>  
+                          <td colspan="3">Nie dodano jeszcze wydatków w tej klasie</td>  
                      </tr>';
 	}
 
 
-	$output.= '</table>
-
-
-		  </div>';
+	$output.= '</table></div>
+		 ';
 	echo $output;
 }
+function fetch_class_account_information()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$id = mysqli_fetch_array($tmpID);
+	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
+
+	$tmpbalance = $connect->query(sprintf("SELECT id, balance,cash,monthly_fee FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$bal = mysqli_fetch_array($tmpbalance);
+	$balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
+	$cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
+	$monthly_fee = $bal["monthly_fee"];
+	$class_account_id = $bal["id"];
+	$class_money =  doubleval($balance) + doubleval($cash);
+
+	$kids_account_balance = $connect->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
+	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
+	$output.= '
+	 <p> Ilość pieniędzy zebranych na koncie klasowym: ' . $class_money . ' zł.</p>
+	 <p> W tym: </p>
+	 <p> - ilość pieniędzy klasowych w gotówce: ' . $cash . ' zł</p>
+	 <p> - ilość pieniędzy klasowych na koncie: ' . $balance . ' zł</p> 
+	 <p> Miesięczna składka wynosi: '.$monthly_fee.' zł</p>';
+	echo $output;
+}
+
+function fetch_children_account_information()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$id = mysqli_fetch_array($tmpID);
+	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
+	$kids_account_balance = $connect->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
+	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
+
+	$output.= '
+	 <p> Ilość pieniędzy na kontach dzieci: ' . $class_kids_money . ' zł</p> 
+	 <p> W tym: </p>
+	 <p> - ilość pieniędzy z kont dzieci w gotówce: '.$kids_account_balance_all["cash"] . ' zł</p>
+	 <p> - ilość pieniędzy z kont dzieci na koncie: '.$kids_account_balance_all["balance"].'zł</p>';
+	echo $output;
+}
+
 
 function fetch_accounts_amount()
 {
@@ -558,30 +621,26 @@ function fetch_accounts_amount()
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
 
-	$tmpbalance = $connect->query(sprintf("SELECT id, balance, expected_budget FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$tmpbalance = $connect->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
 	$bal = mysqli_fetch_array($tmpbalance);
-	$balance = $bal["balance"];
-	$exceptedBalance = $bal["expected_budget"];
+	$balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
+	$cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
+
 	$class_account_id = $bal["id"];
-	$curr_exp = $connect->query(sprintf("SELECT SUM(price) as s FROM expense WHERE class_account_id = " . $class_account_id));
-	$x = mysqli_fetch_array($curr_exp);
-	$currentExpenses = $x["s"];
-	$availableMoney = $exceptedBalance - $currentExpenses;
-	$in_cash = $connect->query(sprintf("SELECT SUM(amount) as cash FROM class_account_payment WHERE class_account_id = " . $class_account_id . " and type='gotowka' "));
-	$cash = mysqli_fetch_array($in_cash);
-	$in_bank = $connect->query(sprintf("SELECT SUM(amount) as cash FROM class_account_payment WHERE class_account_id = " . $class_account_id . " and type='konto' "));
-	$bank = mysqli_fetch_array($in_bank);
-	$kids_account_balance = $connect->query(sprintf("SELECT SUM(balance) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$class_money =  doubleval($balance) + doubleval($cash);
+
+	$kids_account_balance = $connect->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
 	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
+	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
 	$output.= '
-	 <p> Ilość pieniędzy zebranych na koncie klasowym całkowita: ' . $balance . ' zł.</p>
+	 <p> Ilość pieniędzy zebranych na koncie klasowym całkowita: ' . $class_money . ' zł.</p>
 	 <p> W tym: </p>
-	 <p> - ilość pieniędzy klasowych w gotówce: ' . $cash["cash"] . ' zł</p>
-	 <p> - ilość pieniędzy klasowych na koncie: ' . $bank["cash"] . ' zł</p> 
-	 <p> Ilość pieniędzy na kontach dzieci: ' . $kids_account_balance_all["cash"] . ' zł</p> 
+	 <p> - ilość pieniędzy klasowych w gotówce: ' . $cash . ' zł</p>
+	 <p> - ilość pieniędzy klasowych na koncie: ' . $balance . ' zł</p> 
+	 <p> Ilość pieniędzy na kontach dzieci: ' . $class_kids_money . ' zł</p> 
 	 <p> W tym: </p>
-	 <p> - ilość pieniędzy z kont dzieci w gotówce:  zł</p>
-	 <p> - ilość pieniędzy z kont dzieci na koncie: zł</p>  ';
+	 <p> - ilość pieniędzy z kont dzieci w gotówce: '.$kids_account_balance_all["cash"] . ' zł</p>
+	 <p> - ilość pieniędzy z kont dzieci na koncie: '.$kids_account_balance_all["balance"].'zł</p>  ';
 	echo $output;
 }
 // helping function to save which event is edited. Used in handling button confirm
@@ -846,18 +905,21 @@ function fetch_event_list()
 
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	$output = '';
-	$result = $connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "')"));
+	$result = $connect->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "') order by date desc"));
 	$output.= '  
+		<div class="col-md-2  float-md-right p-3" >
+		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj zbiórke</button> 
+		</div>
 		<div class="table-responsive">
            <table class="table table-striped table-bordered">
 		     <thead class="thead-dark"> 
                 <tr>  
-                   <!--  <th scope="col">Id</th>-->  
+					<th scope="col">Data</th>
                      <th scope="col">Nazwa</th> 
 					 <th scope="col">Cena</th>
-					 <th scope="col">Data</th>
 					 <th scope="col">Szczegóły</th>
 					 <th scope="col">Edycja</th>
+					 <th scope="col">Zakończona</th>
 					 <th scope="col">Usuwanie</th> 
                 </tr>
 				<thead>';
@@ -868,12 +930,12 @@ function fetch_event_list()
 			$output.= ' 
 			<tbody>				
                 <tr>  
-                    <!-- <td>' . $row["id"] . '</td>  -->
+					<td>' . $row["date"] . '</td>
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["price"] . ' zł</td>
-					 <td>' . $row["date"] . '</td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent btn btn-default">Edytuj</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Zakończ</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Usuń zbiórkę</button></td>
 				</tr>
 			<tbody>				
@@ -892,6 +954,56 @@ function fetch_event_list()
 	echo $output;
 }
 
+
+
+function fetch_students_list_payments()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$output = '';
+	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$id = mysqli_fetch_array($tmpID);
+	$_SESSION['userID'] = $id["id"];
+	$result = $connect->query(sprintf("SELECT id,name,surname from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ") order by surname desc"));
+	$output.= '  
+      <div class="table-responsive">
+           <table class="table table-striped table-bordered">
+		     <thead class="thead-dark"> 
+                <tr>  
+                     <th scope="col">Imię i Nazwisko</th> 
+					 <th scope="col">Wpłać</th>
+                </tr>
+				<thead>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+
+			$output.= '  
+			<tbody>	
+                <tr>  
+                     <td>' . $row["name"] . ' '. $row["surname"] .'</td>  
+					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment btn btn-default">Wpłać</button></td>
+				</tr>  
+			<tbody>
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
+                          <td colspan="4">Nie dodano jeszcze uczniów do tej klasy</td>  
+                     </tr>';
+	}
+
+	$output.= '</table>  
+      </div>';
+	echo $output;
+}
+
+
 function fetch_students_list()
 {
 	session_start();
@@ -902,22 +1014,20 @@ function fetch_students_list()
 	$tmpID = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"];
-	$result = $connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")"));
+	$result = $connect->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")order by surname desc"));
 	$output.= '  
+		<div class="col-md-2  float-md-right p-3" >
+		<button type="button" onclick="window.open(\'addStudent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj ucznia do klasy</button> 
+		</div>
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
 		     <thead class="thead-dark"> 
                 <tr>  
-                  <!--   <th scope="col">Id</th>  -->
-                     <th scope="col">Imię</th> 
-					 <th scope="col">Nazwisko</th>
+                     <th scope="col">Imię i nazwisko dziecka</th>
 					 <th scope="col">Data urodzenia</th>
-					 <th scope="col">Imię rodzica</th>
-					 <th scope="col">Nazwisko rodzica</th>
+					 <th scope="col">Imię i nazwisko rodzica</th>
 					 <th scope="col">Mail rodzica</th>
-					 <th scope="col">Stan konta dziecka</th>
 					 <th scope="col">Zmień maila rodzica</th>
-					 <th scope="col">Wpłać</th>
 					 <th scope="col">Usuń ucznia</th>
                 </tr>
 				<thead>';
@@ -927,23 +1037,15 @@ function fetch_students_list()
 		{
 			$parentTMP = $connect->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = " . $row["id"] . ")"));
 			$parent = mysqli_fetch_array($parentTMP);
-			
-			$accountBalanceTmp = $connect->query(sprintf("SELECT * FROM account WHERE child_id = " . $row["id"]));
-			$accountBalance = mysqli_fetch_array($accountBalanceTmp);
-			$countBalance=doubleval($accountBalance["balance"])+doubleval($accountBalance["cash"]);
 			$output.= '  
 			<tbody>	
                 <tr>  
-                  <!--   <td>' . $row["id"] . '</td>  -->
-                     <td>' . $row["name"] . '</td>  
-					 <td>' . $row["surname"] . '</td>
+                     <td>' . $row["name"] . ' ' . $row["surname"] . '</td>
 					 <td>' . $row["date_of_birth"] . '</td>
-					 <td>' . $parent["name"] . '</td>
-					 <td>' . $parent["surname"] . '</td>
-					 <td>' . $parent["email"] . '</td>
-					 <td>' . $countBalance . '</td>
+					 <td>' . $parent["name"] . ' ' . $parent["surname"] . '</td>
+					 <td><a href="mailto:' . $parent["email"] . '">' . $parent["email"] . '</a>
+					 </td>
 					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange btn btn-default">Zmień maila</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#makePaymentModal" data-id3="' . $row["id"] . '" class="btn_makePayment btn btn-default">Wpłać</button></td>
 					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent btn btn-default">Usuń ucznia</button></td>
 				</tr>  
 			<tbody>

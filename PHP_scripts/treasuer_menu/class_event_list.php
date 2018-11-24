@@ -7,7 +7,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
 	<!-- Our CSS -->
-	<link rel="stylesheet" type="text/css" href="treasuer_menu/style.css" title="Arkusz stylów CSS">
+	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
 	
 	<!-- Example of icons -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
@@ -24,7 +24,7 @@ if (!isset($_SESSION['loggedIn']))
 }
 
 $_SESSION['treasurerAsParent'] = false;
-require_once "connection.php";
+require_once "../connection.php";
 
 // stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 
@@ -61,29 +61,32 @@ if ($_SESSION['amountOfChild'] == 1)
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 		<a class="navbar-brand">Konto skarbnika</a>
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item">
+					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="expenses.php">Wydatki klasowe</a>
+				</li>
 				<li class="nav-item active">
-					<a class="nav-link" href="#">Strona główna<span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="class_event_list.php">Zbiórki klasowe / Wydarzenia<span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="menu_parent.php">Konto rodzica</a>
+					<a class="nav-link" href="payments.php">Wpłaty</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="treasuer_menu/expenses.php">Wydatki klasowe</a>
+					<a class="nav-link" href="students.php">Uczniowie</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="treasuer_menu/addStudent.php">Dodaj ucznia do klasy</a>
+					<a class="nav-link" href="settings.php">Ustawienia</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="treasuer_menu/addOnceEvent.php">Dodaj zbiórkę</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="treasuer_menu/settings.php">Ustawienia</a>
+					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
 				</li>
 			</ul>
 
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
+					<a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
 			</li>
 			</ul>
 	  </div>
@@ -91,9 +94,12 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-<div class="container">
-	<div class="row">
+<div class="container-fluid">
+	<!--<div class="row">
 		<div id="class_name" class="col-md-12 text-center"></div>
+	</div>-->
+	<div class="row">
+		<div class="ml-3" id ="children_account_information"></div>
 	</div>
 	<div class="row text-center">
 		<h5 class="col-md-12" >Lista zbiórek:</h5>
@@ -103,25 +109,6 @@ if ($_SESSION['amountOfChild'] == 1)
 <div id="class_event" class="container-fluid "></div>
 
 
-
-<!--MODAL CHANGE PASSWORD -->
-<div id="userModal" class="modal fade" >
- <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
-   <div class="modal-content">
-    
-		<h2>ZMIEŃ HASŁO </h2>
-		<p>		
-		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
-		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
-		</p>
-			
-   </div>
-  </form>
- </div>
-</div>
-
-<!--EVENT DETAILS -->
 <div id="eventDetailsModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
@@ -154,7 +141,7 @@ if ($_SESSION['amountOfChild'] == 1)
  </div>
 </div>
 
-<!--EVENT EDIT -->
+<!--EVENT EDIT--> 
 <div id="eventEditModal" class="modal fade" >
  <div class="modal-dialog">
     <form action="treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
@@ -177,6 +164,7 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
+
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -188,20 +176,26 @@ if ($_SESSION['amountOfChild'] == 1)
 <script>
 $(document).ready(function(){
 
-	var zmienna='<?php
-echo $_SESSION['firstLog']; ?>';
-	
-	if (zmienna){	
-	$('#userModal').modal('show');
-		}
+	 
+    function fetch_children_account_information()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'fetch_children_account_information'},
+            success:function(data){
+                $('#children_account_information').html(data);
+            }
+        });
+        
+    }
+    fetch_children_account_information();
 
-
-	  // save which event edit want to edit
 
 	  $(document).on('click','.btn_editEvent',function(){
 	var id=$(this).data("id4");
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call: 'saveEditEvent', id:id},
 			dataType:"text",
@@ -225,7 +219,7 @@ echo $_SESSION['firstLog']; ?>';
 	if(confirm("Czy jestes pewny, ze chcesz usunąć ten event?"))  
            {
 	$.ajax({
-		url:"treasurer_helper.php",
+		url:"../treasurer_helper.php",
 		method:"POST",
 		data:{function2call: 'deleteEvent', id:id},
 		dataType:"text",
@@ -244,7 +238,7 @@ echo $_SESSION['firstLog']; ?>';
 	var id=$(this).data("id4");
 
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call: 'fetch_event_details', id:id},
 			dataType:"text",
@@ -263,7 +257,7 @@ echo $_SESSION['firstLog']; ?>';
 	function fetch_event_list()
 	{
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call:'fetch_event_list'},
 			success:function(data){
@@ -277,7 +271,7 @@ echo $_SESSION['firstLog']; ?>';
 	function fetch_class_name()
 	{
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call:'fetch_class_name'},
 			success:function(data){
@@ -294,7 +288,7 @@ echo $_SESSION['firstLog']; ?>';
 
 	
 		$.ajax({
-			url:"treasurer_helper.php",
+			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call: 'payForEventTmp', childID:childID, eventID:eventID},
 			dataType:"text",

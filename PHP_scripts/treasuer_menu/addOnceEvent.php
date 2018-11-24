@@ -36,20 +36,23 @@ if (!isset($_SESSION['loggedIn']))
 				<li class="nav-item">
 					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
-				</li>
 				<li class="nav-item ">
 					<a class="nav-link" href="expenses.php">Wydatki klasowe</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="addStudent.php">Dodaj ucznia do klasy</a>
+					<a class="nav-link" href="class_event_list.php">Zbiórki klasowe / Wydarzenia</a>
 				</li>
-				<li class="nav-item active">
-					<a class="nav-link" href="addOnceEvent.php">Dodaj zbiórkę<span class="sr-only">(current)</span></a>
+				<li class="nav-item">
+					<a class="nav-link" href="payments.php">Wpłaty</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="students.php">Uczniowie</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="settings.php">Ustawienia</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
 				</li>
 			</ul>
 

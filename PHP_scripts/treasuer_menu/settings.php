@@ -36,19 +36,22 @@ if (!isset($_SESSION['loggedIn'])) {
 					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
-				</li>
-				<li class="nav-item">
 					<a class="nav-link" href="expenses.php">Wydatki klasowe</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="addStudent.php">Dodaj ucznia do klasy</a>
+					<a class="nav-link" href="class_event_list.php">Zbiórki klasowe / Wydarzenia</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="addOnceEvent.php">Dodaj zbiórkę</a>
+					<a class="nav-link" href="payments.php">Wpłaty</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="students.php">Uczniowie</a>
 				</li>
 				<li class="nav-item active">
 					<a class="nav-link" href="settings.php">Ustawienia <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
 				</li>
 			</ul>
 
@@ -59,18 +62,6 @@ if (!isset($_SESSION['loggedIn'])) {
 			</ul>
 	  </div>
 </nav>    
-
-<div class="container">
-	<div class="row">
-		<div class="col-md-12 mt-3 text-center">
-			  <h5> Lista uczniów:</h5>
-		</div>
-	</div>
- </div>
- 
-<div class="container-fluid"> 
-	<div id="students_list"></div>
-</div>
 
 <div class="container">
 	<div class="row">
@@ -186,21 +177,7 @@ if (!isset($_SESSION['loggedIn'])) {
 
 <script>
 $(document).ready(function(){
-function fetch_students_list()
-    {
-        $.ajax({
-            url:"../treasurer_helper.php",
-            method:"POST",
-            data:{function2call:'students_list'},
-            success:function(data){
-                $('#students_list').html(data);
-            }
-        });
-        
-    }
-    fetch_students_list();  
-    
-    
+     
     function fetch_treasuer_data()
     {
         $.ajax({
@@ -215,57 +192,7 @@ function fetch_students_list()
     }
     fetch_treasuer_data(); 
 
-//delete
-    $(document).on('click','.btn_deleteStudent',function(){
-    var id=$(this).data("id3");
-    if(confirm("Czy jestes pewny, ze chcesz usunąć ucznia z tej klasy?"))  
-           {
-    $.ajax({
-        url:"../treasurer_helper.php",
-        method:"POST",
-        data:{function2call: 'deleteStudent', id:id},
-        dataType:"text",
-        success:function(data){
-            alert(data);
-            fetch_students_list();
-            
-                     }  
-                });  
-           }  
-      });
-      
-      //save which parent mail i want to change
-      $(document).on('click','.btn_pMailChange',function(){
-    var id=$(this).data("id3");
-        $.ajax({
-            url:"../treasurer_helper.php",
-            method:"POST",
-            data:{function2call: 'btn_pMailChange', id:id},
-            dataType:"text",
-                success:function(data){
-                     }                          
-                });
-    
-          
-      });
-	  
-	  
-	  
-	$(document).on('click','.btn_makePayment',function(){
-    var id=$(this).data("id3");
-        $.ajax({
-            url:"../treasurer_helper.php",
-            method:"POST",
-            data:{function2call: 'makePayment', id:id},
-            dataType:"text",
-                success:function(data){
-                     }                          
-                });
-    
-          
-      });
-    
-      
+
       
  }); 
   

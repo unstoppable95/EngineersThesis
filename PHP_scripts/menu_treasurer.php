@@ -74,7 +74,7 @@ if ($_SESSION['amountOfChild'] == 1)
 					<a class="nav-link" href="treasuer_menu/payments.php">Wpłaty</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="students.php">Uczniowie</a>
+					<a class="nav-link" href="treasuer_menu/students.php">Uczniowie</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="treasuer_menu/settings.php">Ustawienia</a>

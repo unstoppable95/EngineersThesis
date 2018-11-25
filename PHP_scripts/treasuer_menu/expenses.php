@@ -81,26 +81,48 @@ if (!isset($_SESSION['loggedIn'])) {
 
 
 <!--MODAL ADD EXPENSE -->
-<div id="addExpense" class="modal fade">
- <div class="modal-dialog">
+<div id="addExpense" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered">
   <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
+		<div class="modal-header">
+			<h3 class="text-center">DODAJ WYDATEK KLASOWY</h3>
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+							<p>Podaj informacje o wydatku klasowym</p>
+							
+							<div class="panel-body">
+									<fieldset>
+										<div class="form-group">
+											<label for="expenseName" class="text-center col-form-label">Nazwa:</label>
+											<input type="text" name="expenseName" class="form-control"/>
+											<label for="expensePrice" class="text-center col-form-label">Cena:</label>
+											<input type="text" name="expensePrice" class="form-control"/>
+											<input type="radio" name="payment" value="gotowka">Płatność gotówka<br>
+											<input type="radio" name="payment" value="konto">Płatność kartą<br>
+										</div>
 
-    <h2>DODAJ WYDATEK KLASOWY</h2>
-    <h3>Podaj informacje o wydatku klasowym</h3>
-    <table>
-        <tr><td>Nazwa: </td><td> <input type="text" name="expenseName"/></td></tr>
-        <tr><td>Cena: </td><td> <input type="text" name="expensePrice"/></td></tr>
-    </table>
-    <input type="submit" name="addExpense" class="btn_addExpense" value="Zatwierdz"/>
-   </div>
-  </form>
- </div>
+										<button type="submit" class="btn btn-lg btn-primary btn-block btn_addExpense"  name="addExpense">Zatwierdź</button>
+									</fieldset>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>	
+				</div>
+			</form>
+		</div>
 </div>
 
+<!--
 
-
-<!--MODAL STUDENT DETAILS -->
+<!--MODAL STUDENT DETAILS
 <div id="classAccBalanceDetails" class="modal fade">
  <div class="modal-dialog">
  <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data"> 
@@ -112,8 +134,7 @@ if (!isset($_SESSION['loggedIn'])) {
    </div>
    </form> 
  </div>
-</div>
-
+</div> -->
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

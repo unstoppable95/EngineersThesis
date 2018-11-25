@@ -2,7 +2,7 @@
 
 if ((isset($_POST['changePassword'])))
 {
-	changePassword();
+	changeOldPassword();
 }
 
 if ((isset($_POST['changeMonthlyFee'])))
@@ -478,18 +478,29 @@ function addExpense()
 	$class_account_idx = $connect->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . ")"));
 	$clid = mysqli_fetch_array($class_account_idx);
 	$class_account_id = $clid["id"];
-	$excepted_budget = $clid["expected_budget"];
-	$curr_exp = $connect->query(sprintf("SELECT SUM(price) FROM expense WHERE class_account_id = " . $class_account_id));
-	$x = mysqli_fetch_array($class_account_idx);
-	$currentExpenses = $x["s"];
-	if ($_POST["expensePrice"] + $currentExpenses <= $excepted_budget)
-	{
-		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id) VALUES ('" . $_POST["expenseName"] . "'," . $_POST["expensePrice"] . ", " . $class_account_id . ")"));
+	$cash = $clid["cash"];
+	$balance = $clid["balance"];
+	$all_money = doubleval($cash) + doubleval($balance);
 
+	if ($_POST["expensePrice"]  <= $all_money)
+	{
+		$connect->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $_POST["expensePrice"] . ", " . $class_account_id . ", '" . $_POST['payment'] .  "')"));
+		switch($_POST['payment']) 
+		{
+			case "gotowka":
+				$new_cash = doubleval($cash) - $_POST["expensePrice"];
+				$new_balance = $balance; 
+				break;
+			case "konto":
+				$new_cash = $cash;
+				$new_balance = doubleval($balance) - $_POST["expensePrice"]; 
+			break;
+
+	}
+		$connect->query(sprintf("UPDATE class_account SET cash=" . $new_cash . " , balance = " . $new_balance . " WHERE id= " . $class_account_id ));
 		// KOMUNIKAT ZE DODANO POMYSLNIE
 
 		echo "<script>
-alert('Dodano pomyślnie!');
 	window.location.href='treasuer_menu/expenses.php';
 	</script>";
 	}
@@ -518,7 +529,7 @@ function fetch_expenses_list()
 	$result = $connect->query(sprintf("SELECT * from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . ")) order by date desc"));
 	$output.= '
 	<div class="col-md-2  float-md-right p-3" >
-		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn_deleteEvent btn btn-default btn-block">Dodaj wydatek</button> 
+		<button type="button" data-toggle="modal" data-target="#addExpense" class="btn btn-default btn-block">Dodaj wydatek</button> 
 		</div>
 		<div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -933,7 +944,7 @@ function fetch_event_list()
 					<td>' . $row["date"] . '</td>
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["price"] . ' zł</td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default">Szczegóły</button></td>
+					 <td><button type="button" onclick="window.open(\'eventDetails.php\',\'_blank\')" data-toggle="modal" data-target="#eventDetailsModal"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent btn btn-default">Edytuj</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Zakończ</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Usuń zbiórkę</button></td>
@@ -1117,11 +1128,62 @@ function changeMonthlyFee()
 	$conn->close();
 	header('Location: treasuer_menu/settings.php');
 }
+function changeOldPassword()
+{
+	session_start();
+	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' ||empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0'||empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0' )
+	{
+		header('Location: treasuer_menu/settings.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $_SESSION['user']) , mysqli_real_escape_string($conn, $_POST['oldPassword'])))){
+			$userCount = $result->num_rows;
+			if ($userCount > 0)
+			{
+				$newPassword = $_POST['newPassword'];
+				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
+				$reNewPassword = $_POST['reNewPassword'];
+				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+				if($newPassword==$reNewPassword){
+					$login = $_SESSION['user'];
+					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+					$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$_SESSION['errorChangePassword'] ='';
+				}
+				else{
+					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
+					header('Location: treasuer_menu/settings.php');
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
+				//nowe i powtorzone musza byc takie same
+				}
+			}
+		else{
+			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
+			header('Location: treasuer_menu/settings.php');
+			echo "Stare hasło jest błędne"; 
+			//złe stare hasło
+			}
+	}
+	}
+
+	$conn->close();
+	header('Location: treasuer_menu/settings.php');  // nie trzeba sie przelogowac przy zmiane hasła
+}
 
 function changePassword()
 {
 	session_start();
-	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0')
+	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' )
 	{
 		header('Location: treasuer_menu/settings.php');
 		exit();

@@ -426,18 +426,38 @@ function changePassword()
 	}
 	else
 	{
-		$newPassword = $_POST['newPassword'];
-		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
-		$login = $_SESSION['user'];
-		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		if ($result = @$conn->query(sprintf("UPDATE username SET password='%s' WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login))))
-		{
-			$_SESSION['funChange'] = true;
-		}
+			if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $_SESSION['user']) , mysqli_real_escape_string($conn, $_POST['oldPassword'])))){
+			$userCount = $result->num_rows;
+			if ($userCount > 0)
+			{
+				$newPassword = $_POST['newPassword'];
+				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
+				$reNewPassword = $_POST['reNewPassword'];
+				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+				if($newPassword==$reNewPassword){
+					$login = $_SESSION['user'];
+					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+					$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$_SESSION['errorChangePassword'] ='';
+				}
+				else{
+					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
+					header('Location: treasuer_menu/settings.php');
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
+				//nowe i powtorzone musza byc takie same
+				}
+			}
+		else{
+			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
+			header('Location: treasuer_menu/settings.php');
+			echo "Stare hasło jest błędne"; 
+			//złe stare hasło
+			}
+	}
 	}
 
 	$conn->close();
-	header('Location: logout.php');
+	header('Location: admin_menu/a_settings.php');
 }
 
 function randomPassword()

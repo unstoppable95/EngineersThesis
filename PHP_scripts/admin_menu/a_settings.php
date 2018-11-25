@@ -66,18 +66,30 @@ if (isset($_SESSION['funChange'])) {
 	<div class="container">
 		<form action="../admin_helper.php" class="form-vertical justify-content-center" method="post">
 			<div class="form-group row">
-				<div class="offset-sm-3 col-md-6">
-					<label for="className"  class="text-center col-form-label">Nowe hasło dostępu:</label>  
-					<input type="password" name="newPassword" class="form-control" />
-				</div>
+				<div class="col-md-6 offset-sm-3">
+					<label for="oldPassword" class="text-center col-form-label">Stare hasło:</label>
+					<input type="password" name="oldPassword" class="form-control"/>
+					<label for="newPassword" class="text-center col-form-label">Nowe hasło:</label>
+					<input type="password" name="newPassword" class="form-control"/>
+					<label for="reNewPassword" class="text-center col-form-label">Powtórz nowe hasło:</label>
+					<input type="password" name="reNewPassword" class="form-control"/>
 			</div>
-			<div class="text-center row">
-				<div class="offset-sm-1 col-sm-10">
-					<button type="submit" name="changePassword" class="btn">Zatwierdź</button>
+			<div class="col-md-8 offset-sm-2 text-center text-danger" >
+				<?php
+					if (isset($_SESSION['errorChangePassword']))
+					{
+						echo $_SESSION['errorChangePassword'];
+					}
+				?>
 				</div>
-			</div>
-		</form>
-	</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="changePassword" class="btn_add btn">Zatwierdź</button>
+			 </div>
+		</div>
+    </form>
+</div>
 	
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

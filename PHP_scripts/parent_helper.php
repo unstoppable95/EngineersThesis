@@ -4,7 +4,7 @@
 
 if ((isset($_POST['changePassword'])))
 {
-	changePassword();
+	changeOldPassword();
 }
 
 if ((isset($_POST['function2call'])))
@@ -326,6 +326,58 @@ function fetch_payment_history()
       </div>';
 	echo $output;
 }
+
+function changeOldPassword()
+{
+	session_start();
+	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' ||empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0'||empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0' )
+	{
+		header('Location: parent_menu/p_settings.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+			if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $_SESSION['user']) , mysqli_real_escape_string($conn, $_POST['oldPassword'])))){
+			$userCount = $result->num_rows;
+			if ($userCount > 0)
+			{
+				$newPassword = $_POST['newPassword'];
+				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
+				$reNewPassword = $_POST['reNewPassword'];
+				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+				if($newPassword==$reNewPassword){
+					$login = $_SESSION['user'];
+					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+					$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$_SESSION['errorChangePassword'] ='';
+				}
+				else{
+					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
+					header('Location: treasuer_menu/settings.php');
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
+				//nowe i powtorzone musza byc takie same
+				}
+			}
+		else{
+			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
+			header('Location: treasuer_menu/settings.php');
+			echo "Stare hasło jest błędne"; 
+			//złe stare hasło
+			}
+	}
+	}
+	$conn->close();
+	header('Location: parent_menu/p_settings.php');
+}
+
 
 
 function changePassword()

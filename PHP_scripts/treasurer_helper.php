@@ -685,11 +685,11 @@ function saveEditEventID()
 function editEvent()
 {
 	session_start();
-	if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate']))
-	{
-		header('Location: menu_treasurer.php');
-		exit();
-	}
+	//if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate']))
+	//{
+		//header('Location: treasuer_menu/class_event_list.php');
+		//exit();
+	//}
 
 	require_once "connection.php";
 
@@ -699,10 +699,11 @@ function editEvent()
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
+		
 	}
 	else
 	{
-		if ($res["date"] >= $currrentDate && $_POST['newEventDate'] >= $currrentDate)
+		if ($res["date"] >= $currrentDate)
 		{
 			if (!empty($_POST['newEventName']))
 			{
@@ -720,25 +721,25 @@ function editEvent()
 
 			if (!empty($_POST['newEventDate']))
 			{
+				
 				$newEventDate = $_POST['newEventDate'];
-				$newEventDate = htmlentities($newEventDate, ENT_QUOTES, "UTF-8");
-				$result = $conn->query(sprintf("update event set date='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventDate)));
+				if($newEventDate > $currrentDate){
+					$newEventDate = htmlentities($newEventDate, ENT_QUOTES, "UTF-8");
+					$result = $conn->query(sprintf("update event set date='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventDate)));
+				}else{
+					$_SESSION['errorEditEvent'] = "Data musi być przyszła"; 
+					header('Location: treasuer_menu/class_event_list.php');
+				}
 			}
 
-			echo "<script>
-	alert('Edycja pomyślna!');
-	window.location.href='menu_treasurer.php';
-	</script>";
 		}
 		else
 		{
-			echo "<script>
-	alert('Nie możesz edytować zbiórki, która się odbyło!');
-	window.location.href='menu_treasurer.php';
-	</script>";
+				$_SESSION['errorEditEvent'] = "Nie można edytować zakończonej zbiórki"; 
+				header('Location: treasuer_menu/class_event_list.php');
 		}
 	}
-
+	header('Location: treasuer_menu/class_event_list.php');
 	$conn->close();
 }
 

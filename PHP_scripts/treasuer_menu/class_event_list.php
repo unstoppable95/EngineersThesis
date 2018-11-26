@@ -111,7 +111,7 @@ if ($_SESSION['amountOfChild'] == 1)
 
 <div id="eventDetailsModal" class="modal fade" >
  <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+    <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
     
 		<h2>Szczegóły </h2>
@@ -126,7 +126,7 @@ if ($_SESSION['amountOfChild'] == 1)
 <!--PAY FOR EVENT -->
 <div id="payForEventModal" class="modal fade" >
  <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
+    <form action=".//treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
    <div class="modal-content">
     
 		<h2>Opłać wydarzenie</h2>
@@ -142,22 +142,43 @@ if ($_SESSION['amountOfChild'] == 1)
 </div>
 
 <!--EVENT EDIT--> 
-<div id="eventEditModal" class="modal fade" >
- <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+<div id="eventEditModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="../treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
    <div class="modal-content">
-    
-		<h2>Edycja</h2>	
-		<table>
-		<tr><td>Nazwa: </td><td><input type="text" name="newEventName"/></td></tr> 
-		<tr><td>Cena: </td><td><input type="number" step="0.01" min="0"  name="newEventPrice" /></td></tr> 
-		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="newEventDate" /> </td></tr> 
-		<tr><td colspan="2"><input type="submit" name="editEvent"  class="btn_edit" value="Zatwierdz"/></td></tr>
-		<table>
-		
-		
-		
-   </div>
+		<div class="modal-header">
+				<h3 class="text-center">Edycja wydarzenia</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<label for="newEventName">Nazwa:</label>
+								<input type="text" name="newEventName" class="form-control"/>
+								</div>
+								<div class="row">
+								<label for="newEventPrice">Cena:</label>
+								<input type="number" step="0.01" min="0"  name="newEventPrice" class="form-control"/>
+								</div>
+								<div class="row">
+								<label for="newEventName">Data:</label>
+								<input type="date" placeholder="YYYY-MM-DD" name="newEventDate"class="form-control" />
+							</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="editEvent">Zatwierdź</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
   </form>
  </div>
 </div>

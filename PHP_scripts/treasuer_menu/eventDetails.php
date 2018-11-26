@@ -67,19 +67,36 @@ if (!isset($_SESSION['loggedIn'])) {
 
 
 <!--PAY FOR EVENT -->
-<div id="payForEventModal" class="modal fade" >
- <div class="modal-dialog">
+<div id="payForEventModal" class="modal fade" abindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
     <form action="../treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
    <div class="modal-content">
-    
-		<h2>Opłać wydarzenie</h2>
-			Wprowadż kwotę, jaką chcesz opłacić: <input type="number" step="0.01" min="0"  name="amount"/>
-			<br>
-			<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
-			<br>
-			<input type="submit" name="payForChildEvent"  class="btn_pay" value="Opłać"/>
-		
-   </div>
+		<div class="modal-header">
+				<h3 class="text-center">Opłać wydarzenie</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<label for="newEventName">Wprowadż kwotę, jaką chcesz opłacić:</label>
+								<input type="number" step="0.01" min="0"  name="amount" class="form-control"/>
+								</div>
+								<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
   </form>
  </div>
 </div>

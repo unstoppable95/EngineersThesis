@@ -75,17 +75,35 @@ if (!isset($_SESSION['loggedIn'])) {
 
 
 <!--MODAL CHANGE PARENR MAIL -->
-<div id="changeParMailModal" class="modal fade">
- <div class="modal-dialog">
+<div id="changeParMailModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
   <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
-
-    <h2>ZMIANA MAILA RODZICA</h2>
-    <h3>Podaj nowego maila rodzica</h3>
-        Email: <input type="text" name="newParentMail"/>
-        <input type="submit" name="changeParentMail" class="btn_commitChange" value="Zatwierdz"/>
-
-   </div>
+   <div class="modal-header">
+				<h3 class="text-center">Zmiana maila rodzica:</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<label for="newParentMail">Nowy email:</label>
+								<input type="email" name="newParentMail" class="form-control"/>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_commitChange"  name="changeParentMail">Zatwierdź</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
   </form>
  </div>
 </div>

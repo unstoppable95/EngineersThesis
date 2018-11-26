@@ -66,7 +66,7 @@ if (isset($_SESSION['funAddClass'])) {
 		<div class="form-group row">
 			<div class="col-md-10 offset-sm-1">
 				<label for="className" class="text-center col-form-label">Nazwa klasy:</label>
-				<input type="text" name="className" class="form-control"/>
+				<input type="text" name="className" class="form-control" required/>
 			</div>
 		</div>
 		<div class="row text-center">
@@ -83,7 +83,7 @@ if (isset($_SESSION['funAddClass'])) {
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="email" class="text-center col-form-label">Email:</label>
-				<input type="text" name="email" class="form-control"/>
+				<input type="email" name="email" class="form-control" required/>
 			</div>
 		</div>
 		<div class="row text-center">

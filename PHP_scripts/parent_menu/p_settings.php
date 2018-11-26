@@ -92,17 +92,18 @@ if (!isset($_SESSION['loggedIn']))
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-3">
 				<label for="oldPassword" class="text-center col-form-label">Stare hasło:</label>
-				<input type="password" name="oldPassword" class="form-control"/>
+				<input type="password" name="oldPassword" class="form-control" required/>
 				<label for="newPassword" class="text-center col-form-label">Nowe hasło:</label>
-				<input type="password" name="newPassword" class="form-control"/>
+				<input type="password" name="newPassword" class="form-control" required/>
 				<label for="reNewPassword" class="text-center col-form-label">Powtórz nowe hasło:</label>
-				<input type="password" name="reNewPassword" class="form-control"/>
+				<input type="password" name="reNewPassword" class="form-control" required/>
 			</div>
 			<div class="col-md-8 offset-sm-2 text-center text-danger" >
 				<?php
 					if (isset($_SESSION['errorChangePassword']))
 					{
 						echo $_SESSION['errorChangePassword'];
+						unset($_SESSION['errorChangePassword']);
 					}
 				?>
 			</div>

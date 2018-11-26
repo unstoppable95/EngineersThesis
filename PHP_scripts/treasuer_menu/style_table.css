@@ -11,9 +11,9 @@ body {
   background-color: #f5f5f5;
 }
 
-.table td{
+.table-center td{
    text-align: center;   
 }
-.table th{
+.table-center th{
    text-align: center;   
 }

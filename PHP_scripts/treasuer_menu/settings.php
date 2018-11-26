@@ -99,6 +99,7 @@ if (!isset($_SESSION['loggedIn'])) {
 					if (isset($_SESSION['errorChangePassword']))
 					{
 						echo $_SESSION['errorChangePassword'];
+						unset($_SESSION['errorChangePassword']);
 					}
 				?>
 				</div>
@@ -161,7 +162,7 @@ if (!isset($_SESSION['loggedIn'])) {
     
 		<h3> Dokonaj wpłaty </h3>
 		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
-				Kwota: <input type="text" name="amountOfMoney" /> <br /><br />
+				Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />
 				
 				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
 				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />

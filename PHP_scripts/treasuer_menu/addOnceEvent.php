@@ -32,7 +32,7 @@ if (!isset($_SESSION['loggedIn']))
 		</button>
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
 		<a class="navbar-brand">Konto skarbnika</a>
-			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+			<!--<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 				<li class="nav-item">
 					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
 				</li>
@@ -60,7 +60,7 @@ if (!isset($_SESSION['loggedIn']))
 				<li class="nav-item">
 					<a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
 			</li>
-			</ul>
+			</ul>-->
 	  </div>
 </nav>    
 <div class="container">
@@ -77,7 +77,7 @@ if (!isset($_SESSION['loggedIn']))
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="eventPrice" class="text-center col-form-label">Cena na ucznia:</label>
-				<input type="text" name="eventPrice" class="form-control"/>
+				<input type="number" step="0.01" min="0" name="eventPrice" class="form-control"/>
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="eventDate" class="text-center col-form-label">Data wydarzenia: </label>

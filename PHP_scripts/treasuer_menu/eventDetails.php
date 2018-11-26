@@ -69,11 +69,11 @@ if (!isset($_SESSION['loggedIn'])) {
 <!--PAY FOR EVENT -->
 <div id="payForEventModal" class="modal fade" >
  <div class="modal-dialog">
-    <form action="treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
+    <form action="../treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
    <div class="modal-content">
     
 		<h2>Opłać wydarzenie</h2>
-			Wprowadż kwotę, jaką chcesz opłacić: <input type="text" name="amount"/>
+			Wprowadż kwotę, jaką chcesz opłacić: <input type="number" step="0.01" min="0"  name="amount"/>
 			<br>
 			<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
 			<br>
@@ -132,8 +132,22 @@ $(document).ready(function(){
                      }      					 
                 });   
       });
-	  */
+	  
 	 
+	 	$(document).on('click','.btn_detailsEvent',function(){
+	var id=$(this).data("id4");
+
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'set_selected_rowID', id:id},
+			//dataType:"text",
+			success:function(){
+				window.open('eventDetails.php','_blank');
+					//window.open('http://www.w3schools.com');
+                     }      					 
+                });   
+      });*/
 	$(document).on('click','.btn_payForEvent',function(){
 	var childID=$(this).data("id3");
 	var eventID=$(this).data("id4");

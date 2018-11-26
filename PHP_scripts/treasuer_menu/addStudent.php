@@ -75,11 +75,11 @@ if (!isset($_SESSION['loggedIn']))
 		<div class="form-group row">
 			<div class="col-md-10 offset-sm-1">
 				<label for="childName" class="text-center col-form-label">Imię:</label>
-				<input type="text" name="childName" class="form-control"/>
+				<input type="text" name="childName" class="form-control" required/>
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="childSurname" class="text-center col-form-label">Nazwisko:</label>
-				<input type="text" name="childSurname" class="form-control"/>
+				<input type="text" name="childSurname" class="form-control" required/>
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="childBirthdate" class="text-center col-form-label">Data urodzenia: </label>
@@ -101,7 +101,7 @@ if (!isset($_SESSION['loggedIn']))
 			</div>
 			<div class="col-md-10 offset-sm-1">
 				<label for="parentEmail" class="text-center col-form-label">Email:</label>
-				<input type="text" name="parentEmail" class="form-control"/>
+				<input type="text" name="parentEmail" class="form-control" required/>
 			</div>
 		</div>
 		<div class="row text-center">

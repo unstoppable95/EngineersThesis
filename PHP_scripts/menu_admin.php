@@ -100,7 +100,7 @@ require_once "admin_helper.php";
 
 				<div class="modal-body">
 				<h4>Podaj nowy email skarbnika </h4>
-					Email: <input type="text" name="trNewMail"/>
+					Email: <input type="email" name="trNewMail" required/>
 				</div>
 
 				<div class="modal-footer">
@@ -125,7 +125,7 @@ require_once "admin_helper.php";
 			<div class="modal-body">
 				<h4>Podaj dane nowego skarbnika </h4>
 				<form action="admin_helper.php" method="post">
-					Email: <input type="text" name="trMail"/>
+					Email: <input type="email" name="trMail" required/>
 				</form>
 			</div>
 

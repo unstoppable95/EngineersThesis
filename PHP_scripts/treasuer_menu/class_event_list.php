@@ -130,7 +130,7 @@ if ($_SESSION['amountOfChild'] == 1)
    <div class="modal-content">
     
 		<h2>Opłać wydarzenie</h2>
-			Wprowadż kwotę, jaką chcesz opłacić: <input type="text" name="amount"/>
+			Wprowadż kwotę, jaką chcesz opłacić: <input type="number" step="0.01" min="0"  name="amount"/>
 			<br>
 			<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
 			<br>
@@ -150,7 +150,7 @@ if ($_SESSION['amountOfChild'] == 1)
 		<h2>Edycja</h2>	
 		<table>
 		<tr><td>Nazwa: </td><td><input type="text" name="newEventName"/></td></tr> 
-		<tr><td>Cena: </td><td><input type="text" name="newEventPrice" /></td></tr> 
+		<tr><td>Cena: </td><td><input type="number" step="0.01" min="0"  name="newEventPrice" /></td></tr> 
 		<tr><td>Data: </td><td><input type="date" placeholder="YYYY-MM-DD" name="newEventDate" /> </td></tr> 
 		<tr><td colspan="2"><input type="submit" name="editEvent"  class="btn_edit" value="Zatwierdz"/></td></tr>
 		<table>
@@ -234,7 +234,7 @@ $(document).ready(function(){
 	
 	
 
-	$(document).on('click','.btn_detailsEvent',function(){
+	/*$(document).on('click','.btn_detailsEvent',function(){
 	var id=$(this).data("id4");
 
 		$.ajax({
@@ -249,9 +249,22 @@ $(document).ready(function(){
                      }      					 
                 });   
       });
+	  */
 	  
-	  
+	$(document).on('click','.btn_detailsEvent',function(){
+	var id=$(this).data("id4");
 
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'set_selected_rowID', id:id},
+			//dataType:"text",
+			success:function(){
+				window.open('eventDetails.php','_blank');
+					//window.open('http://www.w3schools.com');
+                     }      					 
+                });   
+      });
 	
 	
 	function fetch_event_list()

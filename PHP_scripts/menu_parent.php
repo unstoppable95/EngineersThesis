@@ -141,7 +141,7 @@ if ($_SESSION['amountOfChild'] == 1)
    <div class="modal-content">
     
 		<p>
-		Nowe hasło: <br /> <input type="password" name="newPassword" /> <br /><br />
+		Nowe hasło: <br /> <input type="password" name="newPassword" required/> <br /><br />
 		<input type="submit" value="Zatwierdz" name="RequiredNewPasswordAccept"/>
 		</p>
 		

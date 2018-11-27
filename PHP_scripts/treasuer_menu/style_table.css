@@ -17,3 +17,7 @@ body {
 .table-center th{
    text-align: center;   
 }
+
+.col-right {
+	text-align: right;
+}

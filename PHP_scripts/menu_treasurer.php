@@ -94,16 +94,16 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-<div class="container-fluid">
+<div class="container">
 	<div class="row">
 		<div id="class_name" class="col-md-12 text-center"></div>
 	</div>
 		<div class="row">
-		<div class="ml-3" id ="accounts_amount">
+		<div class="text-center col-md-12" id ="accounts_amount">
 		</div>
 	</div>
 	<div class="row text-center">
-		<h5 class="col-md-12" >Stan kont dzieci:</h5>
+		<h5 class="col-md" >Stan kont dzieci:</h5>
 	</div>
 </div>
 

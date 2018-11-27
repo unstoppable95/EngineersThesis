@@ -603,11 +603,11 @@ function fetch_class_account_information()
 	<div class="table-responsive p-3">
 				<table class="table table-bordered">
 				<tbody>
-					<tr><td>Ilość pieniędzy zebranych na koncie klasowym</td><td>'  . $class_money . ' zł</td></tr> 
-					<tr><td>    w gotówce </td><td>' . $cash . ' zł</td></tr> 
-					<tr><td>    na koncie </td><td>'  . $balance . ' zł</td></tr> 
+					<tr><td>Ilość pieniędzy zebranych na koncie klasowym</td><td class="col-right">'  . number_format($class_money, 2, ".", "") . ' zł</td></tr> 
+					<tr><td>    w gotówce </td><td class="col-right">' . $cash . ' zł</td></tr> 
+					<tr><td>    na koncie </td><td class="col-right">'  . $balance . ' zł</td></tr> 
 				
-					<tr><td>Wartość miesięcznej składki</td><td>' .$monthly_fee. ' zł</td></tr> 
+					<tr><td>Wartość miesięcznej składki</td><td class="col-right">' .$monthly_fee. ' zł</td></tr> 
 				<tbody>
 				<table>
 			</div>';
@@ -629,10 +629,17 @@ function fetch_children_account_information()
 	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
 
 	$output.= '
-	 <p> Ilość pieniędzy na kontach dzieci: ' . $class_kids_money . ' zł</p> 
-	 <p> W tym: </p>
-	 <p> - ilość pieniędzy z kont dzieci w gotówce: '.$kids_account_balance_all["cash"] . ' zł</p>
-	 <p> - ilość pieniędzy z kont dzieci na koncie: '.$kids_account_balance_all["balance"].'zł</p>';
+	<div class="table-responsive">
+				<table class="table table-bordered">
+				<tbody>
+					<tr><td>Ilość pieniędzy na kontach dzieci:</td><td class="col-right">'  . 
+					number_format($class_kids_money, 2, ".", "") . ' zł</td></tr> 
+					<tr><td>    w gotówce </td><td class="col-right">' . $kids_account_balance_all["cash"] . ' zł</td></tr> 
+					<tr><td>    na koncie </td><td class="col-right">'  . $kids_account_balance_all["balance"] . ' zł</td></tr> 
+				
+				<tbody>
+				<table>
+			</div> ';
 	echo $output;
 }
 
@@ -663,12 +670,10 @@ function fetch_accounts_amount()
 			<div class="table-responsive">
 				<table class="table table-bordered">
 				<tbody>
-					<tr><td>Ilość pieniędzy zebranych na koncie klasowym</td><td>'  . $class_money . ' zł</td></tr> 
-					<tr><td>    w gotówce </td><td>' . $cash . ' zł</td></tr> 
-					<tr><td>    na koncie </td><td>'  . $balance . ' zł</td></tr> 
-					<tr><td>Ilość pieniędzy na kontach dzieci</td><td>'  . $class_kids_money . ' zł</td></tr> 
-					<tr><td>    w gotówce </td><td>' .$kids_account_balance_all["cash"] . ' zł</td></tr> 
-					<tr><td>    na koncie </td><td>' .$kids_account_balance_all["balance"]. ' zł</td></tr> 
+					<tr><td>Ilość pieniędzy zebranych na koncie klasowym</td><td class="col-right">'  . number_format($class_money, 2, ".", "") . ' zł</td><td>Ilość pieniędzy na kontach dzieci</td><td class="col-right">'  . number_format($class_kids_money, 2, ".", "") . ' zł</td></tr> 
+					<tr><td>    w gotówce </td><td class="col-right">' . $cash . ' zł</td><td>    w gotówce </td><td class="col-right">' .$kids_account_balance_all["cash"] . ' zł</td></tr> 
+					<tr><td>    na koncie </td><td class="col-right">'  . $balance . ' zł</td><td>    na koncie </td><td class="col-right">' .$kids_account_balance_all["balance"]. ' zł</td></tr> 
+				
 				<tbody>
 				<table>
 			</div> ';

@@ -34,7 +34,10 @@ if ((isset($_POST['editEvent'])))
 {
 	editEvent();
 }
-
+if ((isset($_POST['endEvent'])))
+{
+	endEvent();
+}
 if ((isset($_POST['addExpense'])))
 {
 	addExpense();
@@ -49,7 +52,10 @@ if ((isset($_POST['payForChildEvent'])))
 {
 	payForEvent();
 }
-
+if ((isset($_POST['deleteEvent'])))
+{
+	deleteEvent();
+}
 
 
 if ((isset($_POST['function2call'])))
@@ -687,6 +693,30 @@ function saveEditEventID()
 	$_SESSION['changeEventID'] = $_POST["id"];
 }
 
+function endEvent()
+{
+	session_start();
+
+	require_once "connection.php";
+
+	$conn = new mysqli($servername, $username, $password, $dbName);
+	$currrentDate = date('Y-m-d');
+	$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+		
+	}
+	else
+	{
+		$result = $conn->query(sprintf("update event set completed='1' where id='" . $_SESSION['changeEventID'] . "'")); 
+		$_SESSION['errorEndEvent'] = "Zbiórka została zamknięta"; 
+	}
+	header('Location: treasuer_menu/class_event_list.php');
+	$conn->close();
+}
+
+
 function editEvent()
 {
 	session_start();
@@ -751,23 +781,21 @@ function editEvent()
 function deleteEvent()
 {
 	require_once "connection.php";
-
+	session_start();
 	$connect = new mysqli($servername, $username, $password, $dbName);
 	$currrentDate = date('Y-m-d');
-	$res = ($connect->query(sprintf("select * FROM event WHERE id = '" . $_POST["id"] . "'")))->fetch_assoc();
+	$res = ($connect->query(sprintf("select * FROM event WHERE id = '" . $_SESSION["changeEventID"] . "'")))->fetch_assoc();
 
 	// checkoig if i can delete event (cannot delete event witch previous date)
 
 	if ($res["date"] > $currrentDate)
 	{
-		if ($res = $connect->query(sprintf("DELETE FROM event WHERE id = '" . $_POST["id"] . "'")))
+		if ($res = $connect->query(sprintf("DELETE FROM event WHERE id = '" . $_SESSION["changeEventID"] . "'")))
 		{
-			echo 'Pomyslnie usunięto zbiórkę.';
+			$_SESSION['errorDeleteEvent'] = "Usunieto zbiorke"; 
+				header('Location: treasuer_menu/class_event_list.php');
+			//echo 'Pomyslnie usunięto zbiórkę.';
 		}
-	}
-	else
-	{
-		echo 'Nie możesz usunąć zbiórki, która już się zakończyła!';
 	}
 }
 
@@ -779,7 +807,7 @@ function fetch_event_details()
 	$output = '';
 	$result = ($connect->query(sprintf("select count(*) as total from participation where event_id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$output.= "Liczba uczestników zbiórki: " . $result["total"] . "";
-	$resultAmount = ($connect->query(sprintf("select price from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+	$resultAmount = ($connect->query(sprintf("select price,completed from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmount = $resultAmount["price"] * $result["total"];
 	$resultAmountPaid = ($connect->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmountPaid = $resultAmountPaid["totalPaid"];
@@ -814,7 +842,7 @@ function fetch_event_details()
 			{
 				$color = '';
 			}
-
+			if($resultAmount["completed"] == 0) {
 			$output.= '  
 			<tbody>
                 <tr>  
@@ -827,7 +855,24 @@ function fetch_event_details()
 
 				</tr>  
 			<tbody>
-           ';
+			';
+			}else
+			{
+			$output.= '  
+			<tbody>
+                <tr>  
+					<!--<td ' . $color . '>' . $row["childID"] . '</td>-->
+                     <td ' . $color . '>' . $row["name"] . '</td>  
+					 <td ' . $color . '>' . $row["surname"] . '</td>
+					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
+					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
+					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" disabled>Oplac</button></td>
+
+				</tr>  
+			<tbody>
+			';
+			}
+			
 		}
 	}
 	else
@@ -955,7 +1000,7 @@ function fetch_event_list()
 					 <th scope="col">Cena</th>
 					 <th scope="col">Szczegóły</th>
 					 <th scope="col">Edycja</th>
-					 <th scope="col">Zakończona</th>
+					 <th scope="col">Zakończ</th>
 					 <th scope="col">Usuwanie</th> 
                 </tr>
 				<thead>';
@@ -963,21 +1008,37 @@ function fetch_event_list()
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
-			//onclick="window.open(\'eventDetails.php\',\'_blank\')" 
-			// data-toggle="modal" data-target="#eventDetailsModal"
+			if($row["completed"]=='0'){
+			
 			$output.= ' 
 			<tbody>				
                 <tr>  
-					<td>' . $row["date"] . '</td>
+					<td >' . $row["date"] . '</td>
                      <td>' . $row["name"] . '</td>  
 					 <td>' . $row["price"] . ' zł</td>
 					 <td><button type="button"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default">Szczegóły</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent btn btn-default">Edytuj</button></td>
-					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Zakończ</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventEndModal" data-id4="' . $row["id"] . '" class="btn_endEvent btn btn-default">Zakończ</button></td>
 					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default">Usuń zbiórkę</button></td>
 				</tr>
 			<tbody>				
            ';
+		}else{
+			$color = 'bgcolor=\"#99e699\"';
+			$output.= ' 
+			<tbody>				
+                <tr>  
+					<td '.$color.'>' . $row["date"] . '</td>
+                     <td '.$color.'>' . $row["name"] . '</td>  
+					 <td '.$color.'>' . $row["price"] . ' zł</td>
+					 <td '.$color.'><button type="button"  data-id4="' . $row["id"] . '" class="btn_detailsEvent btn btn-default" >Szczegóły</button></td>
+					 <td '.$color.'><button type="button" data-toggle="modal" data-target="#eventEditModal"  data-id4="' . $row["id"] . '" class="btn_editEvent btn btn-default" disabled>Edytuj</button></td>
+					 <td '.$color.'><button type="button" data-toggle="modal" data-target="#eventEndModal" data-id4="' . $row["id"] . '" class="btn_endEvent btn btn-default"  disabled>Zakończ</button></td>
+					 <td '.$color.'><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id4="' . $row["id"] . '" class="btn_deleteEvent btn btn-default" disabled>Usuń zbiórkę</button></td>
+				</tr>
+			<tbody>				
+           ';
+		}
 		}
 	}
 	else

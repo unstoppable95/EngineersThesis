@@ -184,6 +184,62 @@ if ($_SESSION['amountOfChild'] == 1)
 </div>
 
 
+<div id="eventEndModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="../treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h6 class="text-center">Czy napewno chcesz zakończyć zbiórkę?</h6>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<!--<h6>Czy napewno chcesz zakończyć zbiórkę?</h6>-->
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit" name="endEvent">Zakończ</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </form>
+ </div>
+</div>
+
+<div id="eventDeleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="../treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h6 class="text-center">Czy napewno chcesz usunąć zbiórkę?</h6>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<!--<h6>Czy napewno chcesz zakończyć zbiórkę?</h6>-->
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="deleteEvent">Usuń</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </form>
+ </div>
+</div>
+
 
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -213,8 +269,8 @@ $(document).ready(function(){
     fetch_children_account_information();
 
 
-	  $(document).on('click','.btn_editEvent',function(){
-	var id=$(this).data("id4");
+	$(document).on('click','.btn_editEvent',function(){
+		var id=$(this).data("id4");
 		$.ajax({
 			url:"../treasurer_helper.php",
 			method:"POST",
@@ -229,30 +285,40 @@ $(document).ready(function(){
            
       });
 
-	
-
-	
-	
+	//zakończ
+	$(document).on('click','.btn_endEvent',function(){
+		var id=$(this).data("id4");
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'saveEditEvent', id:id},
+			dataType:"text",
+		
+				success:function(data){
+					
+                     }      					 
+                });
+	 
+           
+      });
+	  
 	// delete event
 
 	$(document).on('click','.btn_deleteEvent',function(){
-	var id=$(this).data("id4");
-	if(confirm("Czy jestes pewny, ze chcesz usunąć ten event?"))  
-           {
-	$.ajax({
-		url:"../treasurer_helper.php",
-		method:"POST",
-		data:{function2call: 'deleteEvent', id:id},
-		dataType:"text",
-		success:function(data){
-			alert(data);
-			fetch_event_list()
-			
-                     }  
-                });  
-           }  
+		var id=$(this).data("id4");
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'saveEditEvent', id:id},
+			dataType:"text",
+		
+				success:function(data){
+					
+                     }      					 
+                });
+	 
+           
       });
-	
 	
 
 	/*$(document).on('click','.btn_detailsEvent',function(){

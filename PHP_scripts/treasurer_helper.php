@@ -379,7 +379,8 @@ function students_balances_list()
                 <tr>  
                      <th scope="col">Imię i  Nazwisko</th> 
 					 <th scope="col">Konto klasowe</th>
-					 <th scope="col">Konto dziecka</th>
+					 <th scope="col">Konto dziecka gotówka</th>
+					 <th scope="col">Konto dziecka konto</th>
 					<!-- <th scope="col">Szczegóły</th> -->
                 </tr>
 				<thead>';
@@ -389,7 +390,7 @@ function students_balances_list()
 		{
 			$class_account_balanceTMP = $connect->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = ".$row["id"] ));
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
-			$account_balanceTMP = $connect->query(sprintf("SELECT (cash+balance) as account_balance FROM account WHERE child_id = ".$row["id"] ));
+			$account_balanceTMP = $connect->query(sprintf("SELECT cash,balance  FROM account WHERE child_id = ".$row["id"] ));
 			$account_balance = mysqli_fetch_array($account_balanceTMP);
 			//TODO
 			$current_my_q = $connect->query(sprintf("select month(curdate()) as m , year(curdate()) as y from dual"));
@@ -412,7 +413,8 @@ function students_balances_list()
 			$expected_value = intval($months["date"]) * intval($fee["fee"]); 
 			$child_class_account = intval($class_account_balance["x"]) - $expected_value;
 			$output.='		 <td>'. $child_class_account .' zł </td>
-					 <td>' . $account_balance["account_balance"] . ' zł</td>
+					 <td>' . $account_balance["cash"] . ' zł</td>
+					  <td>' . $account_balance["balance"] . ' zł</td>
 					<!-- <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance  btn btn-default">Szczegóły</button></td>-->
 				</tr> 
 			<tbody>						
@@ -894,7 +896,7 @@ function fetch_event_details()
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Oplac</button></td>
+					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Oplac</button></td>
 
 				</tr>  
 			<tbody>

@@ -168,11 +168,11 @@ function payForEvent()
 	$y = mysqli_fetch_array($alreadyPaidx);
 	$alreadyPaid = $y["amount_paid"];	
 	
-	$wantPay = $_POST["amount"];
-	
+	$wantPayBalance = $_POST["amount"];
+	$wantPayCash = $_POST["amountCash"];
 	$leftToPay = $price - $alreadyPaid;
 	
-	
+	$wantPay = $wantPayBalance + $wantPayCash;
 	$payAll=0;
 	if(isset($_POST['payAll'])){
 		$payAll = 1;
@@ -180,55 +180,95 @@ function payForEvent()
 	else{
 		$payAll = 0;
 	}
-	if($wantPay == $leftToPay){
-		$payAll = 1;
-	}
+
 	
-	$accountBalancex = $connect->query(sprintf("SELECT balance FROM account WHERE child_id = ".$_SESSION['childToBePaid']));
+	$accountBalancex = $connect->query(sprintf("SELECT balance,cash FROM account WHERE child_id = ".$_SESSION['childToBePaid']));
 	$z = mysqli_fetch_array($accountBalancex);
 	$accountBalance = $z["balance"];	
-	
+	$accountCash = $z["cash"];
 	$willBePaid =0;
 	
-	if($payAll == 1){
-		if($accountBalance < $leftToPay){
-			$willBePaid = $accountBalance;
-			$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
+	if($payAll == 1){ //chce opłacić wszystko 
+		if($_POST['payAll']=="payAllval") // jeżeli chce zapłacić wszystko z konta bankowego
+		{
+			if($accountBalance < $leftToPay){ // jeżeli nie ma wystarczająco kasy
+				$willBePaidBalance = $accountBalance;
+				$willBePaidCash = 0;
+				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo z konta!";// płaci tyle ile ma 
+			}
+			else{
+				$willBePaidBalance = $leftToPay; // jeżeli ma wystarczająco to opłaca całe
+				$willBePaidCash = 0;
+				$echoo = "Wydarzenie zostało w pełni opłacone z pieniędzy na koncie bankowym!";
+			}
 		}
-		else{
-			$willBePaid = $leftToPay;
-			$echoo = "Wydarzenie zostało w pełni opłacone!";
+		else
+		{//z gotowki
+			if($accountCash < $leftToPay){ // jeżeli nie ma wystarczająco kasy
+				$willBePaidCash = $accountCash;
+				$willBePaidBalance = 0;
+				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo z gotówki!";// płaci tyle ile ma 
+			}
+			else{
+				$willBePaidCash = $leftToPay; // jeżeli ma wystarczająco to opłaca całe
+				$willBePaidBalance = 0;
+				$echoo = "Wydarzenie zostało w pełni opłacone z pieniędzy w gotówce!";
+			}
 		}
 			
-		
 	}
-	else{ //if treasuer want to pay other amount than all
-		if($wantPay > $leftToPay){
-			if($accountBalance >= $wantPay){
-				$willBePaid = $leftToPay;
-				$echoo = "Żądana kwota jest większa niż kwota pozostała do zapłąty. Wydarzenie zostało w pełni opłacone!!";
-			}
-			else{
-				$willBePaid = $accountBalance;
-				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
-			}
+	else{ //jeżeli wpisałam kwoty
+	//w pierwszej kolejności płacę gotówką 
+		$willBePaidBalance = 0;
+		$willBePaidCash = 0;
+		if($wantPayCash >= $leftToPay)   
+		{
+			if($accountCash >= $leftToPay){ // płacę całość gotówka 
+				$willBePaidCash = $leftToPay; 
+				$leftToPay = 0;
+			}else{ // płacę część gotówką bo nie mam tyle kasy
+				$willBePaidCash = $accountCash;
+				$leftToPay = $leftToPay - $accountCash;
+				}
+		}else{
+			if($accountCash >= $wantPayCash){ // płacę całość  wprowadzona gotówka 
+				$willBePaidCash = $wantPayCash; 
+				$leftToPay= $leftToPay - $wantPayCash;
+			}else{ // płacę część z kwoty wprowadzonej gotówką bo nie mam tyle kasy
+				$willBePaidCash = $accountCash;
+				$leftToPay = $leftToPay - $accountCash;
+				}
 		}
-			
-		if($wantPay < $leftToPay){
-			if($accountBalance >= $wantPay){
-				$willBePaid = $wantPay;
-				$echoo = "Wydarzenie zostało opłacone żądaną kwotą!";
-			}
-			else{
-				$willBePaid = $accountBalance;
-				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo!";
-			}
+	//w drugiej z konta
+	if($wantPayBalance >= $leftToPay)   
+		{
+			if($accountBalance >= $leftToPay){ // płacę całość z konta 
+				$willBePaidBalance = $leftToPay; 
+				$leftToPay = 0;
+			}else{ // płacę część z konta bo nie mam tyle kasy
+				$willBePaidBalance = $accountBalance;
+				$leftToPay = $leftToPay - $accountBalance;
+				}
+		}else{
+			if($accountBalance >= $wantPayBalance){ // płacę całość  wprowadzona gotówka 
+				$willBePaidBalance = $wantPayBalance; 
+				$leftToPay= $leftToPay - $wantPayBalance;
+			}else{ // płacę część z kwoty wprowadzonej gotówką bo nie mam tyle kasy
+				$willBePaidBalance = $accountBalance;
+				$leftToPay = $leftToPay - $accountBalance;
+				}
 		}
 	}
 	
+	$willBePaid = $willBePaidBalance + $willBePaidCash;
 	$connect->query(sprintf("UPDATE participation SET amount_paid =amount_paid+".$willBePaid." WHERE child_id =".$_SESSION['childToBePaid']." AND event_id=".$_SESSION['eventToBePaid']));
-	$connect->query(sprintf("UPDATE account SET balance = balance - ".$willBePaid." WHERE child_id=".$_SESSION['childToBePaid']));
-	header('Location: menu_treasurer.php');
+	if($willBePaidBalance>0){
+		$connect->query(sprintf("UPDATE account SET balance = balance - ".$willBePaidBalance." WHERE child_id=".$_SESSION['childToBePaid']));
+	}
+	if($willBePaidCash>0){
+		$connect->query(sprintf("UPDATE account SET  cash = cash - ".$willBePaidCash." WHERE child_id=".$_SESSION['childToBePaid']));
+	}
+	header('Location: treasuer_menu/eventDetails.php');
 	
 } 
 
@@ -394,9 +434,12 @@ function students_balances_list()
 function makePayment2()
 {
 	session_start();
-	if (empty($_POST['amountOfMoney']) || $_POST['amountOfMoney'] == '0')
+	if ((empty($_POST['classBalance']) || $_POST['classBalance'] == '0' )&& 
+	(empty($_POST['classCash']) || $_POST['classCash'] == '0')&&
+	(empty($_POST['childBalance']) || $_POST['childBalance'] == '0')&&
+	(empty($_POST['childBalance']) || $_POST['childCash'] == '0'))
 	{
-		header('Location: treasuer_menu/settings.php');
+		header('Location: treasuer_menu/payments.php');
 		exit();
 	}
 
@@ -409,74 +452,60 @@ function makePayment2()
 	}
 	else
 	{
-		$amountOfMoney = $_POST['amountOfMoney'];
 		$child = $_SESSION['childWhoMakePayment'];
-		if ($_POST['typeOfAccount'] == "normal")
-		{ //if treasuer make normal (cash) payment
-			$curr_balance = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-			$res_balance = mysqli_fetch_array($curr_balance);
-			$currentBalance = $res_balance["b"];
-			$curr_cash = $conn->query(sprintf("SELECT cash as c FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-			$res_cash = mysqli_fetch_array($curr_cash);
-			$currentCash = $res_cash["c"];
-			$account_idTMP = $conn->query(sprintf("SELECT id FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-			$res = mysqli_fetch_array($account_idTMP);
-			$accountID = $res["id"];
-			if($_POST['paymentType'] == "gotowka")
-			{
-				$newBalance = $currentCash + $amountOfMoney;
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				$conn->query(sprintf("UPDATE account SET cash=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-				echo "Record updated successfully";
-			}
-			else
-			{
-				$newBalance = $currentBalance + $amountOfMoney;
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				$conn->query(sprintf("UPDATE account SET balance=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
-				echo "Record updated successfully";
-			}
-			
-			
-			//if ($result = $conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $child))))
-			//{
-			
-			
-			//}
+
+		$curr_balance = $conn->query(sprintf("SELECT balance as b ,id  FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+		$res_balance = mysqli_fetch_array($curr_balance);
+		$currentBalance = $res_balance["b"];
+		$accountID = $res["id"];
+		$curr_cash = $conn->query(sprintf("SELECT cash as c FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+		$res_cash = mysqli_fetch_array($curr_cash);
+		$currentCash = $res_cash["c"];
+	
+		
+		if($_POST['childCash'] > 0)
+		{
+			$newBalance = $currentCash + $_POST['childCash'];
+			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childCash'] . ",'gotowka')"));
+			$conn->query(sprintf("UPDATE account SET cash=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			echo "Record updated successfully";
 		}
-		else
-		{ //if treasuer want to transfer money to child's class account
+		if($_POST['childBalance'] > 0)
+		{
+			$newBalance = $currentBalance + $_POST['childBalance'];
+			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childBalance'] . ",'konto')"));
+			$conn->query(sprintf("UPDATE account SET balance=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
+			echo "Record updated successfully";
+		}
 
-			// fetch class account id
-
-			$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['childWhoMakePayment'] . ")"));
-			$ress = $class_acc_id->fetch_assoc();
-			$class_account_id = $ress["id"];
+		$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['childWhoMakePayment'] . ")"));
+		$ress = $class_acc_id->fetch_assoc();
+		$class_account_id = $ress["id"];
 
 			// inserting payment to class account
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['childWhoMakePayment'] . ",'" . $_POST['paymentType'] . "')"));
+		$conn->query(sprintf("INSERT INTO class_account_payment (amount,class_account_id, child_id,type) VALUES (" . $amountOfMoney . "," . $class_account_id . "," . $_SESSION['childWhoMakePayment'] . ",'" . $_POST['paymentType'] . "')"));
 			
-			$curr_balance = $conn->query(sprintf("SELECT balance as b,cash as c FROM class_account WHERE id =". $class_account_id));
-			$res_balance = mysqli_fetch_array($curr_balance);
-			$currentBalance = $res_balance["b"];
-			$currentCash = $res_balance["c"];
+		$curr_balance = $conn->query(sprintf("SELECT balance as b,cash as c FROM class_account WHERE id =". $class_account_id));
+		$res_balance = mysqli_fetch_array($curr_balance);
+		$currentBalance = $res_balance["b"];
+		$currentCash = $res_balance["c"];
 			
-			if($_POST['paymentType'] == "gotowka")
-			{
-				$newBalance = $currentCash + $amountOfMoney;
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				$conn->query(sprintf("UPDATE class_account SET cash=" . $newBalance . " WHERE id =".$class_account_id));
-				echo "Record updated successfully";
-			}
-			else
-			{
-				$newBalance = $currentBalance + $amountOfMoney;
-				$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $amountOfMoney . ",'" . $_POST['paymentType'] . "')"));
-				$conn->query(sprintf("UPDATE class_account SET balance=" . $newBalance . " WHERE id =".$class_account_id));
-				echo "Record updated successfully";
-			}
+		if($_POST['classCash'] >0)
+		{
+			$newBalance = $currentCash + $_POST['classCash'];
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classCash'] . ",'gotowka'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
+			$conn->query(sprintf("UPDATE class_account SET cash=" . $newBalance . " WHERE id =".$class_account_id));
+			echo "Record updated successfully";
+		}
+		if($_POST['classBalance'] >0)
+		{
+			$newBalance = $currentBalance + $_POST['classBalance'];
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classCash'] . ",'konto'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
+			$conn->query(sprintf("UPDATE class_account SET balance=" . $newBalance . " WHERE id =".$class_account_id));
+			echo "Record updated successfully";
 		}
 	}
+	
 
 	$conn->close();
 	header('Location: treasuer_menu/payments.php');
@@ -837,48 +866,47 @@ function fetch_event_details()
 			if ($row["amount_paid"] == $resultAmount["price"])
 			{
 				$color = ' bgcolor = #66ff66 ';
-			}
-			else
-			{
+				$disabled = 'disabled';
+			}else{
 				$color = '';
+				$disabled='';
 			}
 			if($resultAmount["completed"] == 0) {
 			$output.= '  
 			<tbody>
                 <tr>  
-					<!--<td ' . $color . '>' . $row["childID"] . '</td>-->
                      <td ' . $color . '>' . $row["name"] . '</td>  
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default">Oplac</button></td>
+					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" '.$disabled.'>Oplac</button></td>
 
 				</tr>  
 			<tbody>
 			';
-			}else
+			}
+			else
 			{
 			$output.= '  
 			<tbody>
                 <tr>  
-					<!--<td ' . $color . '>' . $row["childID"] . '</td>-->
                      <td ' . $color . '>' . $row["name"] . '</td>  
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
-					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" disabled>Oplac</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Oplac</button></td>
 
 				</tr>  
 			<tbody>
 			';
 			}
 			
-		}
+	}
 	}
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze zbiórek do tej klasy</td>  
+                          <td colspan="5">Nie dodano jeszcze zbiórek do tej klasy</td>  
                      </tr>';
 	}
 

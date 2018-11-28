@@ -84,10 +84,17 @@ if (!isset($_SESSION['loggedIn'])) {
 						<fieldset>
 							<div class="form-group">
 								<div class="row">
-								<label for="newEventName">Wprowadż kwotę, jaką chcesz opłacić:</label>
-								<input type="number" step="0.01" min="0"  name="amount" class="form-control"/>
+									<label for="amount">Wprowadż kwotę, jaką chcesz opłacić z konta:</label>
+									<input type="number" step="0.01" min="0"  name="amount" class="form-control"/>
+									<label for="amountCash">Wprowadż kwotę, jaką chcesz opłacić gotówką:</label>
+									<input type="number" step="0.01" min="0"  name="amountCash" class="form-control"/>
 								</div>
-								<input type="checkbox" name="payAll" value="payAllval" > Oplac całość<br>
+								<div class="radio">
+									<label><input type="radio" name="payAll" value="payAllval">Opłać całość z konta</label>
+								</div>
+								<div class="radio">
+									<label><input type="radio" name="payAll" value="payAllCash">Opłać całość gotówką</label>
+								</div>
 							</div>
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
 						</fieldset>

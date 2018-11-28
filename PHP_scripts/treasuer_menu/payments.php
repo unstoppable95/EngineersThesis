@@ -76,14 +76,37 @@ if (!isset($_SESSION['loggedIn'])) {
 
 
 <!--MODAL MAKE PAYMENT -->
-<div id="makePaymentModal" class="modal fade" >
- <div class="modal-dialog">
+<div id="makePaymentModal" class="modal fade" abindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
     <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
    <div class="modal-content">
-    
-		<h3> Dokonaj wpłaty </h3>
-		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
-				Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />
+    <div class="modal-header">
+				<h3 class="text-center">Wpłać na konto ucznia</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+	<div class="modal-body">
+		<div class="col-md-12">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div class="text-center">
+					<fieldset>
+						<div class="form-group">
+							<div class="row">
+								<h5 class="text-center col">Wpłata na konto klasowe</h5>
+								<label for="classBalance">Wprowadż kwotę, jaką chcesz wpłacić na konto w banku</label>
+								<input type="number" step="0.01" min="0"  name="classBalance" class="form-control"/>
+								<label for="classCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
+								<input type="number" step="0.01" min="0"  name="classCash" class="form-control"/>
+								<h5 class="text-center col">Wpłata na konto ucznia</h5>
+								<label for="childBalance">Wprowadż kwotę, jaką chcesz wpłacić na konto w banku</label>
+								<input type="number" step="0.01" min="0"  name="childBalance" class="form-control"/>
+								<label for="childCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
+								<input type="number" step="0.01" min="0"  name="childCash" class="form-control"/>
+							</div>
+						</div>
+		<!--<form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">-->
+				<!--Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />
 				
 				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
 				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />
@@ -91,12 +114,18 @@ if (!isset($_SESSION['loggedIn'])) {
 				 <select name="paymentType">
 					<option value="gotowka">Gotówka</option>
 					<option value="konto">Na konto</option>
-				</select>
-				<br /><br />
-				<input type="submit" value="Wpłać" name="makePayment2"/>
-		</form>
+				</select>-->
+
+		<!--</form>-->
 		
-   </div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="makePayment2">Wpłać</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
   </form>
  </div>
 </div>

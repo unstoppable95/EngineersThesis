@@ -75,6 +75,10 @@ if ((isset($_POST['function2call'])))
 		fetch_treasurer_data();
 		break;
 
+	case 'monthly_fee':
+		fetch_monthly_fee();
+		break;
+
 	case 'fetch_event_list':
 		fetch_event_list();
 		break;
@@ -1193,8 +1197,8 @@ function fetch_students_list()
 	echo $output;
 }
 
-// showing in settings
 
+// showing in settings
 function fetch_treasurer_data()
 {
 	session_start();
@@ -1218,6 +1222,18 @@ function fetch_treasurer_data()
 	echo $output;
 }
 
+function fetch_monthly_fee()
+{
+	session_start();
+	require_once "connection.php";
+
+	$connect = new mysqli($servername, $username, $password, $dbName);
+	$login = $_SESSION['user'];
+	$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+	$result = $connect->query(sprintf("SELECT * FROM class_account WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($connect, $login)));
+	$res = mysqli_fetch_array($result);
+	echo '<p>Aktualna miesięczna składka: ' . $res["monthly_fee"] . '</p>';
+}
 function changeMonthlyFee()
 {
 	session_start();

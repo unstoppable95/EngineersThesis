@@ -86,9 +86,9 @@ function fetch_paid_months()
            <table class="table table-striped table-bordered">
 		     <thead class="thead-dark"> 
                 <tr>
-                     <th scope="col"">Miesiąc (1 semestr)</th>
+                     <th scope="col">Miesiąc (1 semestr)</th>
 					 <th scope="col">Wpłacona kwota</th>
-					 <th scope="col"">Miesiąc (2 semestr)</th>
+					 <th scope="col">Miesiąc (2 semestr)</th>
 					 <th scope="col">Wpłacona kwota</th>
                 </tr>
 				</thead>';
@@ -217,21 +217,20 @@ function fetch_class_expenses_list()
 		while ($row = mysqli_fetch_array($result))
 		{
 			$output.= '  
-				<tbody>	
-						<tr>  
-							 <td>' . $row["name"] . '</td> 
-							<td>' . $row["price"] . ' zł</td>  					 
-							 <td>' . $row["date"] . '</td>
-						</tr>  
-				<tbody>	
-				   ';
+				<tbody>
+					<tr>
+						<td>' . $row["name"] . '</td>
+						<td>' . $row["price"] . ' zł</td>
+						<td>' . $row["date"] . '</td>
+					</tr>
+				<tbody>';
 		}
 	}
 	else
 	{
 		$output.= '<tr>  
-								  <td colspan="4">Nie znaleziono wydatków</td>  
-							 </tr>';
+			<td colspan="4">Nie znaleziono wydatków</td>
+			</tr>';
 	}
 
 	$output.= '</table>  
@@ -278,7 +277,7 @@ function fetch_child_name()
 	}
 	else
 	{
-		$output = "Wystapil blad w poborze dzieci";
+		$output = "Wystapil błąd w poborze dzieci";
 	}
 
 	echo $output;
@@ -343,7 +342,7 @@ function changeOldPassword()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 	{
-		echo "Blad: " . $conn->connect_errno;
+		echo "Bląd: " . $conn->connect_errno;
 	}
 	else
 	{
@@ -396,7 +395,7 @@ function changePassword()
 	$conn = new mysqli($servername, $username, $password, $dbName);
 	if ($conn->connect_errno != 0)
 	{
-		echo "Blad: " . $conn->connect_errno;
+		echo "Bląd: " . $conn->connect_errno;
 	}
 	else
 	{

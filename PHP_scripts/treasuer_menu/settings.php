@@ -115,7 +115,7 @@ if (!isset($_SESSION['loggedIn'])) {
 <div class="container">
 	<div class="row">
 		<div class="col-md-12 mt-5 text-center">
-			  <h5> Zmień kwotę miesięcznej składki klasowej</h5>
+			  <h5>Zmień kwotę miesięcznej składki klasowej</h5>
 		</div>
 	</div>
 </div> 
@@ -124,6 +124,7 @@ if (!isset($_SESSION['loggedIn'])) {
     <form action="../treasurer_helper.php" method="post" id="form1"  class="form-vertical justify-content-center">
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-3">
+				<div id="monthly_fee"> </div>
 				<label for="newMonthlyFee" class="text-center col-form-label">Nowe miesięczna składka:</label>
 				<input type="monthly_fee" name="newMonthlyFee" class="form-control"/>
 			</div>
@@ -147,8 +148,7 @@ if (!isset($_SESSION['loggedIn'])) {
     <h3>Podaj nowego maila rodzica</h3>
         Email: <input type="text" name="newParentMail"/>
         <input type="submit" name="changeParentMail" class="btn_commitChange" value="Zatwierdz"/>
-
-   </div>
+    </div>
   </form>
  </div>
 </div>
@@ -183,10 +183,8 @@ if (!isset($_SESSION['loggedIn'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-
 </body>
 </html>
-
 
 <script>
 $(document).ready(function(){
@@ -205,9 +203,19 @@ $(document).ready(function(){
     }
     fetch_treasuer_data(); 
 
+	function fetch_monthly_fee()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'monthly_fee'},
+            success:function(data){
+                $('#monthly_fee').html(data);
+            }
+        });
+    }
+    fetch_monthly_fee();
 
-      
  }); 
-  
 
 </script>

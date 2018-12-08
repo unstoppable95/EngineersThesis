@@ -84,7 +84,7 @@ if (!isset($_SESSION['loggedIn'])) {
 
 
 <div class="container">
-    <form action="../treasurer_helper.php" method="post" id="form1"  class="form-vertical justify-content-center">
+    <form action="../treasurer_helper.php" method="post"  class="form-vertical justify-content-center">
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-3">
 				<label for="oldPassword" class="text-center col-form-label">Stare hasło:</label>
@@ -121,7 +121,7 @@ if (!isset($_SESSION['loggedIn'])) {
 </div> 
 
 <div class="container">
-    <form action="../treasurer_helper.php" method="post" id="form1"  class="form-vertical justify-content-center">
+    <form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-3">
 				<div id="monthly_fee"> </div>
@@ -141,7 +141,7 @@ if (!isset($_SESSION['loggedIn'])) {
 <!--MODAL CHANGE PARENR MAIL -->
 <div id="changeParMailModal" class="modal fade">
  <div class="modal-dialog">
-  <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+  <form action="../treasurer_helper.php" method="post" enctype="multipart/form-data">
    <div class="modal-content">
 
     <h2>ZMIANA MAILA RODZICA</h2>
@@ -157,11 +157,11 @@ if (!isset($_SESSION['loggedIn'])) {
 <!--MODAL MAKE PAYMENT -->
 <div id="makePaymentModal" class="modal fade" >
  <div class="modal-dialog">
-    <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+    <form action="../treasurer_helper.php" method="post" enctype="multipart/form-data">
    <div class="modal-content">
     
 		<h3> Dokonaj wpłaty </h3>
-		 <form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">
+		 <form action="parent_helper.php" method="post" enctype="multipart/form-data">
 				Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />
 				
 				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />

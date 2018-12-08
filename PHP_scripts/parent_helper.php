@@ -82,14 +82,16 @@ function fetch_paid_months()
 	$x = $monthly_f->fetch_assoc();
 	$monthly_fee = $x["m"];
 	$output.= '  
-      <div class="table-responsive">
+	  <div class="table-responsive">
            <table class="table table-striped table-bordered">
 		     <thead class="thead-dark"> 
-                <tr>  
-                     <th scope="col"">Miesiąc</th> 
+                <tr>
+                     <th scope="col"">Miesiąc (1 semestr)</th>
+					 <th scope="col">Wpłacona kwota</th>
+					 <th scope="col"">Miesiąc (2 semestr)</th>
 					 <th scope="col">Wpłacona kwota</th>
                 </tr>
-				<thead>';
+				</thead>';
 	if ($amount_of_paid_money > 0)
 	{
 		$months = array(
@@ -104,35 +106,35 @@ function fetch_paid_months()
 			'maj',
 			'czerwiec'
 		);
-		$topay = 0;
-		$fild_color = '#66ff66';
+		$topay = array_fill(0, 10, 0);
+		$fild_color = array_fill(0, 10, '#FF5050');
 		$fully_paid_months = floor($amount_of_paid_money / $monthly_fee);
 		for ($i = 0; $i < 10; $i++)
 		{
 			if ($i < $fully_paid_months)
 			{
-				$topay = $monthly_fee;
+				$topay[$i] = $monthly_fee;
+				$fild_color[$i] = '#66ff66';
 			}
 			else
 			{
 				if ($i == $fully_paid_months)
 				{
-					$topay = - (($i) * $monthly_fee) + $amount_of_paid_money;
-					$fild_color = '#FF5050';
-				}
-				else
-				{
-					$topay = 0;
+					$topay[$i] = - (($i) * $monthly_fee) + $amount_of_paid_money;
 				}
 			}
-
+		}
+		for ($i = 0; $i < 5; $i++)
+		{
 			$output.= '  
-			<tbody>
-						<tr>  
-							<td bgcolor=' . $fild_color . ' >' . $months[$i] . '</td> 
-							<td bgcolor=' . $fild_color . '  >' . $topay . ' zł</td> 
-						</tr>  
-			<tbody> ';
+				<tbody>
+					<tr>
+						<td bgcolor=' . $fild_color[$i] . ' >' . $months[$i] . '</td>
+						<td bgcolor=' . $fild_color[$i] . '  >' . $topay[$i] . ' zł</td>
+						<td bgcolor=' . $fild_color[$i + 5] . ' >' . $months[$i + 5] . '</td>
+						<td bgcolor=' . $fild_color[$i + 5] . '  >' . $topay[$i + 5] . ' zł</td>
+					</tr>
+				<tbody> ';
 		}
 	}
 	else

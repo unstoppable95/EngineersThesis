@@ -76,15 +76,15 @@ INSERT INTO `child` (`id`, `name`, `surname`, `date_of_birth`, `parent_id`, `cla
 (1, 'Tomek', 'Olejniczak', '2006-12-01', 2, 1),
 (2, 'Basia', 'Pawlaczyk', '2006-08-15', 3, 1),
 (3, 'Aleksandra', 'Kowalska', '2006-06-09', 4, 1),
-(4, 'Katrzyna', 'J&oacute;Åºwiak', '2006-02-25', 5, 1),
+(4, 'Katrzyna', 'Jóźwiak', '2006-02-25', 5, 1),
 (5, 'Patryk', 'Glapiak', '2007-08-05', 6, 1),
-(6, 'Krystian', 'Å»urczak', '2006-05-05', 1, 1),
-(7, 'Piotr', 'J&oacute;Åºwiak', '2001-10-05', 7, 2),
+(6, 'Krystian', 'Żurczak', '2006-05-05', 1, 1),
+(7, 'Piotr', 'Jóźwiak', '2001-10-05', 7, 2),
 (8, 'Tomasz', 'Nowak', '2001-08-05', 8, 2),
 (9, 'Witold', 'Chudy', '2001-06-08', 9, 2),
 (10, 'Kasper', 'Kowal', '2001-05-08', 10, 2),
-(11, 'Karol', 'MichaÅ‚owski', '2001-08-05', 11, 2),
-(12, 'Bartosz', 'G&oacute;rka', '2002-05-08', 12, 2);
+(11, 'Karol', 'Michałowski', '2001-08-05', 11, 2),
+(12, 'Bartosz', 'Górka', '2002-05-08', 12, 2);
 
 --
 -- Wyzwalacze `child`
@@ -408,8 +408,8 @@ INSERT INTO `expense` (`id`, `name`, `price`, `date`, `class_account_id`, `type`
 (3, 'kwiaty', '3.00', '2018-11-22', 1, 'gotowka'),
 (4, 'mleko', '5.00', '2018-11-28', 1, 'gotowka'),
 (5, 'mleko', '3.00', '2018-11-28', 1, 'konto'),
-(6, 'kwiaty na dzieÅ„ nauczyciela', '15.00', '2018-11-28', 2, 'gotowka'),
-(7, 'kwiaty na dzieÅ„ nauczyciela', '15.00', '2018-11-28', 2, 'konto'),
+(6, 'kwiaty na dzień nauczyciela', '15.00', '2018-11-28', 2, 'gotowka'),
+(7, 'kwiaty na dzień nauczyciela', '15.00', '2018-11-28', 2, 'konto'),
 (8, 'herbata', '3.00', '2018-11-28', 2, 'gotowka');
 
 --
@@ -439,18 +439,18 @@ CREATE TABLE `parent` (
 --
 
 INSERT INTO `parent` (`id`, `name`, `surname`, `email`, `type`) VALUES
-(1, 'Anna', 'Å»urczak', 'annazurczak1@gmail.com', 't'),
+(1, 'Anna', 'Żurczak', 'annazurczak1@gmail.com', 't'),
 (2, 'Robert', 'Olejniczak', 'robert23891@wp.pl', 'p'),
 (3, 'Jan', 'Pawlaczyk', 'pawlaykok@onet.pl', 'p'),
 (4, 'Piotr', 'Kowalski', 'kowal85845@onet.pl', 'p'),
-(5, 'Adrianna', 'J&oacute;Åºwiak', 'jozwiakkasia258@wp.pl', 'p'),
+(5, 'Adrianna', 'Jóźwiak', 'jozwiakkasia258@wp.pl', 'p'),
 (6, 'Zofia', 'Glapiak', 'glapiakpatrykkkk@gmail.com', 'p'),
-(7, 'Kasia', 'J&oacute;Åºwiak', 'kasjozw@gmail.com', 't'),
+(7, 'Kasia', 'Jóźwiak', 'kasjozw@gmail.com', 't'),
 (8, 'Aurelia', 'Nowak', 'elaelaelaleasd@gmail.com', 'p'),
 (9, 'Andrzej', 'Chudy', 'andriejchudy88@onet.pl', 'p'),
 (10, 'Mateusz', 'Kowal', 'matikowalhyhy@wp.pl', 'p'),
-(11, 'JarosÅ‚aw', 'MichaÅ‚owski', 'jareczekmichalowskihoho@wp.pl', 'p'),
-(12, 'BogumiÅ‚a', 'G&oacute;rka', 'bogulagorek@gmail.com', 'p');
+(11, 'Jarosław', 'Michałowski', 'jareczekmichalowskihoho@wp.pl', 'p'),
+(12, 'Bogumiła', 'Górka', 'bogulagorek@gmail.com', 'p');
 
 --
 -- Wyzwalacze `parent`

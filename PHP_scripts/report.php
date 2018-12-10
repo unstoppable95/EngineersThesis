@@ -10,6 +10,7 @@ $height = 10;
 session_start();
 $connect = new mysqli($servername, $username, $password, $dbName);
 class myPDF extends FPDF {
+    
     function headerTable()
     {
         $this->SetFont('Times', 'B', 12);
@@ -19,6 +20,7 @@ class myPDF extends FPDF {
         $this->Cell($GLOBALS['width4Col'], $GLOBALS['height'], 'Konto dziecka konto', 1, 0, 'C');
         $this->Ln();
     }
+
     function viewTable($connect)
     {
         $this->SetFont('Times', '', 12);
@@ -57,8 +59,8 @@ class myPDF extends FPDF {
         }
         else
 	    {
-            $sumOfWidth = $width1Col + $width2Col + $width3Col + $width4Col;
-            $pdf->Cell($sumOfWidth, $height, 'Nie dodano jeszcze uczniów do tej klasy', 1, 0, 'C');
+            $sumOfWidth = $GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col'] + $GLOBALS['width4Col'];
+            $this->Cell($sumOfWidth, $GLOBALS['height'], 'Nie dodano jeszcze uczniów do tej klasy', 1, 0, 'C');
         }
     }
 }

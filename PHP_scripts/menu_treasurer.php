@@ -104,7 +104,7 @@ if ($_SESSION['amountOfChild'] == 1)
 	</div>
 	<div class="row">
 		<h5 class="col-md text-center">Stan kont dzieci:</h5>
-		<a class="btn btn-secondary" href="fpdf/test.php" role="button">Generuj raport</a>
+		<a class="btn btn-secondary" href="report.php" role="button">Generuj raport</a>
 		<!-- <button type="button" class="btn btn-secondary btn-sm">Generuj raport</button> -->
 	</div>
 </div>

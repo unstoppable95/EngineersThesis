@@ -57,8 +57,8 @@ if (isset($_SESSION['funAddClass'])) {
 			</li>
 			</ul>
 	  </div>
-	</nav>    
-		
+	</nav>
+
 <h3 class="text-center">Dodaj klasę i skarbnika</h3>
 	
 <div class="container">

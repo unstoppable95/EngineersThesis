@@ -28,7 +28,7 @@ require_once "connection.php";
 
 // stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 
-$conn = @new mysqli($servername, $username, $password, $dbName);
+$conn = new MyDB();
 $result = $conn->query(sprintf("select * from username where login='%s' and first_login=TRUE", mysqli_real_escape_string($conn, $_SESSION['user'])));
 $isUser = $result->num_rows;
 

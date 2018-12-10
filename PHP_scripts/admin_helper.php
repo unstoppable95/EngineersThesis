@@ -139,7 +139,7 @@ function addStudentsFile()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$filename = "." . $target_file;
 	if ($_FILES["fileToUpload"]["size"] > 0)
 	{
@@ -218,7 +218,7 @@ function addStudent()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -313,7 +313,7 @@ function sendPassword()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -355,7 +355,7 @@ function changeEmailTreasuer()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -383,7 +383,7 @@ function changeTreasuer2()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -419,7 +419,7 @@ function changePassword()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -485,7 +485,7 @@ function addClassTreasurer()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -544,10 +544,10 @@ function fetch()
 {
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	
 	$output = '';
-	$result = $connect->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id"));
+	$result = $conn->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -607,8 +607,8 @@ function deleteFromDB()
 {
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
-	if ($res = $connect->query(sprintf("DELETE FROM class WHERE id = '" . $_POST["id"] . "'")))
+	$conn = new MyDB();
+	if ($res = $conn->query(sprintf("DELETE FROM class WHERE id = '" . $_POST["id"] . "'")))
 	{
 		echo 'Pomyślnie usunięto klasę';
 	}
@@ -617,9 +617,9 @@ function deleteFromDB()
 function showTreasuerData(){
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
+	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
 	$res = mysqli_fetch_array($result);
 	$output.= '
 		   Imię: ' . $res["name"] . '
@@ -633,11 +633,11 @@ function showDetails()
 {
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
-	$className = $connect->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
-	$studentsList = $connect->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
+	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
+	$className = $conn->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
+	$studentsList = $conn->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
 	$res = mysqli_fetch_array($result);
 	$output.= '<h2>Szczegóły klasy: ' . mysqli_fetch_array($className) ["name"] . '</h2>
 

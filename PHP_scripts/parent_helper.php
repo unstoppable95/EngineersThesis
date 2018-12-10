@@ -73,12 +73,12 @@ function fetch_paid_months()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$sum = $connect->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild']));
+	$sum = $conn->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild']));
 	$r = $sum->fetch_assoc();
 	$amount_of_paid_money = $r["s"];
-	$monthly_f = $connect->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")"));
+	$monthly_f = $conn->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")"));
 	$x = $monthly_f->fetch_assoc();
 	$monthly_fee = $x["m"];
 	$output.= '  
@@ -154,9 +154,9 @@ function fetch_class_account_payment_history()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild'] . " ORDER BY date"));
+	$result = $conn->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild'] . " ORDER BY date"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -199,9 +199,9 @@ function fetch_class_expenses_list()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")) ORDER BY date"));
+	$result = $conn->query(sprintf("SELECT * FROM expense WHERE class_account_id =(SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")) ORDER BY date"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -243,7 +243,7 @@ function fetch_class_account_data()
 	session_start();
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$sum = $conn->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild']));
 	$r = $sum->fetch_assoc();
 	$amount_of_paid_money = $r["s"];
@@ -263,14 +263,14 @@ function fetch_child_name()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if (isset($_SESSION["choosenChild"]))
 	{
-		$result = $connect->query(sprintf("SELECT * FROM child WHERE id=" . $_SESSION['choosenChild']));
+		$result = $conn->query(sprintf("SELECT * FROM child WHERE id=" . $_SESSION['choosenChild']));
 		if (mysqli_num_rows($result) > 0)
 		{
 			$row = mysqli_fetch_array($result);
-			$class = $connect->query(sprintf("SELECT * FROM class WHERE id=" . $row["class_id"]));
+			$class = $conn->query(sprintf("SELECT * FROM class WHERE id=" . $row["class_id"]));
 			$classrow = mysqli_fetch_array($class);
 			$output = '<h5> Bieżące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h5>';
 		}
@@ -288,9 +288,9 @@ function fetch_payment_history()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * FROM payment WHERE account_id =(SELECT id FROM account WHERE child_id = " . $_SESSION['choosenChild'] . ") ORDER BY date"));
+	$result = $conn->query(sprintf("SELECT * FROM payment WHERE account_id =(SELECT id FROM account WHERE child_id = " . $_SESSION['choosenChild'] . ") ORDER BY date"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -339,7 +339,7 @@ function changeOldPassword()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Bląd: " . $conn->connect_errno;
@@ -392,7 +392,7 @@ function changePassword()
 
 	require_once "connection.php";
 
-	$conn = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Bląd: " . $conn->connect_errno;
@@ -415,11 +415,11 @@ function fetch()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
 	if (isset($_SESSION["choosenChild"]))
 	{
-		$result = $connect->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") order by sortx desc"));
+		$result = $conn->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") order by sortx desc"));
 		$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -446,7 +446,7 @@ function fetch()
 					$color = '';
 				}
 
-				$payedTmp = $connect->query(sprintf("SELECT * FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . " AND event_id=" . $row["id"]));
+				$payedTmp = $conn->query(sprintf("SELECT * FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . " AND event_id=" . $row["id"]));
 				$res = mysqli_fetch_array($payedTmp);
 				$paid = $res["amount_paid"];
 				$output.= ' 
@@ -486,20 +486,20 @@ function deleteFromDB()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 
 	// adding paid money to account
 
-	$amount_paid_tmp = $connect->query(sprintf("SELECT amount_paid FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild']));
+	$amount_paid_tmp = $conn->query(sprintf("SELECT amount_paid FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild']));
 	$x = mysqli_fetch_array($amount_paid_tmp);
 	$amount_paid = $x["amount_paid"];
-	$curr = $connect->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['choosenChild']));
+	$curr = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['choosenChild']));
 	$res = mysqli_fetch_array($curr);
 	$currentBalance = $res["b"];
 	$newBalance = $currentBalance + $amount_paid;
-	$connect->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($connect, $newBalance) , mysqli_real_escape_string($connect, $_SESSION['choosenChild'])));
+	$conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $_SESSION['choosenChild'])));
 
-	if ($res = $connect->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
+	if ($res = $conn->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
 	{
 		echo 'Pomyslnie wypisano dziecko';
 	}
@@ -512,12 +512,12 @@ function fetch_child_list()
 	$_SESSION['firstDisplayParent'] = false;
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$x = $connect->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+	$x = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$res = mysqli_fetch_array($x);
 	$_SESSION['userID'] = $res["id"];
-	$result = $connect->query(sprintf("SELECT * from child WHERE parent_id = " . $_SESSION['userID']));
+	$result = $conn->query(sprintf("SELECT * from child WHERE parent_id = " . $_SESSION['userID']));
 	$output.= '  
       <div class="table-responsive">
 		<table class="table table-striped table-bordered">
@@ -564,9 +564,9 @@ function fetch_parent_data()
 	session_start();
 	require_once "connection.php";
 
-	$connect = new mysqli($servername, $username, $password, $dbName);
+	$conn = new MyDB();
 	$output = '';
-	$result = $connect->query(sprintf("SELECT * FROM parent WHERE id =" . $_SESSION['userID']));
+	$result = $conn->query(sprintf("SELECT * FROM parent WHERE id =" . $_SESSION['userID']));
 	$res = mysqli_fetch_array($result);
 	$output.= '	 <div class="table-responsive">
 		<table class="table table-bordered">
@@ -597,9 +597,9 @@ function fetch_balance()
 	{
 		require_once "connection.php";
 
-		$connect = new mysqli($servername, $username, $password, $dbName);
+		$conn = new MyDB();
 		$output = '';
-		$result = $connect->query(sprintf("SELECT balance FROM account WHERE child_id =" . $_SESSION['choosenChild']));
+		$result = $conn->query(sprintf("SELECT balance FROM account WHERE child_id =" . $_SESSION['choosenChild']));
 		$res = mysqli_fetch_array($result);
 		$output.='<p class="text-center">Stan konta dziecka: '. $res["balance"] .'</p>';
 	}

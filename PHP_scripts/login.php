@@ -21,7 +21,7 @@ require_once "connection.php";
 
 // stworzenie polaczenia z baza danych -> @ wyciszanie bledow zeby dac swoje
 
-$conn = @new mysqli($servername, $username, $password, $dbName);
+$conn = new MyDB();
 
 if ($conn->connect_errno != 0)
 {

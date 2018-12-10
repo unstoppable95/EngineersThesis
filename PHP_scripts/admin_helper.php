@@ -547,7 +547,7 @@ function fetch()
 	$conn = new MyDB();
 	
 	$output = '';
-	$result = $conn->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id"));
+	$result = $conn->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id order by class.name"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">

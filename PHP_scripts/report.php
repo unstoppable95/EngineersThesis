@@ -22,7 +22,7 @@ class myPDF extends tFPDF {
 
     function viewTable($conn)
     {
-        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname desc"));
+        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
         if (mysqli_num_rows($result) > 0)
         {
             while ($row = mysqli_fetch_array($result))

@@ -375,7 +375,7 @@ function students_balances_list()
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname desc"));
+	$result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
 	$output.= '  
 		<div class="table-responsive ">
            <table class="table table-striped table-bordered table-center">
@@ -1098,7 +1098,7 @@ function fetch_students_list_payments()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"];
-	$result = $conn->query(sprintf("SELECT id,name,surname from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ") order by surname desc"));
+	$result = $conn->query(sprintf("SELECT id,name,surname from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ") order by surname, name"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -1146,7 +1146,7 @@ function fetch_students_list()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"];
-	$result = $conn->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")order by surname desc"));
+	$result = $conn->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")order by surname, name"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
 		<button type="button" onclick="window.open(\'addStudent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj ucznia do klasy</button> 

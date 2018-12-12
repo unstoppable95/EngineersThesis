@@ -78,16 +78,6 @@ if ($_SESSION['amountOfChild'] == 1)
 				</li>
 				<li class="nav-item">
 					<?php
-					if ($_SESSION['type'] == "t")
-					{
-						$myVar = '<a class="nav-link" href="menu_treasurer.php">Panel skarbnika</a>';
-						$_SESSION['treasurerAsParent'] = true;
-						echo $myVar;
-					}
-					?>
-				</li>
-				<li class="nav-item">
-					 <?php
 					if ((int)$_SESSION['amountOfChild'] > 1)
 					{
 						$myVar = '<a class="nav-link" href="parent_menu/p_choiceChild.php">Wybór dziecka</a>';
@@ -104,12 +94,22 @@ if ($_SESSION['amountOfChild'] == 1)
 				<li class="nav-item">
 					<a class="nav-link" href="parent_menu/p_settings.php">Ustawienia</a>
 				</li>
+				<li class="nav-item">
+					<?php
+					if ($_SESSION['type'] == "t")
+					{
+						$myVar = '<a class="nav-link" href="menu_treasurer.php">Panel skarbnika</a>';
+						$_SESSION['treasurerAsParent'] = true;
+						echo $myVar;
+					}
+					?>
+				</li>
 			</ul>
 
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">
 					<a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
-			</li>
+				</li>
 			</ul>
 	  </div>
 	</nav>  

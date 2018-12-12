@@ -10,6 +10,11 @@ if ((isset($_POST['changeMonthlyFee'])))
 	changeMonthlyFee();	
 }
 
+if ((isset($_POST['changeBankAccount'])))
+{
+	changeBankAccount();
+}
+
 if ((isset($_POST['addEvent'])))
 {
 	addEvent();
@@ -77,6 +82,10 @@ if ((isset($_POST['function2call'])))
 
 	case 'monthly_fee':
 		fetch_monthly_fee();
+		break;
+
+	case 'bank_account_number':
+		fetch_bank_account_number();
 		break;
 
 	case 'fetch_event_list':
@@ -1233,6 +1242,27 @@ function fetch_monthly_fee()
 	$res = mysqli_fetch_array($result);
 	echo '<p>Aktualna miesięczna składka: ' . $res["monthly_fee"] . '</p>';
 }
+
+function fetch_bank_account_number()
+{
+	session_start();
+	require_once "connection.php";
+
+	$conn = new MyDB();
+	$login = $_SESSION['user'];
+	$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+	$result = $conn->query(sprintf("SELECT bank_account_number FROM class WHERE parent_id= (SELECT id FROM parent WHERE email = '%s')", mysqli_real_escape_string($conn, $login)));
+	$res = mysqli_fetch_array($result);
+	//format for account number
+	$parts = array(0 => 2, 2 => 4, 6 => 4, 10 => 4, 14 => 4, 18 => 4, 22 => 4);
+	$newNumber = '';
+	foreach ($parts as $key => $val)
+	{
+	  $newNumber .= substr($res["bank_account_number"], $key, $val) . ' ';
+	}
+	echo '<p>Aktualne numery konta bankowego: ' . trim($newNumber) . '</p>';
+}
+
 function changeMonthlyFee()
 {
 	session_start();
@@ -1255,12 +1285,44 @@ function changeMonthlyFee()
 		$newMonthlyFee = htmlentities($newMonthlyFee, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		$result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee) , mysqli_real_escape_string($conn, $login)));
+		$result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee), mysqli_real_escape_string($conn, $login)));
 	}
 
 	$conn->close();
 	header('Location: treasuer_menu/settings.php');
 }
+
+function changeBankAccount()
+{
+	session_start();
+	if (empty($_POST['newAccountNumber']) || $_POST['newAccountNumber'] == '0')
+	{
+		header('Location: treasuer_menu/settings.php');
+		exit();
+	}
+
+	require_once "connection.php";
+
+	$conn = new MyDB();
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		$newAccountNumber = $_POST['newAccountNumber'];
+		$newAccountNumber = htmlentities($newAccountNumber, ENT_QUOTES, "UTF-8");
+		$newAccountNumber = preg_replace('/\s+/', '', $newAccountNumber);
+		$login = $_SESSION['user'];
+		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+		$result = $conn->query(sprintf("UPDATE class SET bank_account_number='%s' WHERE parent_id=(SELECT id FROM parent WHERE email = '%s')", mysqli_real_escape_string($conn, $newAccountNumber), mysqli_real_escape_string($conn, $login)));
+	}
+	echo $newAccountNumber;
+	echo $login;
+	$conn->close();
+	header('Location: treasuer_menu/settings.php');
+}
+
 function changeOldPassword()
 {
 	session_start();
@@ -1427,9 +1489,9 @@ function addChildParent()
 	else
 	{
 		$childName = $_POST['childName'];
-		//$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
+		$childName = htmlentities($childName, ENT_QUOTES, "UTF-8");
 		$childSurname = $_POST['childSurname'];
-		//$childSurname = htmlentities($childSurname, ENT_QUOTES, "UTF-8");
+		$childSurname = htmlentities($childSurname, ENT_QUOTES, "UTF-8");
 		$childBirthdate = $_POST['childBirthdate'];
 		$childBirthdate = htmlentities($childBirthdate, ENT_QUOTES, "UTF-8");
 		$parentName = $_POST['parentName'];

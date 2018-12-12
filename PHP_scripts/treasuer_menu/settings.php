@@ -126,12 +126,29 @@ if (!isset($_SESSION['loggedIn'])) {
 			<div class="col-md-6 offset-sm-3">
 				<div id="monthly_fee"> </div>
 				<label for="newMonthlyFee" class="text-center col-form-label">Nowe miesięczna składka:</label>
-				<input type="monthly_fee" name="newMonthlyFee" class="form-control"/>
+				<input type="number" name="newMonthlyFee" class="form-control"/>
 			</div>
 		</div>
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
 				<button type="submit" name="changeMonthlyFee" class="btn_add btn">Zatwierdź</button>
+			 </div>
+		</div>
+    </form>
+</div>
+
+<div class="container">
+    <form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-6 offset-sm-3">
+				<div id="bank_account_number"> </div>
+				<label for="newAccountNumber" class="text-center col-form-label">Nowe numery konta:</label>
+				<input type="text" name="newAccountNumber" class="form-control"/>
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="changeBankAccount" class="btn_add btn">Zatwierdź</button>
 			 </div>
 		</div>
     </form>
@@ -215,6 +232,19 @@ $(document).ready(function(){
         });
     }
     fetch_monthly_fee();
+
+	function fetch_bank_account_number()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'bank_account_number'},
+            success:function(data){
+                $('#bank_account_number').html(data);
+            }
+        });
+    }
+    fetch_bank_account_number();
 
  }); 
 

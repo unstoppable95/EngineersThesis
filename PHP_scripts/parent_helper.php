@@ -273,6 +273,14 @@ function fetch_child_name()
 			$class = $conn->query(sprintf("SELECT * FROM class WHERE id=" . $row["class_id"]));
 			$classrow = mysqli_fetch_array($class);
 			$output = '<h5> Bieżące płatności dziecka: ' . $row["name"] . ' ' . $row["surname"] . ', klasa: ' . $classrow["name"] . ' </h5>';
+			//format for account number
+			$parts = array(0 => 2, 2 => 4, 6 => 4, 10 => 4, 14 => 4, 18 => 4, 22 => 4);
+			$newNumber = '';
+			foreach ($parts as $key => $val)
+			{
+				$newNumber .= substr($classrow["bank_account_number"], $key, $val) . ' ';
+			}
+			$output .= '<h5>Nr konta klasowego: ' . trim($newNumber) . '</h5>';
 		}
 	}
 	else

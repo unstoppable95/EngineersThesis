@@ -95,17 +95,16 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 <div class="container">
-	<div class="row">
-		<div id="class_name" class="col-md-12 text-center"></div>
+	<div class="row text-center">
+		<div id="class_name" class="col text-center"></div>
 	</div>
-	<div class="row">
-		<div class="text-center col-md-12" id="accounts_amount">
-		</div>
+	
+		<div class="text-center" id="accounts_amount">
+
 	</div>
 	<div class="row">
 		<h5 class="col-md text-center">Stan kont dzieci:</h5>
-		<a class="btn btn-secondary" href="report.php" role="button">Generuj raport</a>
-		<!-- <button type="button" class="btn btn-secondary btn-sm">Generuj raport</button> -->
+		<button class="btn btn-default col-md-2 " onclick="window.open('report.php','_blank')" href="report.php" role="button">Generuj raport</button>
 	</div>
 </div>
 <div id="students_balances_list" class="container-fluid"></div>

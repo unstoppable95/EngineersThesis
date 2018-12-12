@@ -76,12 +76,22 @@ if (!isset($_SESSION['loggedIn']))
 				<input type="text" name="expenseName" class="form-control" required />
 			</div>
 			<div class="col-md-10 offset-sm-1">
-				<label for="eventPriceCash" class="text-center col-form-label">Kwota wpłacona gotówka:</label>
+				<label for="eventPriceCash" class="text-center col-form-label">Cena:</label>
 				<input type="number" step="0.01" min="0" name="eventPriceCash" class="form-control" value="0"/>
 			</div>
 			<div class="col-md-10 offset-sm-1">
-				<label for="eventPriceBank" class="text-center col-form-label">Kwota wpłacona karta: </label>
-				<input type="number" step="0.01" min="0" name="eventPriceBank" class="form-control" value="0"/>
+			<div class="form-check">
+				<label class="form-check-label">
+				<input type="radio" class="form-check-input" name="payment_type" value="cash" checked>Płatność gotówką
+				</label>
+			</div>
+			</div>
+			<div class="col-md-10 offset-sm-1">
+			<div class="form-check">
+				<label class="form-check-label">
+				<input type="radio" class="form-check-input" name="payment_type" value="bank">Płatność z konta
+				</label>
+			</div>
 			</div>
 			<div class="col-md-8 offset-sm-2 text-center text-danger" >
 				<?php

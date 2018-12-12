@@ -386,14 +386,13 @@ function students_balances_list()
 	$output = '';
 	$result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
 	$output.= '  
-		<div class="table-responsive ">
+		<div class="table-responsive p-3">
            <table class="table table-striped table-bordered table-center">
 		     <thead class="thead-dark">
                 <tr>  
                      <th scope="col">Imię i  Nazwisko</th> 
 					 <th scope="col">Konto klasowe</th>
-					 <th scope="col">Konto dziecka gotówka</th>
-					 <th scope="col">Konto dziecka konto</th>
+					 <th scope="col">Konto dziecka</th>
 					<!-- <th scope="col">Szczegóły</th> -->
                 </tr>
 				<thead>';
@@ -418,16 +417,16 @@ function students_balances_list()
 			$months=mysqli_fetch_array($month_count);
 			$monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
 			$fee=mysqli_fetch_array($monthly_fee);
+			$kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
 			$output.= '  
 			<tbody>		
                 <tr>  
                      <td>' . $row["name"] . ' ' . $row["surname"] . '</td>  ';
 			$child_class_account = '';
-			$expected_value = intval($months["date"]) * intval($fee["fee"]); 
-			$child_class_account = intval($class_account_balance["x"]) - $expected_value;
-			$output.='		 <td>'. $child_class_account .' zł </td>
-					 <td>' . $account_balance["cash"] . ' zł</td>
-					  <td>' . $account_balance["balance"] . ' zł</td>
+			$expected_value = intval($months["date"]) * doubleval($fee["fee"]); 
+			$child_class_account = doubleval($class_account_balance["x"]) - $expected_value;
+			$output.='		 <td>'.number_format($child_class_account, 2, ".", "") .' zł </td>
+					 <td>' .number_format($kid_cash_whole, 2, ".", "") . ' zł</td>
 					<!-- <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance  btn btn-default">Szczegóły</button></td>-->
 				</tr> 
 			<tbody>						
@@ -450,9 +449,7 @@ function makePayment2()
 {
 	session_start();
 	if ((empty($_POST['classBalance']) || $_POST['classBalance'] == '0' )&& 
-	(empty($_POST['classCash']) || $_POST['classCash'] == '0')&&
-	(empty($_POST['childBalance']) || $_POST['childBalance'] == '0')&&
-	(empty($_POST['childBalance']) || $_POST['childCash'] == '0'))
+	(empty($_POST['childBalance']) || $_POST['childBalance'] == '0'))
 	{
 		header('Location: treasuer_menu/payments.php');
 		exit();
@@ -467,28 +464,33 @@ function makePayment2()
 	}
 	else
 	{
+		if(isset($_POST['payment_type'])){
+			$type = $_POST["payment_type"];
+		}else{
+			$type="cash"; //TODO domysle ustawienia w skarbniku
+		}
 		$child = $_SESSION['childWhoMakePayment'];
 
 		$curr_balance = $conn->query(sprintf("SELECT balance as b ,id  FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
 		$res_balance = mysqli_fetch_array($curr_balance);
 		$currentBalance = $res_balance["b"];
-		$accountID = $res["id"];
+		$accountID = $res_balance["id"];
 		$curr_cash = $conn->query(sprintf("SELECT cash as c FROM account WHERE child_id =" . $_SESSION['childWhoMakePayment']));
 		$res_cash = mysqli_fetch_array($curr_cash);
 		$currentCash = $res_cash["c"];
 	
-		
-		if($_POST['childCash'] > 0)
+		if($type=="cash" && $_POST['childBalance'] > 0)
+		//if($_POST['childCash'] > 0)
 		{
-			$newBalance = $currentCash + $_POST['childCash'];
-			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childCash'] . ",'gotowka')"));
+			$newBalance = $currentCash + $_POST['childBalance'];
+			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childBalance'] . ",'gotowka')"));
 			$conn->query(sprintf("UPDATE account SET cash=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
 			echo "Record updated successfully";
 		}
-		if($_POST['childBalance'] > 0)
+		else if($type=="bank" && $_POST['childBalance'] > 0)
 		{
 			$newBalance = $currentBalance + $_POST['childBalance'];
-			$conn>query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childBalance'] . ",'konto')"));
+			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childBalance'] . ",'konto')"));
 			$conn->query(sprintf("UPDATE account SET balance=" . $newBalance . " WHERE child_id =" . $_SESSION['childWhoMakePayment']));
 			echo "Record updated successfully";
 		}
@@ -505,17 +507,17 @@ function makePayment2()
 		$currentBalance = $res_balance["b"];
 		$currentCash = $res_balance["c"];
 			
-		if($_POST['classCash'] >0)
+		if($type=="cash" && $_POST['classBalance'] >0)
 		{
-			$newBalance = $currentCash + $_POST['classCash'];
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classCash'] . ",'gotowka'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
+			$newBalance = $currentCash + $_POST['classBalance'];
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classBalance'] . ",'gotowka'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
 			$conn->query(sprintf("UPDATE class_account SET cash=" . $newBalance . " WHERE id =".$class_account_id));
 			echo "Record updated successfully";
 		}
-		if($_POST['classBalance'] >0)
+		else if($type="bank" && $_POST['classBalance'] >0)
 		{
 			$newBalance = $currentBalance + $_POST['classBalance'];
-			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classCash'] . ",'konto'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
+			$conn->query(sprintf("INSERT INTO class_account_payment (amount,type,class_account_id,child_id) VALUES (" . $_POST['classBalance'] . ",'konto'," . $class_account_id . ", " .$_SESSION['childWhoMakePayment'] .")"));
 			$conn->query(sprintf("UPDATE class_account SET balance=" . $newBalance . " WHERE id =".$class_account_id));
 			echo "Record updated successfully";
 		}
@@ -545,33 +547,33 @@ function addExpense()
 	$cash = doubleval($clid["cash"]);
 	$balance = doubleval($clid["balance"]);
 	$all_money = doubleval($cash) + doubleval($balance);
-	$cash_price = doubleval($_POST['eventPriceCash']);
-	$bank_price = doubleval($_POST['eventPriceBank']);
-	if ($cash>=$cash_price && $balance>=$bank_price)
-	{
-		if($cash_price>0)
-		{
-			$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $cash_price . ", " . $class_account_id . ", 'gotowka')"));
-			$cash = $cash - $cash_price;
-		}
-		if($bank_price>0)
-		{
-			$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $bank_price . ", " . $class_account_id . ", 'konto')"));
-			$balance = $balance - $bank_price; 
-		}
-
-	
-		$conn->query(sprintf("UPDATE class_account SET cash=" . $cash . " , balance = " . $balance . " WHERE id= " . $class_account_id ));
-		// KOMUNIKAT ZE DODANO POMYSLNIE
+	$price = doubleval($_POST["eventPriceCash"]);
+	if(isset($_POST['payment_type'])){
+		$type = $_POST["payment_type"];
+	}else{
+		$type="cash"; //TODO domysle ustawienia w skarbniku
 	}
+	if(($type == "cash") && ($cash> $price)){
+		$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $price . ", " . $class_account_id . ", 'gotowka')"));
+		$cash = $cash - $price;
+		$conn->query(sprintf("UPDATE class_account SET cash=" . $cash . " , balance = " . $balance . " WHERE id= " . $class_account_id ));
+	}
+	else if(($type=="bank") && ($balance>= $price)){
+//bank
+		$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $price . ", " . $class_account_id . ", 'konto')"));
+		$balance = $balance - $price; 
+		$conn->query(sprintf("UPDATE class_account SET cash=" . $cash . " , balance = " . $balance . " WHERE id= " . $class_account_id ));
+	}
+		// KOMUNIKAT ZE DODANO POMYSLNIE
+	
 	else
 	{
-		$_SESSION['error_new_expense'] = "Nie masz wystarczającej ilości pieniędzy. Sprawdź stan konta i rodziel kwotę w inny sposób lub wpłać pieniądze."; 
+		$_SESSION['error_new_expense'] = "Nie masz wystarczającej ilości pieniędzy."; 
 		header('Location: treasuer_menu/new_expenses.php');
+		
 	}
-	
 	$conn->close();
-	header('Location: treasuer_menu/expenses.php');  // nie trzeba sie przelogowac przy zmiane hasła
+	header('Location: treasuer_menu/expenses.php');
 	
 }
 
@@ -715,13 +717,16 @@ function fetch_accounts_amount()
 	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
 	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
 	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
+	$whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
+	$whole_balance = doubleval($balance) + doubleval($kids_account_balance_all["balance"]);
 	$output.= '
-			<div class="table-responsive">
+			<div class="table-responsive-sm table-aligin-center">
 				<table class="table table-bordered">
 				<tbody>
-					<tr><td>Ilość pieniędzy zebranych na koncie klasowym</td><td class="col-right">'  . number_format($class_money, 2, ".", "") . ' zł</td><td>Ilość pieniędzy na kontach dzieci</td><td class="col-right">'  . number_format($class_kids_money, 2, ".", "") . ' zł</td></tr> 
-					<tr><td>    w gotówce </td><td class="col-right">' . $cash . ' zł</td><td>    w gotówce </td><td class="col-right">' .$kids_account_balance_all["cash"] . ' zł</td></tr> 
-					<tr><td>    na koncie </td><td class="col-right">'  . $balance . ' zł</td><td>    na koncie </td><td class="col-right">' .$kids_account_balance_all["balance"]. ' zł</td></tr> 
+					<tr><td>Suma pieniędzy zebranych na koncie klasowym</td><td class="col-right">'  . number_format($class_money, 2, ".", "") . ' zł</td></tr>
+					<tr><td>Suma pieniędzy na kontach dzieci</td><td class="col-right">'  . number_format($class_kids_money, 2, ".", "") . ' zł</td></tr> 
+					<tr><td>Suma pieniądzy zebranych w gotówce </td><td class="col-right">' . number_format($whole_cash, 2, ".", ""). ' zł</td></tr> 
+					<tr><td>Suma pieniądzy zebranych na koncie </td><td class="col-right">'  . number_format($whole_balance, 2, ".", "") . ' zł</td></tr> 
 				
 				<tbody>
 				<table>
@@ -841,7 +846,6 @@ function deleteEvent()
 		}
 	}
 }
-
 function fetch_event_details()
 {
 	session_start();
@@ -891,8 +895,8 @@ function fetch_event_details()
                 <tr>  
                      <td ' . $color . '>' . $row["name"] . '</td>  
 					 <td ' . $color . '>' . $row["surname"] . '</td>
-					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
-					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
+					 <td ' . $color . '>' . $row["amount_paid"] . ' zł</td>
+					 <td ' . $color . '>' . $resultAmount["price"] . ' zł</td>
 					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" '.$disabled.'>Oplac</button></td>
 
 				</tr>  
@@ -1031,7 +1035,7 @@ function fetch_event_list()
 	$result = $conn->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "') order by date desc"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
-		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj zbiórke</button> 
+		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_self\')" class="btn btn-default btn-block">Dodaj zbiórke</button> 
 		</div>
 		<div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -1158,7 +1162,7 @@ function fetch_students_list()
 	$result = $conn->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")order by surname, name"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
-		<button type="button" onclick="window.open(\'addStudent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj ucznia do klasy</button> 
+		<button type="button" onclick="window.open(\'addStudent.php\',\'_self\')" class="btn btn-default btn-block">Dodaj ucznia do klasy</button> 
 		</div>
       <div class="table-responsive">
            <table class="table table-striped table-bordered">

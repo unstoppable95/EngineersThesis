@@ -93,17 +93,31 @@ if (!isset($_SESSION['loggedIn'])) {
 					<fieldset>
 						<div class="form-group">
 							<div class="row">
-								<h5 class="text-center col">Wpłata na konto klasowe</h5>
-								<label for="classBalance">Wprowadż kwotę, jaką chcesz wpłacić na konto w banku</label>
+								<label for="classBalance">Wpłata na konto klasowe:</label>
 								<input type="number" step="0.01" min="0"  name="classBalance" class="form-control"/>
-								<label for="classCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
-								<input type="number" step="0.01" min="0"  name="classCash" class="form-control"/>
-								<h5 class="text-center col">Wpłata na konto ucznia</h5>
-								<label for="childBalance">Wprowadż kwotę, jaką chcesz wpłacić na konto w banku</label>
+							<!--	<label for="classCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
+								<input type="number" step="0.01" min="0"  name="classCash" class="form-control"/>-->
+								<label for="childBalance">Wpłata na konto ucznia:</label>
 								<input type="number" step="0.01" min="0"  name="childBalance" class="form-control"/>
-								<label for="childCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
-								<input type="number" step="0.01" min="0"  name="childCash" class="form-control"/>
+								<!--<label for="childCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
+								<input type="number" step="0.01" min="0"  name="childCash" class="form-control"/>-->
 							</div>
+							<div class="row">
+							<div class="col-md-10 offset-sm-1">
+							<div class="form-check">
+							<label class="form-check-label">
+								<input type="radio" class="form-check-input" name="payment_type" value="cash" checked>Wpłata gotówkowa
+							</label>
+							</div>
+							</div>
+							<div class="col-md-10 offset-sm-1">
+							<div class="form-check">
+							<label class="form-check-label">
+								<input type="radio" class="form-check-input" name="payment_type" value="bank">Wpłata na konto bankowe
+							</label>
+							</div>
+							</div>
+						</div>
 						</div>
 		<!--<form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">-->
 				<!--Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />

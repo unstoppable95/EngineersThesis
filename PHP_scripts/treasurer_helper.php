@@ -725,8 +725,8 @@ function fetch_accounts_amount()
 				<tbody>
 					<tr><td>Suma pieniędzy zebranych na koncie klasowym</td><td class="col-right">'  . number_format($class_money, 2, ".", "") . ' zł</td></tr>
 					<tr><td>Suma pieniędzy na kontach dzieci</td><td class="col-right">'  . number_format($class_kids_money, 2, ".", "") . ' zł</td></tr> 
-					<tr><td>Suma pieniądzy zebranych w gotówce </td><td class="col-right">' . number_format($whole_cash, 2, ".", ""). ' zł</td></tr> 
-					<tr><td>Suma pieniądzy zebranych na koncie </td><td class="col-right">'  . number_format($whole_balance, 2, ".", "") . ' zł</td></tr> 
+					<tr><td>Suma pieniądzy zebranych w gotówce</td><td class="col-right">' . number_format($whole_cash, 2, ".", ""). ' zł</td></tr> 
+					<tr><td>Suma pieniądzy zebranych na koncie</td><td class="col-right">'  . number_format($whole_balance, 2, ".", "") . ' zł</td></tr> 
 				
 				<tbody>
 				<table>

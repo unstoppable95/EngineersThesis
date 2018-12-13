@@ -11,8 +11,37 @@ session_start();
 $conn = new MyDB();
 class myPDF extends tFPDF {
     
-    function headerTable()
+    function headerTable($conn)
     {
+        $tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
+        
+        $id = mysqli_fetch_array($tmpID);
+        $_SESSION['userID'] = $id["id"]; //userID = treasuerID
+        /////////////////////
+        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+        $bal = mysqli_fetch_array($tmpbalance);
+        $balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
+        $cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
+
+        $class_account_id = $bal["id"];
+        $class_money =  doubleval($balance) + doubleval($cash);
+
+        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+        $kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
+        $class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
+        $whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
+        $whole_balance = doubleval($balance) + doubleval($kids_account_balance_all["balance"]);
+        /////////////////////
+        $this->Cell(120, 10, "Suma pieniędzy zebranych na koncie klasowym: " . number_format($class_money, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Ln();
+        $this->Cell(120, 10, "Suma pieniędzy na kontach dzieci: " . number_format($class_kids_money, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Ln();
+        $this->Cell(120, 10, "Suma pieniądzy zebranych w gotówce: " . number_format($whole_cash, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Ln();
+        $this->Cell(120, 10, "Suma pieniądzy zebranych na koncie: " . number_format($whole_balance, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Ln();
+        $this->Ln();
+
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], 'Imię i nazwisko', 1, 0, 'C');
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], 'Konto klasowe', 1, 0, 'C');
         $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], 'Konto dziecka', 1, 0, 'C');
@@ -66,7 +95,7 @@ $pdf->AliasNbPages();
 $pdf->AddPage('P', 'A4', 0);
 $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
 $pdf->SetFont('DejaVu', '', 12); 
-$pdf->headerTable();
+$pdf->headerTable($conn);
 $pdf->viewTable($conn);
 $pdf->Output();
 

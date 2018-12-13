@@ -62,6 +62,16 @@ if (!isset($_SESSION['loggedIn'])) {
 	  </div>
 </nav>    
 
+<div class="container">
+	<div class="row text-center">
+		<div id="class_name" class="col text-center"></div>
+	</div>
+		<div class="text-center" id="accounts_amount">
+	</div>
+	<div class="row">
+		<button class="btn btn-default col-md-2 " onclick="window.open('event_report.php','_blank')" href="event_report.php" role="button">Generuj raport</button>
+	</div>
+</div>
 <div id="event_details" class="container"></div>	
         
 

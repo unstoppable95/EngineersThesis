@@ -148,7 +148,8 @@ DELIMITER ;
 CREATE TABLE `class` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `parent_id` int(11) NOT NULL
+  `parent_id` int(11) NOT NULL,
+  `bank_account_number` varchar(26) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --

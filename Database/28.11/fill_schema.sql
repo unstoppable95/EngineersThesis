@@ -173,16 +173,17 @@ DELIMITER ;
 CREATE TABLE `class` (
   `id` int(11) NOT NULL,
   `name` varchar(50) COLLATE utf8_polish_ci NOT NULL,
-  `parent_id` int(11) NOT NULL
+  `parent_id` int(11) NOT NULL,
+  `bank_account_number` varchar(26) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `class`
 --
 
-INSERT INTO `class` (`id`, `name`, `parent_id`) VALUES
-(1, '3a', 1),
-(2, '5b', 7);
+INSERT INTO `class` (`id`, `name`, `parent_id`, `bank_account_number`) VALUES
+(1, '3a', 1, '71124041849500142373368890'),
+(2, '5b', 7, '29150023705269650626818448');
 
 --
 -- Wyzwalacze `class`

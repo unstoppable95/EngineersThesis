@@ -853,12 +853,15 @@ function fetch_event_details()
 	$conn = new MyDB();
 	$output = '';
 	$result = ($conn->query(sprintf("select count(*) as total from participation where event_id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
-	$output.= "Liczba uczestników zbiórki: " . $result["total"];
-	$resultAmount = ($conn->query(sprintf("select price,completed from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+	
+	$resultAmount = ($conn->query(sprintf("select price, completed, name  from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmount = $resultAmount["price"] * $result["total"];
+	$name = $resultAmount["name"];
+	$output.= "<h1>" . $name . "</h1>";
+	$output.= "Liczba uczestników zbiórki: " . $result["total"];
 	$resultAmountPaid = ($conn->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmountPaid = $resultAmountPaid["totalPaid"];
-	$output.= "<br /> Całkowity koszt zbiórki: " . $totalAmount . " zł<br /> Suma wpłat uczestników: " . $totalAmountPaid . " zł";
+	$output.= "<br /> Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł<br /> Suma wpłat uczestników: " . $totalAmountPaid . " zł";
 	$output.= "<br /><br />";
 	$result = $conn->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_SESSION['selectedID']. "' order by surname,idx asc"));
 	$output.= ' 

@@ -14,9 +14,14 @@ class myPDF extends tFPDF {
     function headerTable($conn)
     {
         $result = ($conn->query(sprintf("select count(*) as total from participation where event_id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+        $resultAmount = ($conn->query(sprintf("select price, completed, name from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+        $name = $resultAmount["name"];
+        $this->Cell(100, 10, $name, 0, 0, 'C');
+        $this->Ln();
+        $this->SetFont('DejaVu', '', 12); 
         $this->Cell(100, 10, "Liczba uczestników zbiórki: " . $result["total"], 0, 0, 'C');
         $this->Ln();
-        $resultAmount = ($conn->query(sprintf("select price,completed from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+        
         $totalAmount = $resultAmount["price"] * $result["total"];
         $resultAmountPaid = ($conn->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $totalAmountPaid = $resultAmountPaid["totalPaid"];
@@ -57,7 +62,7 @@ $pdf = new myPDF();
 $pdf->AliasNbPages();
 $pdf->AddPage('P', 'A4', 0);
 $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
-$pdf->SetFont('DejaVu', '', 12); 
+$pdf->SetFont('DejaVu', '', 15); 
 $pdf->headerTable($conn);
 $pdf->viewTable($conn);
 $pdf->Output();

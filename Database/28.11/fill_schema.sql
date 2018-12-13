@@ -280,8 +280,8 @@ CREATE TABLE `event` (
 INSERT INTO `event` (`id`, `name`, `price`, `date`, `class_id`, `completed`) VALUES
 (1, 'Kulig', '15.00', '2018-12-20', 1, 0),
 (2, 'Zakopane 2 dni ', '100.00', '2019-01-30', 1, 0),
-(3, 'ÅšwiÄ…teczny WrocÅ‚aw', '35.00', '2018-12-18', 2, 0),
-(4, 'ognisko', '5.00', '2018-11-30', 2, 1);
+(3, 'Świąteczny Wrocław', '35.00', '2018-12-18', 2, 0),
+(4, 'Ognisko', '5.00', '2018-11-30', 2, 1);
 
 --
 -- Wyzwalacze `event`

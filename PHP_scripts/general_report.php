@@ -3,8 +3,8 @@
 require "tfpdf/tfpdf.php";
 require_once "connection.php";
 
-$width1Col = $width3Col = $width4Col = 50;
-$width2Col = 30;
+$width1Col = 70;
+$width2Col = $width3Col = 40;
 $height = 10;
 
 session_start();
@@ -15,8 +15,7 @@ class myPDF extends tFPDF {
     {
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], 'Imię i nazwisko', 1, 0, 'C');
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], 'Konto klasowe', 1, 0, 'C');
-        $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], 'Konto dziecka gotówka', 1, 0, 'C');
-        $this->Cell($GLOBALS['width4Col'], $GLOBALS['height'], 'Konto dziecka konto', 1, 0, 'C');
+        $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], 'Konto dziecka', 1, 0, 'C');
         $this->Ln();
     }
 
@@ -41,22 +40,22 @@ class myPDF extends tFPDF {
                     $current_year= $current_year - 1; 
                 }
                 $month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
-                $months=mysqli_fetch_array($month_count);
+                $months = mysqli_fetch_array($month_count);
                 $monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
-                $fee=mysqli_fetch_array($monthly_fee);
+                $fee = mysqli_fetch_array($monthly_fee);
                 $expected_value = intval($months["date"]) * intval($fee["fee"]); 
-			    $child_class_account = intval($class_account_balance["x"]) - $expected_value;
+                $child_class_account = intval($class_account_balance["x"]) - $expected_value;
+                $kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
                 /////////////////////
                 $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], $row["name"] . ' ' . $row["surname"], 1, 0, 'C');
-                $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], $child_class_account . ' zł', 1, 0, 'C');
-                $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], $account_balance['cash'], 1, 0, 'C');
-                $this->Cell($GLOBALS['width4Col'], $GLOBALS['height'], $account_balance['balance'], 1, 0, 'C');
+                $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], number_format($child_class_account, 2, ".", "") . ' zł', 1, 0, 'C');
+                $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], number_format($kid_cash_whole, 2, ".", "")  . ' zł', 1, 0, 'C');
                 $this->Ln();
             }
         }
         else
 	    {
-            $sumOfWidth = $GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col'] + $GLOBALS['width4Col'];
+            $sumOfWidth = $GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col'];
             $this->Cell($sumOfWidth, $GLOBALS['height'], 'Nie dodano jeszcze uczniów do tej klasy', 1, 0, 'C');
         }
     }

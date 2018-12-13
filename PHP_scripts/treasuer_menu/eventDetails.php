@@ -122,19 +122,16 @@ $(document).ready(function(){
 	
 	function fetch_event_details()
     {
-	var id=$(this).data("id4");
-       $.ajax({
+		var id=$(this).data("id4");
+		$.ajax({
 			url:"../treasurer_helper.php",
 			method:"POST",
 			data:{function2call: 'fetch_event_details', id:id},
 			dataType:"text",
 				success:function(data){
 					$('#event_details').html(data);
-			
-			
-                     }      					 
-                });   
-        
+                }
+            });
     }
     fetch_event_details();
 
@@ -183,11 +180,9 @@ $(document).ready(function(){
 			data:{function2call: 'payForEventTmp', childID:childID, eventID:eventID},
 			dataType:"text",
 				success:function(data){
-                     }      					 
-                });   
-      });
- 
- 
-        
+                    }
+            });
+		});
+
  }); 
   </script>

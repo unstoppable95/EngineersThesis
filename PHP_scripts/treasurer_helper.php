@@ -414,9 +414,9 @@ function students_balances_list()
 				$current_year= $current_year - 1; 
 			}
 			$month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
-			$months=mysqli_fetch_array($month_count);
+			$months = mysqli_fetch_array($month_count);
 			$monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
-			$fee=mysqli_fetch_array($monthly_fee);
+			$fee = mysqli_fetch_array($monthly_fee);
 			$kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
 			$output.= '  
 			<tbody>		
@@ -425,7 +425,7 @@ function students_balances_list()
 			$child_class_account = '';
 			$expected_value = intval($months["date"]) * doubleval($fee["fee"]); 
 			$child_class_account = doubleval($class_account_balance["x"]) - $expected_value;
-			$output.='		 <td>'.number_format($child_class_account, 2, ".", "") .' zł </td>
+			$output.='		 <td>' .number_format($child_class_account, 2, ".", "") .' zł </td>
 					 <td>' .number_format($kid_cash_whole, 2, ".", "") . ' zł</td>
 					<!-- <td><button type="button" data-toggle="modal" data-target="#classAccBalanceDetails"  data-id3="' . $row["id"] . '" class="btn_detailsClassAccBalance  btn btn-default">Szczegóły</button></td>-->
 				</tr> 
@@ -872,7 +872,6 @@ function fetch_event_details()
 					<th scope="col">Kwota wpłacona</th>
 					<th scope="col">Koszt</th>
 					<th scope="col">Opłać</th>
-					 
                 </tr>
 			<thead>';
 	if (mysqli_num_rows($result) > 0)
@@ -915,17 +914,15 @@ function fetch_event_details()
 					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Oplac</button></td>
 
 				</tr>  
-			<tbody>
-			';
+			<tbody>';
 			}
-			
-	}
+		}
 	}
 	else
 	{
 		$output.= '<tr>  
                           <td colspan="5">Nie dodano jeszcze zbiórek do tej klasy</td>  
-                     </tr>';
+                    </tr>';
 	}
 
 	$output.= '</table>  

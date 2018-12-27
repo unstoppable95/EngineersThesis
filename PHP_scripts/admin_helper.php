@@ -39,7 +39,10 @@ if ((isset($_POST['addStudentsFile'])))
 {
 	addStudentsFile();
 }
-
+if ((isset($_POST['deleteEvent'])))
+{
+	deleteFromDB();
+}
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -68,6 +71,10 @@ if ((isset($_POST['function2call'])))
 	case 'saveClassID':
 		saveClassID();
 		break;
+		
+	case 'saveIDToDelete':
+		saveIDToDelete();
+		break;
 	}
 }
 
@@ -75,6 +82,20 @@ function saveClassID()
 {
 	session_start();
 	$_SESSION['classIDCSV'] = $_POST["id"];
+	//debug_to_console("Ustawiono id csv");
+}
+function debug_to_console( $data ) {
+    $output = $data;
+    if ( is_array( $output ) )
+        $output = implode( ',', $output);
+
+    echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
+}
+function saveIDToDelete()
+{
+	session_start();
+	$_SESSION['classToDelete'] = $_POST["id"];
+	//debug_to_console("Ustawiono". $_SESSION['classToDelete']. "dupa");
 }
 
 function addStudentsFile()
@@ -163,6 +184,7 @@ function addStudentsFile()
 			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
 			$passwd = randomPassword();
 			$classID = $_SESSION['classIDCSV'];
+				
 			if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
 			{
 				$isUser = $result->num_rows;
@@ -547,7 +569,7 @@ function fetch()
 	$conn = new MyDB();
 	
 	$output = '';
-	$result = $conn->query(sprintf("SELECT class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id order by class.name"));
+	$result = $conn->query(sprintf("SELECT parent.id as treasuer_id,class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id order by class.name"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -574,18 +596,20 @@ function fetch()
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
+			$email = $conn->query(sprintf("select email from parent where id=". $row["treasuer_id"].";"));
+			$treasuer_email = mysqli_fetch_array($email);
 			$output.= '
 			<tbody>			
                 <tr>  
                   <!--   <th scope="row">' . $row["id"] . '</th>  -->
                      <td>' . $row["class_name"] . '</td>  
 					<td><button type="button" data-toggle="modal" data-target="#userModal" data-id3="' . $row["id"] . '" class="btn_details btn btn-default">Wyświetl</button></td>
-					<td>' . $row["parent_name"] .' '. $row["surname"].'</td>
+					<td>' . $row["parent_name"] .' '. $row["surname"].'<p><a href="mailto:'.$treasuer_email["email"].'">'.$treasuer_email["email"].'</a></p></td>
 					<td><button type="button" data-toggle="modal" data-target="#changeTrEmail" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień email</button>
 					<button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień skarbnika</button></td>
-					<td><button type="button" data-toggle="modal" data-target="#addStudentModal" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Ucznia</button></td>
+					<td><button type="button" onclick="window.open(\'./admin_menu/addStudent.php\',\'_self\')" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Ucznia</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Z pliku</button></td>
-					<td><button type="button" data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Usuń</button></td> 
+					<td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id3="' . $row["id"] . '" class="btn_delete_class btn btn-default">Usuń</button></td> 
 				</tr>  
 			<tbody>
            ';
@@ -594,7 +618,7 @@ function fetch()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze żadnych klas</td>  
+                          <td colspan="7">Nie dodano jeszcze żadnych klas</td>  
                      </tr>';
 	}
 
@@ -605,13 +629,21 @@ function fetch()
 
 function deleteFromDB()
 {
-	require_once "connection.php";
+	 if(!session_id()) {
+        session_start();
+    }
 
+	require_once "connection.php";
 	$conn = new MyDB();
-	if ($res = $conn->query(sprintf("DELETE FROM class WHERE id = '" . $_POST["id"] . "'")))
+	
+	if ($res = $conn->query(sprintf("DELETE FROM class WHERE id = '" . 	$_SESSION['classToDelete'] . "'")))
 	{
-		echo 'Pomyślnie usunięto klasę';
+		//echo 'Pomyślnie usunieto klase'. $_SESSION['classToDelete'] . 'lalal';
+		//header('Location: menu_admin.php');
+		header('Location: menu_admin.php');
 	}
+
+	$conn->close();
 }
 
 function showTreasuerData(){
@@ -639,7 +671,7 @@ function showDetails()
 	$className = $conn->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
 	$studentsList = $conn->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
 	$res = mysqli_fetch_array($result);
-	$output.= '<h2>Szczegóły klasy: ' . mysqli_fetch_array($className) ["name"] . '</h2>
+	$output.= '<h5>Lista uczniów klasy: ' . mysqli_fetch_array($className) ["name"] . '</h5>
 
 		   ';
 	$output.= '  
@@ -647,21 +679,26 @@ function showDetails()
 		<table class="table table-striped table-bordered">
 		    <thead class="thead-dark"> 
                 <tr>  
-                     <th scope="col">Imię</th> 
-					 <th scope="col">Nazwisko</th>
+                     <th scope="col">Imię Nazwisko</th> 
 					 <th scope="col">Data urodzenia</th>
+					 <th scope="col">Rodzic</th>
+					 <th scope="col">Email</th>
                 </tr>
 			</thead>';
 	if (mysqli_num_rows($result) > 0)
 	{
 		while ($row = mysqli_fetch_array($studentsList))
 		{
+			$parentTMP = $conn->query(sprintf("SELECT * FROM parent WHERE id = (SELECT parent_id FROM child WHERE id = " . $row["id"] . ")"));
+			$parent = mysqli_fetch_array($parentTMP);
 			$output.= '  
 			<tbody>
                 <tr>  
-                     <td>' . $row["name"] . '</td>  
-					 <td>' . $row["surname"] . '</td>
+                     <td>' . $row["name"] . ' ' . $row["surname"] .'</td>  
 					 <td>' . $row["date_of_birth"] . '</td>
+					 <td>' . $parent["name"] . ' ' . $parent["surname"] . '</td>
+					 <td><a href="mailto:' . $parent["email"] . '">' . $parent["email"] . '</a>
+					 </td>				 
                 </tr>  
 			<tbody>
            ';

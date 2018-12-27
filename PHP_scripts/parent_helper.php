@@ -280,7 +280,7 @@ function fetch_child_name()
 			{
 				$newNumber .= substr($classrow["bank_account_number"], $key, $val) . ' ';
 			}
-			$output .= '<h5>Nr konta klasowego: ' . trim($newNumber) . '</h5>';
+			$output .= '<h4>Nr konta klasowego: ' . trim($newNumber) . '</h4>';
 		}
 	}
 	else
@@ -474,7 +474,7 @@ function fetch()
 		else
 		{
 			$output.= '<tr>  
-                          <td colspan="4">Nie znaleziono wydarzeń</td>  
+                          <td colspan="5">Nie znaleziono wydarzeń</td>  
                      </tr>';
 		}
 
@@ -594,8 +594,8 @@ function choose()
 {
 	session_start();
 	$_SESSION['choosenChild'] = $_POST["id"];
-	$ale = "Wybrales dziecko o id: " . $_SESSION['choosenChild'];
-	echo $ale;
+	//$ale = "Wybrales dziecko o id: " . $_SESSION['choosenChild'];
+	//echo $ale;
 }
 
 function fetch_balance()
@@ -609,7 +609,7 @@ function fetch_balance()
 		$output = '';
 		$result = $conn->query(sprintf("SELECT balance FROM account WHERE child_id =" . $_SESSION['choosenChild']));
 		$res = mysqli_fetch_array($result);
-		$output.='<p class="text-center">Stan konta dziecka: '. $res["balance"] .'</p>';
+		$output.='<h5 class="text-center">Stan konta dziecka: '. $res["balance"] .'</h5>';
 	}
 	else
 	{

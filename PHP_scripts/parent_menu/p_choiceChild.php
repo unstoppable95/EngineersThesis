@@ -32,16 +32,6 @@ if (!isset($_SESSION['loggedIn'])) {
 				<li class="nav-item">
 					<a class="nav-link" href="../menu_parent.php">Strona główna</a>
 				</li>
-				<li class="nav-item">
-					<?php
-					if ($_SESSION['type'] == "t")
-					{
-						$myVar = '<a class="nav-link" href="../menu_treasurer.php">Panel skarbnika</a>';
-						$_SESSION['treasurerAsParent'] = true;
-						echo $myVar;
-					}
-					?>
-				</li>
 				<li class="nav-item active">
 					 <?php
 					if ((int)$_SESSION['amountOfChild'] > 1)
@@ -59,6 +49,16 @@ if (!isset($_SESSION['loggedIn'])) {
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="p_settings.php">Ustawienia</a>
+				</li>
+				<li class="nav-item">
+					<?php
+					if ($_SESSION['type'] == "t")
+					{
+						$myVar = '<a class="nav-link" href="../menu_treasurer.php">Panel skarbnika</a>';
+						$_SESSION['treasurerAsParent'] = true;
+						echo $myVar;
+					}
+					?>
 				</li>
 			</ul>
 

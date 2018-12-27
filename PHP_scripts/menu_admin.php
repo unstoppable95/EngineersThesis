@@ -69,96 +69,141 @@ require_once "admin_helper.php";
 
 
 <!--MODAL DETAILS -->
-<div id="userModal" class="modal fade">
-	<div class="modal-dialog modal-lg">
-		<form method="post" id="user_form" enctype="multipart/form-data">
-			<div class="modal-content">
-			<div class="modal-header">
-				<h3 class="modal-title">Szczegóły</h3>
-			</div>
-			<div class="modal-body">
-			<div id="parent_data"></div>
-			</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+<div id="userModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form method="post" enctype="multipart/form-data" id="user_form">
+   <div class="modal-content">
+		<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<div id="parent_data"></div>
+								</div>
+							</div>
+							
+						</fieldset>
+						</div>
+					</div>
 				</div>
 			</div>
-		</form>
+		</div>
 	</div>
+  </form>
+ </div>
 </div>
 
 <!--MODAL CHANGE TR email -->
-<div id="changeTrEmail" class="modal fade">
-	<div class="modal-dialog modal-lg">
-		<form action="admin_helper.php" method="post" enctype="multipart/form-data">
-			<div class="modal-content">
-	
-				<div class="modal-header">
-					<h3 class="modal-title">Zmiana skarbnika</h3>
+<div id="changeTrEmail" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="admin_helper.php" method="post" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h3 class="text-center">Zmiana maila obecnego skarbnika</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<label for="trNewMail">Nowy email:</label>
+								<input type="email" name="trNewMail" class="form-control"/>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block"  name="changeNewTreasurer">Zatwierdź</button>
+						</fieldset>
+						</div>
+					</div>
 				</div>
-
-				<div class="modal-body">
-				<h4>Podaj nowy email skarbnika </h4>
-					Email: <input type="email" name="trNewMail" required/>
-				</div>
-
-				<div class="modal-footer">
-					<input type="submit" name="changeNewTreasurer" value="Zatwierdź"/>
-				</div>
-
 			</div>
-		</form>
+		</div>
 	</div>
+  </form>
+ </div>
 </div>
 
 <!--MODAL CHANGE TR -->
-<div id="changeTrModal" class="modal fade">
-	<div class="modal-dialog modal-lg">
-		<form method="post" id="user_form" enctype="multipart/form-data">
-		   <div class="modal-content">
-
-			<div class="modal-header">
-				<h3 class="modal-title">Zmiana skarbnika</h3>
+<div id="changeTrModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form method="post" enctype="multipart/form-data" id="user_form">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h3 class="text-center">Zmiana skarbnika klasowego</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<form action="admin_helper.php" method="post">
+								<label for="trMail">Email nowego skarbnika:</label>
+								<input type="email" name="trMail" class="form-control"/>
+								</form>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_commitChange"  name="changeTreasuer2">Zatwierdź</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
 			</div>
-
-			<div class="modal-body">
-				<h4>Podaj dane nowego skarbnika </h4>
-				<form action="admin_helper.php" method="post">
-					Email: <input type="email" name="trMail" required/>
-				</form>
-			</div>
-
-			<div class="modal-footer">
-				<input type="submit" name="changeTreasuer2" class="btn_commitChange" value="Zatwierdź"/>
-			</div>
-
-			</div>
-		</form>
+		</div>
 	</div>
-</div>	
+  </form>
+ </div>
+</div>
 
 <!--MODAL ADD STUDENTs csv-->
-<div id="addStudentCSVModal" class="modal fade">
-	<div class="modal-dialog modal-lg">
-		<form action="admin_helper.php" method="post" enctype="multipart/form-data">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title">Wczytywanie pliku CSV</h3>
-				</div>
-
-				<div class="modal-body">
-					<h4>Załaduj plik CSV z danymi</h4>
-					<input type="file" name="fileToUpload" id="fileToUpload">
-				</div>
-
-				<div class="modal-footer">
-					<input type="submit" name="addStudentsFile" value="Dodaj uczniów"/>
+<div id="addStudentCSVModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="admin_helper.php" method="post" enctype="multipart/form-data" id="user_form">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h3 class="text-center">Wczytywanie uczniów z pliku CSV</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file" >
+								</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block"  name="addStudentsFile">Dodaj uczniów</button>
+						</fieldset>
+						</div>
+					</div>
 				</div>
 			</div>
-		</form>
+		</div>
 	</div>
+  </form>
+ </div>
 </div>
+
+
 
 <!--MODAL ADD STUDENT-->
 <div id="addStudentModal" class="modal fade">
@@ -195,6 +240,34 @@ require_once "admin_helper.php";
 	</div>
 </div>
 
+<!--confirm delete class-->
+<div id="eventDeleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="admin_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h6 class="text-center">Czy napewno chcesz usunąć klasę?</h6>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<!--<h6>Czy napewno chcesz zakończyć zbiórkę?</h6>-->
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="deleteEvent">Usuń</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </form>
+ </div>
+</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -221,22 +294,21 @@ $(document).ready(function(){
 	
 // delete
 
-$(document).on('click','.btn_delete',function(){
+$(document).on('click','.btn_delete_class',function(){
 	var id=$(this).data("id3");
-	if(confirm("Czy jestes pewny, ze chcesz usunąć tą klasę?"))  
-           {
 	$.ajax({
 		url:"admin_helper.php",
 		method:"POST",
-		data:{function2call: 'delete', id:id},
+		data:{function2call: 'saveIDToDelete', id:id },
 		dataType:"text",
 		success:function(data){
-			alert(data);
-			fetch_data();
+			//alert(data);
+			//alert(id);
+	
 			
                      }  
                 });  
-           }  
+             
       }); 
 	  
 	  //save classID to load date from CSV

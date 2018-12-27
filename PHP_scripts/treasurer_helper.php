@@ -39,6 +39,10 @@ if ((isset($_POST['editEvent'])))
 {
 	editEvent();
 }
+if ((isset($_POST['deleteStudentEvent'])))
+{
+	deleteStudent();
+}
 if ((isset($_POST['endEvent'])))
 {
 	endEvent();
@@ -151,6 +155,9 @@ if ((isset($_POST['function2call'])))
 	case 'fetch_students_list_payments':
 		fetch_students_list_payments();
 		break;
+	case 'saveStudentID':
+		saveStudentID();
+		break;
 	}
 }
 
@@ -166,6 +173,12 @@ function set_selected_rowID()
 {
 	session_start();
 	$_SESSION['selectedID'] = $_POST["id"];
+}
+
+function saveStudentID()
+{
+	session_start();
+	$_SESSION['studentToDelete'] = $_POST["id"];
 }
 function payForEvent()
 {
@@ -924,7 +937,7 @@ function fetch_event_details()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="5">Nie dodano jeszcze zbiórek do tej klasy</td>  
+                          <td colspan="7">Nie dodano jeszcze zbiórek do tej klasy</td>  
                     </tr>';
 	}
 
@@ -974,43 +987,50 @@ function btn_pMailChange()
 
 function deleteStudent()
 {
+	session_start();
 	require_once "connection.php";
 
 	$conn = new MyDB();
 
 	// checking if student have all previous months paid
 
-	$result = $conn->query(sprintf("SELECT SUM(amount) AS s FROM class_account_payment WHERE child_id = " . $_POST["id"]));
+	$result = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = " .$_SESSION["studentToDelete"])); //suma zapłacona przez studenta
 	$res = mysqli_fetch_array($result);
-	$paidAmount = $res["s"];
-	$currentMonth = date("m");
-	$fee = $conn->query(sprintf("SELECT monthly_fee FROM class_account WHERE id = (SELECT distinct class_account_id FROM class_account_payment WHERE child_id = " . $_POST["id"] . ")"));
-	$resss = mysqli_fetch_array($fee);
-	$monthlyFee = $resss["monthly_fee"];
-	if ($currentMonth >= 1 and $currentMonth <= 6)
+	
+	$current_my_q = $conn->query(sprintf("select month(curdate()) as m , year(curdate()) as y from dual"));
+	$current_my = mysqli_fetch_array($current_my_q);
+	$current_month = intval($current_my['m']);
+	$current_year = intval($current_my['y']);
+	if($current_month>=1 and $current_month<= 8)
 	{
-		$currentMonth = $currentMonth + 12;
+		$current_year= $current_year - 1; 
 	}
-
-	$differenceInMonths = $currentMonth - 9 + 1;
-	$charge = $differenceInMonths * $monthlyFee;
+	$month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
+	$months = mysqli_fetch_array($month_count);
+	
+	$fee_tmp = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
+	$fee = mysqli_fetch_array($fee_tmp);
+	$monthly_fee = $fee["monthly_fee"];
+	$expected_value = intval($months["date"]) * doubleval($fee["fee"]); 
+	$child_class_account = doubleval($res["x"]) - $expected_value;
 	$x = "start";
-	if ($charge >= $paidAmount)
+	if ($child_class_account < 0)
 	{
-		$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat';
+		$x = 'Nie można usunąć dziecka bo nie opłaciło wszystkich opłat ';
 	}
 	else
 	{
 
 		// deleting student
 
-		if ($res = $conn->query(sprintf("DELETE FROM child WHERE id = '" . $_POST["id"] . "'")))
+		if ($res = $conn->query(sprintf("DELETE FROM child WHERE id = '" . $_SESSION["studentToDelete"] . "'")))
 		{
 			$x = 'Pomyslnie usunięto ucznia';
+			
 		}
 	}
-
-	echo $x;
+	$_SESSION["info_delete_student"] =$x;
+	header('Location: ./treasuer_menu/students.php');
 }
 
 function fetch_class_name()
@@ -1090,7 +1110,7 @@ function fetch_event_list()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie dodano jeszcze zbiórek do tej klasy</td>  
+                          <td colspan="7">Nie dodano jeszcze zbiórek do tej klasy</td>  
                      </tr>';
 	}
 
@@ -1191,7 +1211,7 @@ function fetch_students_list()
 					 <td><a href="mailto:' . $parent["email"] . '">' . $parent["email"] . '</a>
 					 </td>
 					 <td><button type="button" data-toggle="modal" data-target="#changeParMailModal" data-id3="' . $row["id"] . '" class="btn_pMailChange btn btn-default">Zmień maila</button></td>
-					 <td><button type="button" data-id3="' . $row["id"] . '" class="btn_deleteStudent btn btn-default">Usuń ucznia</button></td>
+					 <td><button type="button" data-toggle="modal" data-target="#eventDeleteModal"  data-id3="' . $row["id"] . '" class="btn_deleteStudent btn btn-default">Usuń</button></td>
 				</tr>  
 			<tbody>
            ';
@@ -1560,7 +1580,7 @@ function addChildParent()
 			}
 		}
 		$conn->close();
-		header('Location: treasuer_menu/addStudent.php');
+		header('Location: treasuer_menu/students.php');
 	}
 }
 

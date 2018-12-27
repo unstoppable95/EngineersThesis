@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
 	<!-- Our CSS -->
-	<link rel="stylesheet" type="text/css" href="style.css" title="Arkusz stylów CSS">
+	<link rel="stylesheet" type="text/css" href="../treasuer_menu/style.css" title="Arkusz stylów CSS">
 	
 	<!-- Example of icons -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
@@ -71,7 +71,7 @@ if (!isset($_SESSION['loggedIn']))
 
 
 <div class="container">
-	<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+	<form action="../admin_helper.php" method="post" class="form-vertical justify-content-center">
 		<div class="form-group row">
 			<div class="col-md-10 offset-sm-1">
 				<label for="childName" class="text-center col-form-label">Imię:</label>
@@ -106,7 +106,7 @@ if (!isset($_SESSION['loggedIn']))
 		</div>
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
-				<button type="submit" name="addChildParent" class="btn_add btn" onclick="return validate(this.form);">Zatwierdź</button>
+				<button type="submit" name="addStudent" class="btn_add btn" onclick="return validate(this.form);">Zatwierdź</button>
 			 </div>
 		</div>
 		<!--<input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/>-->

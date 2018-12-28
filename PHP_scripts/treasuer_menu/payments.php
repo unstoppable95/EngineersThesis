@@ -48,7 +48,10 @@ if (!isset($_SESSION['loggedIn'])) {
 					<a class="nav-link" href="students.php">Uczniowie</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="settings.php">Ustawienia </a>
+					<a class="nav-link" href="transfer.php">Wypłaty</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="settings.php">Ustawienia</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>

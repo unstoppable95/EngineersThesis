@@ -71,6 +71,15 @@ if (!isset($_SESSION['loggedIn'])) {
 	<div class="row">
 		<button class="btn btn-default col-md-2 " onclick="window.open('event_report.php','_blank')" href="event_report.php" role="button">Generuj raport</button>
 	</div>
+	<div class="col-md-8 offset-sm-2 text-center text-danger" >
+				<?php
+					if (isset($_SESSION['error_pay_event']))
+					{
+						echo $_SESSION['error_pay_event'];
+						unset($_SESSION['error_pay_event']);
+					}
+				?>
+				</div>
 </div>
 <div id="event_details" class="container"></div>	
         
@@ -80,6 +89,7 @@ if (!isset($_SESSION['loggedIn'])) {
 <div id="payForEventModal" class="modal fade" abindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered container">
     <form action="../treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
+	<!--gvg<p></p>ffdfdf-->
    <div class="modal-content">
 		<div class="modal-header">
 				<h3 class="text-center">Opłać wydarzenie</h3>
@@ -93,20 +103,19 @@ if (!isset($_SESSION['loggedIn'])) {
 						<div class="text-center">
 						<fieldset>
 							<div class="form-group">
+							<div class="row">
+							<div class="account_info text-center container-fluid" id="account_info"></div>
+							</div>
 								<div class="row">
-									<label for="amount">Wprowadż kwotę, jaką chcesz opłacić z konta:</label>
+									<label for="amount">Wprowadż kwotę, jaką chcesz opłacić:</label>
 									<input type="number" step="0.01" min="0"  name="amount" class="form-control"/>
-									<label for="amountCash">Wprowadż kwotę, jaką chcesz opłacić gotówką:</label>
-									<input type="number" step="0.01" min="0"  name="amountCash" class="form-control"/>
 								</div>
 								<div class="radio">
-									<label><input type="radio" name="payAll" value="payAllval">Opłać całość z konta</label>
-								</div>
-								<div class="radio">
-									<label><input type="radio" name="payAll" value="payAllCash">Opłać całość gotówką</label>
+									<label><input type="radio" name="payAll" value="payAllval">Opłać całość</label>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
+								<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
+
 						</fieldset>
 						</div>
 					</div>
@@ -116,7 +125,7 @@ if (!isset($_SESSION['loggedIn'])) {
 	</div>
   </form>
  </div>
-</div>
+ </div>
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -146,39 +155,6 @@ $(document).ready(function(){
     fetch_event_details();
 
 	
-	
-	
- /*	$(document).on('click','.btn_detailsEvent',function(){
-	var id=$(this).data("id4");
-
-		$.ajax({
-			url:"../treasurer_helper.php",
-			method:"POST",
-			data:{function2call: 'fetch_event_details', id:id},
-			dataType:"text",
-				success:function(data){
-					$('#event_details').html(data);
-			
-			
-                     }      					 
-                });   
-      });
-	  
-	 
-	 	$(document).on('click','.btn_detailsEvent',function(){
-	var id=$(this).data("id4");
-
-		$.ajax({
-			url:"../treasurer_helper.php",
-			method:"POST",
-			data:{function2call: 'set_selected_rowID', id:id},
-			//dataType:"text",
-			success:function(){
-				window.open('eventDetails.php','_blank');
-					//window.open('http://www.w3schools.com');
-                     }      					 
-                });   
-      });*/
 	$(document).on('click','.btn_payForEvent',function(){
 	var childID=$(this).data("id3");
 	var eventID=$(this).data("id4");
@@ -190,6 +166,8 @@ $(document).ready(function(){
 			data:{function2call: 'payForEventTmp', childID:childID, eventID:eventID},
 			dataType:"text",
 				success:function(data){
+					//alert(data);
+					$('.account_info').html(data);
                     }
             });
 		});

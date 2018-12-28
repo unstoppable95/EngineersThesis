@@ -47,6 +47,9 @@ if (!isset($_SESSION['loggedIn'])) {
 				<li class="nav-item active">
 					<a class="nav-link" href="students.php">Uczniowie<span class="sr-only">(current)</span></a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="transfer.php">Wypłaty</a>
+				</li>				
 				<li class="nav-item ">
 					<a class="nav-link" href="settings.php">Ustawienia</a>
 				</li>

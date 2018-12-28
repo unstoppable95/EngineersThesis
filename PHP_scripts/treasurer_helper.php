@@ -15,11 +15,14 @@ if ((isset($_POST['changeBankAccount'])))
 	changeBankAccount();
 }
 
+if ((isset($_POST['add_transfer'])))
+{
+	add_transfer();
+}
 if ((isset($_POST['addEvent'])))
 {
 	addEvent();
 }
-
 if ((isset($_POST['addChildParent'])))
 {
 	addChildParent();
@@ -124,6 +127,9 @@ if ((isset($_POST['function2call'])))
 		fetch_expenses_list();
 		break;
 		
+	case 'fetch_transfer_list':
+		fetch_transfer_list();
+		break;
 	case 'makePayment':
 		makePayment();
 		break;
@@ -138,6 +144,10 @@ if ((isset($_POST['function2call'])))
 		
 	case 'payForEventTmp':
 		payForEventTmp();
+		break;
+	
+	case 'put_kid_details':
+		put_kid_details();
 		break;
 		
 	case 'fetch_class_account_information':
@@ -161,13 +171,173 @@ if ((isset($_POST['function2call'])))
 	}
 }
 
+function add_transfer(){
+	session_start();
+	require_once "connection.php";
+	$conn = new MyDB();
+	
+	$class_idx = $conn->query(sprintf("SELECT id FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+	$class_idt = mysqli_fetch_array($class_idx);
+	$class_id = $class_idt["id"];
+	$type = $_POST["type"]; //1 - konto ->gotówka  //-1 gotówka -> konto
+	$amount = doubleval($_POST["amount"]); //wysokość trzeba sprawdzić czy tyle kasy wgl jest 
+	$account_type = $_POST["account_type"]; // 1 - klasowe //0 - konta dzieci
+	
+	if($account_type=="1"){//klasowe
+		if($type=="1"){//konto->gotówka
+			$balancex = $conn->query(sprintf("SELECT balance FROM class_account WHERE class_id = ".$class_id.";"));
+			$balancet = mysqli_fetch_array($balancex);
+			$balance=$balancet["balance"];
+			if($balance>=$amount) //czy ma tyle kasy
+			{
+				
+				$conn->query(sprintf("insert into transfer (cash,class_account,class_id) values (".$amount.",1,".$class_id.");"));
+				$conn->query(sprintf("update class_account set balance=balance-".$amount." , cash=cash+".$amount." where class_id=".$class_id.";"));
+				$_SESSION["error_transfer"] = $amount.$class_id;
+			}
+			else
+			{
+				$_SESSION["error_transfer"]='Nie masz tyle pieniądzy na koncie.';
+			}
+		}else{ //gotowka->konto
+			$cashx = $conn->query(sprintf("SELECT cash FROM class_account WHERE class_id = ".$class_id.";"));
+			$casht = mysqli_fetch_array($cashx);
+			$cash=$casht["cash"];
+			if($cash>=$amount) //czy ma tyle kasy
+			{
+				$amount=(-1)*$amount;
+				$exit=$conn->query(sprintf("insert into transfer (cash,class_account,class_id) values (".$amount.",1,".$class_id.");")); 
+				$conn->query(sprintf("update class_account set balance=balance-".$amount." , cash=cash+".$amount." where class_id=".$class_id.";"));
+			}
+			else
+			{
+				$_SESSION["error_transfer"]='Nie masz tyle pieniądzy w gotówce.';
+			}
+		}
+	
+	}else{//dzieci
+		//TODO
+		$_SESSION["error_transfer"] = "tego nie obslugujemy jeszcze";
+	}
 
+	//echo $type .' '. $amount .' '. $account_type;
+	header('Location: treasuer_menu/transfer.php');
+}
+
+function fetch_transfer_list(){
+	session_start();
+	require_once "connection.php";
+	$conn = new MyDB();
+	$class="Klasowy";
+	$kids="Konta dzieci";
+	$output = '';
+	$result = $conn->query(sprintf("SELECT * FROM transfer WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by date desc"));
+	$output.= '  
+		<div class="table-responsive p-3">
+           <table class="table table-striped table-bordered table-center">
+		     <thead class="thead-dark">
+                <tr>  
+                     <th scope="col">Data</th> 
+					 <th scope="col">Kwota</th>
+					 <th scope="col">Rodzaj przelewu</th>
+					 <th scope="col">Rachunek</th>
+                </tr>
+				<thead>';
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$cash = $row["cash"];
+			if($cash>=0){
+				$type="Wypłata z konta";
+				//z konta na gotówke
+			}else{
+				$type="Wpłata na konto";
+				//z gotowki na konto
+				$cash = $cash *(-1);
+			}
+			$class_account = $row["class_account"];
+			if($class_account==1){
+				$account="Klasowe";
+			}
+			else{
+				$account="Uczniowskie";
+			}
+			$output.= '  
+			<tbody>		
+                <tr>  
+					<td>' . $row["date"] . '</td>		 
+					<td>' .number_format($cash, 2, ".", "") .' zł </td>
+					<td>' .$type. ' </td>
+					<td>' .$account. ' </td>
+				</tr> 
+			<tbody>						
+           ';
+		}
+	}
+	else
+	{
+		$output.= '<tr>  
+                          <td colspan="3">Nie dodano jeszcze uczniów do tej klasy</td>  
+                     </tr>';
+	}
+
+	$output.= '</table>  
+      </div>';
+	echo $output;
+}
 function payForEventTmp()
 {
 	session_start();
 	$_SESSION['eventToBePaid'] = $_POST["eventID"];
 	$_SESSION['childToBePaid'] = $_POST["childID"];
-}
+	require_once "connection.php";
+	$conn = new MyDB();
+	$childx= $conn->query(sprintf("SELECT name,surname FROM child WHERE id =".$_POST['childID'] ));
+	$child = mysqli_fetch_array($childx);
+	$kid_accountx=$conn->query(sprintf("SELECT balance,cash FROM account WHERE child_id =".$_POST['childID'] ));
+	$kid_account = mysqli_fetch_array($kid_accountx);
+	
+	 $output ='
+	 <div class="table-responsive">
+           <table class="table table-bordered">
+		     <thead> 
+                <tr>  
+					<th colspan="2">Stan konta '.$child["name"].' '.$child["surname"].'</th>	
+                </tr>
+			<thead>
+			<tbody> 
+					<tr>  
+						<th scope="row">Gotówka</th> 
+						<td>' .$kid_account["cash"].'</td> 
+					</tr>
+					<tr>
+						<th scope="row">Na koncie</th>
+						<td>' .$kid_account["balance"].'</td> 
+					</tr>  
+				  <tbody> </table><div>';
+	
+	
+	echo $output;
+//	echo 'dupa';
+	}
+ 
+ function put_kid_details()
+{
+	//session_start();
+	//$_SESSION['eventToBePaid'] = $_POST["eventID"];
+	//$_SESSION['childToBePaid'] = $_POST["childID"];
+	/*require_once "connection.php";
+	$conn = new MyDB();
+	$childx= $conn->query(sprintf("SELECT name,surname FROM child WHERE id =".$_POST['childID'] ));
+	$child = mysqli_fetch_array($childx);
+	$kid_accountx=$conn->query(sprintf("SELECT balance,cash FROM account WHERE child_id =".$_POST['childID'] ));
+	$kid_account = mysqli_fetch_array($kid_accountx);
+	$output='<p>Stan konta '.$child["name"].' '.$child["surname"].'</p><p>Gotówka: '.$kid_account["cash"].'</p><p>Konto: '.$kid_account["balance"].'</p>';*/
+	//echo $output;
+	//echo 'dupa';
+	}
+ 
  
 function set_selected_rowID()
 {
@@ -186,6 +356,10 @@ function payForEvent()
 	require_once "connection.php";
 	$conn = new MyDB();
 	
+	$kidx = $conn->query(sprintf("SELECT name,surname FROM child WHERE id =".$_SESSION['childToBePaid'] ));
+	$kid = mysqli_fetch_array($kidx);
+	
+	
 	$pricex = $conn->query(sprintf("SELECT price FROM event WHERE id = ".$_SESSION['eventToBePaid'] ));
 	$x = mysqli_fetch_array($pricex);
 	$price = $x["price"];
@@ -194,11 +368,11 @@ function payForEvent()
 	$y = mysqli_fetch_array($alreadyPaidx);
 	$alreadyPaid = $y["amount_paid"];	
 	
-	$wantPayBalance = $_POST["amount"];
-	$wantPayCash = $_POST["amountCash"];
+	$wantPay = $_POST["amount"];
 	$leftToPay = $price - $alreadyPaid;
-	
-	$wantPay = $wantPayBalance + $wantPayCash;
+	if($wantPay>$leftToPay){
+		$wantPay = $leftToPay;
+	}
 	$payAll=0;
 	if(isset($_POST['payAll'])){
 		$payAll = 1;
@@ -206,93 +380,50 @@ function payForEvent()
 	else{
 		$payAll = 0;
 	}
-
-	
+	$willBePaidBalance=0;
+	$willBePaidCash=0;
 	$accountBalancex = $conn->query(sprintf("SELECT balance,cash FROM account WHERE child_id = ".$_SESSION['childToBePaid']));
 	$z = mysqli_fetch_array($accountBalancex);
 	$accountBalance = $z["balance"];	
 	$accountCash = $z["cash"];
 	$willBePaid =0;
+	$sumKidMoney = doubleval($accountBalance) + doubleval($accountCash);
 	
 	if($payAll == 1){ //chce opłacić wszystko 
-		if($_POST['payAll']=="payAllval") // jeżeli chce zapłacić wszystko z konta bankowego
-		{
-			if($accountBalance < $leftToPay){ // jeżeli nie ma wystarczająco kasy
-				$willBePaidBalance = $accountBalance;
-				$willBePaidCash = 0;
-				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo z konta!";// płaci tyle ile ma 
-			}
-			else{
-				$willBePaidBalance = $leftToPay; // jeżeli ma wystarczająco to opłaca całe
-				$willBePaidCash = 0;
-				$echoo = "Wydarzenie zostało w pełni opłacone z pieniędzy na koncie bankowym!";
-			}
+		if($leftToPay>$sumKidMoney){ 
+		$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';
+		}	
+		else{
+		 // cała gotówka reszta z konta
+			$willBePaidCash = $accountCash;
+			$leftToPay = doubleval($leftToPay) - doubleval($accountCash);
+			$willBePaidBalance = $leftToPay;
 		}
-		else
-		{//z gotowki
-			if($accountCash < $leftToPay){ // jeżeli nie ma wystarczająco kasy
-				$willBePaidCash = $accountCash;
-				$willBePaidBalance = 0;
-				$echoo = "Stan Konta ucznia nie pozwolił na opłacenie całej żądanej kwoty. Kwota została opłącona częściowo z gotówki!";// płaci tyle ile ma 
-			}
-			else{
-				$willBePaidCash = $leftToPay; // jeżeli ma wystarczająco to opłaca całe
-				$willBePaidBalance = 0;
-				$echoo = "Wydarzenie zostało w pełni opłacone z pieniędzy w gotówce!";
-			}
-		}
-			
+				
 	}
 	else{ //jeżeli wpisałam kwoty
-	//w pierwszej kolejności płacę gotówką 
-		$willBePaidBalance = 0;
-		$willBePaidCash = 0;
-		if($wantPayCash >= $leftToPay)   
-		{
-			if($accountCash >= $leftToPay){ // płacę całość gotówka 
-				$willBePaidCash = $leftToPay; 
-				$leftToPay = 0;
-			}else{ // płacę część gotówką bo nie mam tyle kasy
+		if($wantPay>$sumKidMoney){ 		$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';}
+		else{
+		 // cała gotówka reszta z konta
+			if($wantPay >= $accountCash){
 				$willBePaidCash = $accountCash;
-				$leftToPay = $leftToPay - $accountCash;
-				}
-		}else{
-			if($accountCash >= $wantPayCash){ // płacę całość  wprowadzona gotówka 
-				$willBePaidCash = $wantPayCash; 
-				$leftToPay= $leftToPay - $wantPayCash;
-			}else{ // płacę część z kwoty wprowadzonej gotówką bo nie mam tyle kasy
-				$willBePaidCash = $accountCash;
-				$leftToPay = $leftToPay - $accountCash;
-				}
-		}
-	//w drugiej z konta
-	if($wantPayBalance >= $leftToPay)   
-		{
-			if($accountBalance >= $leftToPay){ // płacę całość z konta 
-				$willBePaidBalance = $leftToPay; 
-				$leftToPay = 0;
-			}else{ // płacę część z konta bo nie mam tyle kasy
-				$willBePaidBalance = $accountBalance;
-				$leftToPay = $leftToPay - $accountBalance;
-				}
-		}else{
-			if($accountBalance >= $wantPayBalance){ // płacę całość  wprowadzona gotówka 
-				$willBePaidBalance = $wantPayBalance; 
-				$leftToPay= $leftToPay - $wantPayBalance;
-			}else{ // płacę część z kwoty wprowadzonej gotówką bo nie mam tyle kasy
-				$willBePaidBalance = $accountBalance;
-				$leftToPay = $leftToPay - $accountBalance;
-				}
+				$leftToPay = doubleval($leftToPay) - doubleval($accountCash);
+				$willBePaidBalance = $leftToPay;
+			}
+			else{
+				$willBePaidCash = $wantPay;
+				$willBePaidBalance=0;
+			}
 		}
 	}
 	
-	$willBePaid = $willBePaidBalance + $willBePaidCash;
-	$conn->query(sprintf("UPDATE participation SET amount_paid =amount_paid+".$willBePaid." WHERE child_id =".$_SESSION['childToBePaid']." AND event_id=".$_SESSION['eventToBePaid']));
 	if($willBePaidBalance>0){
 		$conn->query(sprintf("UPDATE account SET balance = balance - ".$willBePaidBalance." WHERE child_id=".$_SESSION['childToBePaid']));
+		$conn->query(sprintf("UPDATE participation SET balance =balance+".$willBePaidBalance." WHERE child_id =".$_SESSION['childToBePaid']." AND event_id=".$_SESSION['eventToBePaid']));
 	}
 	if($willBePaidCash>0){
 		$conn->query(sprintf("UPDATE account SET  cash = cash - ".$willBePaidCash." WHERE child_id=".$_SESSION['childToBePaid']));
+		$conn->query(sprintf("UPDATE participation SET cash =cash+".$willBePaidCash." WHERE child_id =".$_SESSION['childToBePaid']." AND event_id=".$_SESSION['eventToBePaid']));
 	}
 	header('Location: treasuer_menu/eventDetails.php');
 	
@@ -912,7 +1043,7 @@ function fetch_event_details()
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . ' zł</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . ' zł</td>
-					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" '.$disabled.'>Oplac</button></td>
+					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default" '.$disabled.'>Opłać</button></td>
 
 				</tr>  
 			<tbody>
@@ -927,7 +1058,7 @@ function fetch_event_details()
 					 <td ' . $color . '>' . $row["surname"] . '</td>
 					 <td ' . $color . '>' . $row["amount_paid"] . '</td>
 					 <td ' . $color . '>' . $resultAmount["price"] . '</td>
-					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Oplac</button></td>
+					 <td ' . $color . '><button type="button" data-toggle="modal" data-target="#payForEventModal" data-id3="' . $row["childID"] . '" data-id4="' . $_SESSION['selectedID'] . '" class="btn_payForEvent btn btn-default " disabled>Opłać</button></td>
 
 				</tr>  
 			<tbody>';
@@ -1471,12 +1602,12 @@ function addEvent()
 		}
 		else
 		{
-			echo "Nie udalo sie dodac dziecka";
+			echo "Nie udalo sie dodac wydarzenia";
 		}
 	}
 
 	$conn->close();
-	header('Location: treasuer_menu/addOnceEvent.php');
+	header('Location: treasuer_menu/class_event_list.php');
 }
 
 function randomPassword()

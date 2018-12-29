@@ -156,7 +156,7 @@ function fetch_class_account_payment_history()
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild'] . " ORDER BY date"));
+	$result = $conn->query(sprintf("SELECT * FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild'] . " and school_year_id=".$_SESSION["school_year_id"]." ORDER BY date"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -185,7 +185,7 @@ function fetch_class_account_payment_history()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="4">Nie znaleziono wpłat</td>  
+                          <td colspan="3">Nie znaleziono wpłat</td>  
                      </tr>';
 	}
 
@@ -244,7 +244,7 @@ function fetch_class_account_data()
 	require_once "connection.php";
 
 	$conn = new MyDB();
-	$sum = $conn->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild']));
+	$sum = $conn->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_SESSION['choosenChild']." and school_year_id=".$_SESSION["school_year_id"].";"));
 	$r = $sum->fetch_assoc();
 	$amount_of_paid_money = $r["s"];
 	$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")"));
@@ -298,7 +298,7 @@ function fetch_payment_history()
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT * FROM payment WHERE account_id =(SELECT id FROM account WHERE child_id = " . $_SESSION['choosenChild'] . ") ORDER BY date"));
+	$result = $conn->query(sprintf("SELECT * FROM payment WHERE school_year_id=".$_SESSION["school_year_id"] ." and account_id =(SELECT id FROM account WHERE child_id = " . $_SESSION['choosenChild'] . ") ORDER BY date"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -427,7 +427,7 @@ function fetch()
 	$output = '';
 	if (isset($_SESSION["choosenChild"]))
 	{
-		$result = $conn->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") order by sortx desc"));
+		$result = $conn->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") and e.school_year_id=".$_SESSION['school_year_id']." order by sortx desc"));
 		$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -525,7 +525,7 @@ function fetch_child_list()
 	$x = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$res = mysqli_fetch_array($x);
 	$_SESSION['userID'] = $res["id"];
-	$result = $conn->query(sprintf("SELECT * from child WHERE parent_id = " . $_SESSION['userID']));
+	$result = $conn->query(sprintf("SELECT * from child WHERE class_id in (select id from class where school_year_id=".$_SESSION["school_year_id"].") and parent_id = " . $_SESSION['userID']));
 	$output.= '  
       <div class="table-responsive">
 		<table class="table table-striped table-bordered">

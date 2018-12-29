@@ -145,16 +145,12 @@ if ((isset($_POST['function2call'])))
 		students_balances_list();
 		break;
 	
-	case 'student_class_acc_payment_details':
+	/*case 'student_class_acc_payment_details':
 		student_class_acc_payment_details();
 		break;
-		
+		*/
 	case 'payForEventTmp':
 		payForEventTmp();
-		break;
-	
-	case 'put_kid_details':
-		put_kid_details();
 		break;
 		
 	case 'fetch_class_account_information':
@@ -307,7 +303,7 @@ function fetch_transfer_list(){
 	$class="Klasowy";
 	$kids="Konta dzieci";
 	$output = '';
-	$result = $conn->query(sprintf("SELECT * FROM transfer WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by date desc"));
+	$result = $conn->query(sprintf("SELECT * FROM transfer WHERE class_id=(SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') order by date desc"));
 	$output.= '  
 		<div class="table-responsive p-3">
            <table class="table table-striped table-bordered table-center">
@@ -395,25 +391,7 @@ function payForEventTmp()
 	
 	
 	echo $output;
-//	echo 'dupa';
-	}
- 
- function put_kid_details()
-{
-	//session_start();
-	//$_SESSION['eventToBePaid'] = $_POST["eventID"];
-	//$_SESSION['childToBePaid'] = $_POST["childID"];
-	/*require_once "connection.php";
-	$conn = new MyDB();
-	$childx= $conn->query(sprintf("SELECT name,surname FROM child WHERE id =".$_POST['childID'] ));
-	$child = mysqli_fetch_array($childx);
-	$kid_accountx=$conn->query(sprintf("SELECT balance,cash FROM account WHERE child_id =".$_POST['childID'] ));
-	$kid_account = mysqli_fetch_array($kid_accountx);
-	$output='<p>Stan konta '.$child["name"].' '.$child["surname"].'</p><p>Gotówka: '.$kid_account["cash"].'</p><p>Konto: '.$kid_account["balance"].'</p>';*/
-	//echo $output;
-	//echo 'dupa';
-	}
- 
+}
  
 function set_selected_rowID()
 {
@@ -504,7 +482,7 @@ function payForEvent()
 	header('Location: treasuer_menu/eventDetails.php');
 	
 } 
-
+/*
 function student_class_acc_payment_details()
 {
 	session_start();
@@ -592,7 +570,7 @@ function student_class_acc_payment_details()
 	
 	echo $output;
 }
-
+*/
 
 
 
@@ -604,13 +582,13 @@ function students_balances_list()
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
+	$result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"] ." and parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
 	$output.= '  
 		<div class="table-responsive p-3">
            <table class="table table-striped table-bordered table-center">
 		     <thead class="thead-dark">
                 <tr>  
-                     <th scope="col">Imię i  Nazwisko</th> 
+                     <th scope="col">Imię i Nazwisko</th> 
 					 <th scope="col">Konto klasowe</th>
 					 <th scope="col">Konto dziecka</th>
 					<!-- <th scope="col">Szczegóły</th> -->
@@ -620,7 +598,7 @@ function students_balances_list()
 	{
 		while ($row = mysqli_fetch_array($result))
 		{
-			$class_account_balanceTMP = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = ".$row["id"] ));
+			$class_account_balanceTMP = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE school_year_id=".$_SESSION["school_year_id"] ." and child_id = ".$row["id"] ));
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
 			$account_balanceTMP = $conn->query(sprintf("SELECT cash,balance  FROM account WHERE child_id = ".$row["id"] ));
 			$account_balance = mysqli_fetch_array($account_balanceTMP);
@@ -635,7 +613,7 @@ function students_balances_list()
 			}
 			$month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
 			$months = mysqli_fetch_array($month_count);
-			$monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
+			$monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') " ));
 			$fee = mysqli_fetch_array($monthly_fee);
 			$kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
 			$output.= '  
@@ -761,7 +739,7 @@ function addExpense()
 	require_once "connection.php";
 
 	$conn = new MyDB();
-	$class_account_idx = $conn->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . ")"));
+	$class_account_idx = $conn->query(sprintf("SELECT * FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id= " . $_SESSION['userID'] . ")"));
 	$clid = mysqli_fetch_array($class_account_idx);
 	$class_account_id = $clid["id"];
 	$cash = doubleval($clid["cash"]);
@@ -807,7 +785,7 @@ function fetch_expenses_list()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
-	$result = $conn->query(sprintf("SELECT date, name, SUM(price) as price from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id= " . $_SESSION['userID'] . "))  group by name,date order by date desc"));
+	$result = $conn->query(sprintf("SELECT date, name, SUM(price) as price from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id= " . $_SESSION['userID'] . "))  group by name,date order by date desc"));
 	$output.= '
 	<div class="col-md-2  float-md-right p-3">
 		<button type="button" onclick="window.open(\'new_expenses.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj wydatek</button> 
@@ -859,7 +837,7 @@ function fetch_class_account_information()
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
 
-	$tmpbalance = $conn->query(sprintf("SELECT id, balance,cash,monthly_fee FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$tmpbalance = $conn->query(sprintf("SELECT id, balance,cash,monthly_fee FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
 	$bal = mysqli_fetch_array($tmpbalance);
 	$balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
 	$cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
@@ -867,7 +845,7 @@ function fetch_class_account_information()
 	$class_account_id = $bal["id"];
 	$class_money =  doubleval($balance) + doubleval($cash);
 
-	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
 	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
 	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
 	$output.= '
@@ -895,7 +873,7 @@ function fetch_children_account_information()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
-	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
 	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
 	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
 
@@ -926,7 +904,7 @@ function fetch_accounts_amount()
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"]; //userID = treasuerID
 
-	$tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
 	$bal = mysqli_fetch_array($tmpbalance);
 	$balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
 	$cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
@@ -934,7 +912,7 @@ function fetch_accounts_amount()
 	$class_account_id = $bal["id"];
 	$class_money =  doubleval($balance) + doubleval($cash);
 
-	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+	$kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
 	$kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
 	$class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
 	$whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
@@ -969,7 +947,7 @@ function endEvent()
 
 	$conn = new MyDB();
 	$currrentDate = date('Y-m-d');
-	$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
+	//$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -1201,7 +1179,7 @@ function deleteStudent()
 
 	// checking if student have all previous months paid
 
-	$result = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = " .$_SESSION["studentToDelete"])); //suma zapłacona przez studenta
+	$result = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE school_year_id=".$_SESSION["school_year_id"]." and child_id = " .$_SESSION["studentToDelete"])); //suma zapłacona przez studenta
 	$res = mysqli_fetch_array($result);
 	
 	$current_my_q = $conn->query(sprintf("select month(curdate()) as m , year(curdate()) as y from dual"));
@@ -1246,7 +1224,7 @@ function fetch_class_name()
 	require_once "connection.php";
 
 	$conn = new MyDB();
-	$result = $conn->query(sprintf("SELECT name FROM class WHERE parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
+	$result = $conn->query(sprintf("SELECT name FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and  parent_id = (SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "')"));
 	$res = mysqli_fetch_array($result);
 	$output = "<h3>Konto klasy " . $res['name'] ."</h3>";
 	echo $output;
@@ -1259,7 +1237,7 @@ function fetch_event_list()
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("select * from event where class_id=(select id from class where parent_id='" . $_SESSION['userID'] . "') order by date desc"));
+	$result = $conn->query(sprintf("select * from event where class_id=(select id from class where school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') order by date desc"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
 		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_self\')" class="btn btn-default btn-block">Dodaj zbiórke</button> 
@@ -1338,7 +1316,7 @@ function fetch_students_list_payments()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"];
-	$result = $conn->query(sprintf("SELECT id,name,surname from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ") order by surname, name"));
+	$result = $conn->query(sprintf("SELECT id,name,surname from child WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and  parent_id = " . $_SESSION['userID'] . ") order by surname, name"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -1386,7 +1364,7 @@ function fetch_students_list()
 	$tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
 	$id = mysqli_fetch_array($tmpID);
 	$_SESSION['userID'] = $id["id"];
-	$result = $conn->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . ")order by surname, name"));
+	$result = $conn->query(sprintf("SELECT * from child WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . ")order by surname, name"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
 		<button type="button" onclick="window.open(\'addStudent.php\',\'_self\')" class="btn btn-default btn-block">Dodaj ucznia do klasy</button> 
@@ -1469,7 +1447,7 @@ function fetch_monthly_fee()
 	$conn = new MyDB();
 	$login = $_SESSION['user'];
 	$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-	$result = $conn->query(sprintf("SELECT * FROM class_account WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $login)));
+	$result = $conn->query(sprintf("SELECT * FROM class_account WHERE class_id=(SELECT id from class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $login)));
 	$res = mysqli_fetch_array($result);
 	echo '<p>Aktualna miesięczna składka: ' . $res["monthly_fee"] . '</p>';
 }
@@ -1516,7 +1494,7 @@ function changeMonthlyFee()
 		$newMonthlyFee = htmlentities($newMonthlyFee, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		$result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee), mysqli_real_escape_string($conn, $login)));
+		$result = $conn->query(sprintf("UPDATE class_account SET monthly_fee='%s' WHERE class_id=(SELECT id from class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = (SELECT id FROM parent WHERE email = '%s'))", mysqli_real_escape_string($conn, $newMonthlyFee), mysqli_real_escape_string($conn, $login)));
 	}
 
 	$conn->close();
@@ -1659,7 +1637,7 @@ function addEvent()
 		$eventPrice = htmlentities($eventPrice, ENT_QUOTES, "UTF-8");
 		$eventDate = $_POST['eventDate'];
 		$eventDate = htmlentities($eventDate, ENT_QUOTES, "UTF-8");
-		$resultclassID = ($conn->query(sprintf("select * from class where parent_id='" . $_SESSION['userID'] . "'")))->fetch_assoc();
+		$resultclassID = ($conn->query(sprintf("select * from class where school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "'")))->fetch_assoc();
 		$classID = $resultclassID['id'];
 		$result = $conn->query(sprintf("insert into event (name,price,date,class_ID) values ('%s' , '%s' ,'%s',$classID)", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventPrice) , mysqli_real_escape_string($conn, $eventDate)));
 		$resulteventID = ($conn->query(sprintf("select * from event where name='%s' and date='%s'", mysqli_real_escape_string($conn, $eventName) , mysqli_real_escape_string($conn, $eventDate))))->fetch_assoc();
@@ -1753,7 +1731,7 @@ function addChildParent()
 
 		// id klasy zalgodowanego skarbnika
 
-		$classID1 = $conn->query(sprintf("SELECT id FROM class where parent_id=(SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "' )"));
+		$classID1 = $conn->query(sprintf("SELECT id FROM class where school_year_id=".$_SESSION["school_year_id"]." and parent_id=(SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "' )"));
 		$classID = mysqli_fetch_array($classID1) ["id"];
 		if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))
 		{

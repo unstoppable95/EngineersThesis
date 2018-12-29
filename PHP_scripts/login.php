@@ -51,6 +51,10 @@ else
 			$details = $result->fetch_assoc();
 			$_SESSION['user'] = $details['login'];
 
+			$school_year_id = "select max(id) as id from school_year;";
+			$school_year_idq = ($conn->query($school_year_id))->fetch_assoc();
+			$_SESSION['school_year_id'] = $school_year_idq['id'];
+			
 			// usuniecie zmiennej blad z session
 
 			unset($_SESSION['error']);

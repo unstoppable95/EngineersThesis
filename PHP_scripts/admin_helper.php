@@ -564,12 +564,14 @@ function addClassTreasurer()
 
 function fetch()
 {
+	session_start();
 	require_once "connection.php";
 
 	$conn = new MyDB();
 	
 	$output = '';
-	$result = $conn->query(sprintf("SELECT parent.id as treasuer_id,class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id order by class.name"));
+		
+	$result = $conn->query(sprintf("SELECT parent.id as treasuer_id,class.id as id,class.name as class_name, parent.name as parent_name , parent.surname as surname FROM class left join parent on class.parent_id=parent.id where class.school_year_id=".$_SESSION["school_year_id"]." order by class.name"));
 	$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -645,13 +647,13 @@ function deleteFromDB()
 
 	$conn->close();
 }
-
+/*
 function showTreasuerData(){
 	require_once "connection.php";
 
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
+	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "and school_year_id=".$_SESSION["school_year_id"].";)"));
 	$res = mysqli_fetch_array($result);
 	$output.= '
 		   Imię: ' . $res["name"] . '
@@ -660,14 +662,14 @@ function showTreasuerData(){
 	echo $output;
 }
 
-
+*/
 function showDetails()
 {
 	require_once "connection.php";
-
+	session_start();
 	$conn = new MyDB();
 	$output = '';
-	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "')"));
+	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = " . $_POST["id"] . " and school_year_id=".$_SESSION['school_year_id'].")"));
 	$className = $conn->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
 	$studentsList = $conn->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
 	$res = mysqli_fetch_array($result);

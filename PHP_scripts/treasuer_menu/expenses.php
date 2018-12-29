@@ -193,19 +193,6 @@ $(document).ready(function(){
     }
     students_balances_list();
 
-	
-	$(document).on('click','.btn_detailsClassAccBalance',function(){
-	var id=$(this).data("id3");
-	$.ajax({
-		url:"../treasurer_helper.php",
-		method:"POST",
-		data:{function2call: 'student_class_acc_payment_details', id:id},
-		dataType:"text",
-		success:function(data){
-			$('#details').html(data);
-                     }  
-                });  
-      }); 
         
  }); 
   </script>

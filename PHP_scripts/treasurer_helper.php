@@ -190,10 +190,8 @@ function add_transfer(){
 			$balance=$balancet["balance"];
 			if($balance>=$amount) //czy ma tyle kasy
 			{
-				
 				$conn->query(sprintf("insert into transfer (cash,class_account,class_id) values (".$amount.",1,".$class_id.");"));
 				$conn->query(sprintf("update class_account set balance=balance-".$amount." , cash=cash+".$amount." where class_id=".$class_id.";"));
-				$_SESSION["error_transfer"] = $amount.$class_id;
 			}
 			else
 			{
@@ -216,8 +214,55 @@ function add_transfer(){
 		}
 	
 	}else{//dzieci
-		//TODO
-		$_SESSION["error_transfer"] = "tego nie obslugujemy jeszcze";
+		if($type=="1"){//konto->gotówka
+			$kids_balancex =  $conn->query(sprintf("select sum(balance) as sum_balance from account join child on account.child_id=child.id where child.class_id = ".$class_id.";"));
+			$kids_balancet = mysqli_fetch_array($kids_balancex);
+			$kids_balance = $kids_balancet["sum_balance"];
+
+			if($kids_balance>=$amount) //czy maja tyle kasy
+			{
+				$conn->query(sprintf("insert into transfer (cash,class_account,class_id) values (".$amount.",0,".$class_id.");"));
+				
+				$kids_with_balancex = $conn->query(sprintf("select account.id as id ,account.balance as balance from account join child on account.child_id=child.id where child.class_id = ".$class_id." and balance>0;"));
+				if (mysqli_num_rows($kids_with_balancex) > 0)
+				{
+					while ($row = mysqli_fetch_array($kids_with_balancex) and $amount>0)
+					{
+						$min_amount = min($amount,$row["balance"]);
+						$amount -= $min_amount;
+						$conn->query(sprintf("update account set balance=balance-".$min_amount." , cash=cash+".$min_amount." where id=".$row["id"].";"));
+					}
+				}
+			}
+			else
+			{
+				$_SESSION["error_transfer"]='Nie ma tyle pieniądzy na kontach dzieci.';
+			}
+		}else{ //gotowka->konto
+			$kids_cashx =  $conn->query(sprintf("select sum(cash) as sum_cash from account join child on account.child_id=child.id where child.class_id = ".$class_id.";"));
+			$kids_casht = mysqli_fetch_array($kids_cashx);
+			$kids_cash = $kids_casht["sum_cash"];
+			if($kids_cash>=$amount) //czy ma tyle kasy
+			{
+				$temp_amount=(-1)*$amount;
+				$conn->query(sprintf("insert into transfer (cash,class_account,class_id) values (".$temp_amount.",0,".$class_id.");"));
+				
+				$kids_with_cashx = $conn->query(sprintf("select account.id as id ,account.cash as cash from account join child on account.child_id=child.id where child.class_id = ".$class_id." and cash>0;"));
+				if (mysqli_num_rows($kids_with_cashx) > 0)
+				{
+					while ($row = mysqli_fetch_array($kids_with_cashx) and $amount>0)
+					{
+						$min_amount = min($amount,$row["cash"]);
+						$amount -= $min_amount;
+						$conn->query(sprintf("update account set balance=balance+".$min_amount." , cash=cash-".$min_amount." where id=".$row["id"].";"));
+					}
+				}
+			}
+			else
+			{
+				$_SESSION["error_transfer"]='Dzieci nie mają tyle pieniądzy w gotówce.';
+			}
+		}
 	}
 
 	//echo $type .' '. $amount .' '. $account_type;

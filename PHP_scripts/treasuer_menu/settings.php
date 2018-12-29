@@ -80,6 +80,29 @@ if (!isset($_SESSION['loggedIn'])) {
 <div class="container">
 	<div class="row">
 		<div class="col-md-12 mt-5 text-center">
+			  <h5>Poprzednie lata - raporty:</h5>
+		</div>
+	</div>
+</div>
+
+				<div id="school_year_id_options"></div>
+ 
+<div class="container">
+    <form action="../treasurer_helper.php" method="post"  class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div id="school_year_id_options"></div>	
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit" name="school_year_id" class="btn_add btn">Pobierz raport</button>
+			 </div>
+		</div>
+    </form>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
 			  <h5>Zmiana hasła:</h5>
 		</div>
 	</div>
@@ -248,7 +271,20 @@ $(document).ready(function(){
         });
     }
     fetch_bank_account_number();
-
+	
+	function school_year_id_options()
+    {
+        $.ajax({
+            url:"../treasurer_helper.php",
+            method:"POST",
+            data:{function2call:'fetch_school_year_id_options'},
+            success:function(data){
+                $('#school_year_id_options').html(data);
+            }
+        });
+        
+    }
+    school_year_id_options();
  }); 
 
 </script>

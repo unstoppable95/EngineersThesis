@@ -68,6 +68,10 @@ if ((isset($_POST['deleteEvent'])))
 {
 	deleteEvent();
 }
+if ((isset($_POST['school_year_id'])))
+{
+	generate_school_year_raport();
+}
 
 
 if ((isset($_POST['function2call'])))
@@ -75,6 +79,9 @@ if ((isset($_POST['function2call'])))
 	$function2call = $_POST['function2call'];
 	switch ($function2call)
 	{
+	case 'fetch_school_year_id_options':
+		fetch_school_year_id_options();
+		break;
 	case 'set_selected_rowID':
 		set_selected_rowID();
 		break;
@@ -169,6 +176,30 @@ if ((isset($_POST['function2call'])))
 		saveStudentID();
 		break;
 	}
+}
+
+function generate_school_year_raport(){
+	//spojrz w todo nizej i niech sie zapisuje jakos na serwer w sensie ze jak raz byl generewonay to pobiera ten stary 
+ echo "download raport in pdf";
+}
+
+function fetch_school_year_id_options(){
+	session_start();
+	require_once "connection.php";
+	$conn = new MyDB();
+	//TODO jakos trzeba sprawdzic czy ta klasa była juz w tym roku szkolnym bo class ma school_year_id ale jak zmieni sie rok to id clasy tez bedzie nowa klasa
+	//mozde clasa wskaznik na poprzednia klase albo cos w tym stylu taki lancuszek sie zrobi 
+	$school_year = $conn->query(sprintf("SELECT * FROM school_year"));
+	$output ='<div class="col-md-6 offset-sm-3"><label for="school_year_id" class="text-center col-form-label">Wybierz rok szkolny:</label><select name="school_year_id" class="form-control" onchange="this.form.submit()">
+				<option value="-1">----</option>';
+	if (mysqli_num_rows($school_year) > 0)
+	{
+		while ($row = mysqli_fetch_array($school_year))
+		{
+			$output.="<option value=".$row["id"].">".$row["start_year"]. "/" . $row["end_year"]."</option>";
+		}
+	}
+	echo $output."</select></div>";
 }
 
 function add_transfer(){
@@ -306,7 +337,7 @@ function fetch_transfer_list(){
 				$account="Klasowe";
 			}
 			else{
-				$account="Uczniowskie";
+				$account="Uczniowski";
 			}
 			$output.= '  
 			<tbody>		

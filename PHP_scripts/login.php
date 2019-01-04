@@ -42,13 +42,12 @@ else
 	if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $login) , mysqli_real_escape_string($conn, $password))))
 	{
 		$userCount = $result->num_rows;
-		if ($userCount > 0)
+		$details = $result->fetch_assoc();
+		if ($userCount > 0 && password_verify($password, $details['hashedPassword']))
 		{
-
 			// ustalam ze jestem zalogowany
 
 			$_SESSION['loggedIn'] = true;
-			$details = $result->fetch_assoc();
 			$_SESSION['user'] = $details['login'];
 
 			$school_year_id = "select max(id) as id from school_year;";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 28 Gru 2018, 20:36
+-- Czas generowania: 04 Sty 2019, 02:43
 -- Wersja serwera: 10.1.36-MariaDB
 -- Wersja PHP: 7.2.10
 
@@ -597,6 +597,7 @@ DELIMITER ;
 CREATE TABLE `username` (
   `login` varchar(100) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
+  `hashedPassword` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `type` varchar(1) COLLATE utf8_polish_ci NOT NULL,
   `first_login` tinyint(1) NOT NULL,
   `parent_id` int(11) DEFAULT NULL
@@ -606,18 +607,18 @@ CREATE TABLE `username` (
 -- Zrzut danych tabeli `username`
 --
 
-INSERT INTO `username` (`login`, `password`, `type`, `first_login`, `parent_id`) VALUES
-('admin', 'admin', 'a', 0, NULL),
-('annazurczak1@gmail.com', 'anka', 't', 0, 1),
-('gzurczak@wp.pl', '1MXMDSeq', 'p', 1, 6),
-('kluczykmamamamamma@gmail.com', 'W9xjFwcI', 'p', 1, 10),
-('nieznany012@wp.pl', 'OYpdVdqs', 'p', 1, 5),
-('pati3285485@onet.pl', 'GsibqkjM', 'p', 1, 8),
-('pawlaykpiotrxd@onet.pl', 'O9hDxrsy', 'p', 1, 3),
-('piotrpawlaczyk21@gmail.com', 'sQSiaWr8', 'p', 1, 4),
-('robert23891@wp.pl', 'robciu', 't', 0, 2),
-('waldeknowackihehe@gmail.com', '1QARsjnm', 'p', 1, 9),
-('wkhdhd@wp.pl', 'UqexXx5B', 'p', 1, 7);
+INSERT INTO `username` (`login`, `password`, `hashedPassword`, `type`, `first_login`, `parent_id`) VALUES
+('admin', 'admin', '$2y$10$mVft5nQLdcy8cGC4YPo1Le37x.zf3n0cxQBtK1sg6vYn2rN9ZVYaW', 'a', 0, NULL),
+('annazurczak1@gmail.com', 'anka', '$2y$10$rNhPgNtxCraufKSyo2Sn3uaEN4m1Gpd7OtRQKWnCpT8mxrRVVA1bC', 't', 0, 1),
+('gzurczak@wp.pl', '1MXMDSeq', '$2y$10$mbX8otQWxdnlkxJoTPYbl.D3u.HSy.kbo7h9LUnXPvnSMXn5Qw1.q', 'p', 1, 6),
+('kluczykmamamamamma@gmail.com', 'W9xjFwcI', '$2y$10$29BNarDgjZI5HYwaQt7wae7hsDK5phzj89yUtOeBfuOZ7UUBg9BUe', 'p', 1, 10),
+('nieznany012@wp.pl', 'OYpdVdqs', '$2y$10$Zegy0.LPJfJTig1VFsPRXusTyozzNBzUT.rhQA5q4rJeVnr2p403O', 'p', 1, 5),
+('pati3285485@onet.pl', 'GsibqkjM', '$2y$10$.UA8frR2j560mDOjxnWkfu97qdMF4ceNNuh3uUQ1gbJiQ1fwjfeTu', 'p', 1, 8),
+('pawlaykpiotrxd@onet.pl', 'O9hDxrsy', '$2y$10$sorpx.ZeIwut5jx01e0Mzubr6F0BxqrYPNVMYeiL0CRXn2aqbtSAi', 'p', 1, 3),
+('piotrpawlaczyk21@gmail.com', 'sQSiaWr8', '$2y$10$IGeOVQtSrRvwV.MlKlsJmOh1F3ErLJzAYs/BYdJvXwNh2s/sGWKDy', 'p', 1, 4),
+('robert23891@wp.pl', 'robciu', '$2y$10$89Vj1kTaVbUyejyOR8sTXOIFnow/EX3EomhoOI1Ju8qBqugoXtwqO', 't', 0, 2),
+('waldeknowackihehe@gmail.com', '1QARsjnm', '$2y$10$zbj7DotdutfSBtDPSAp1jO2QkqMqfQ0zJM/Xj7gDZYihODQQsRpJO', 'p', 1, 9),
+('wkhdhd@wp.pl', 'UqexXx5B', '$2y$10$pkNHy1.ciUjeNk3yaMGDhuq.c0RmRdEBP4lnqOrpR2svnPp0pnDRe', 'p', 1, 7);
 
 --
 -- Indeksy dla zrzutów tabel

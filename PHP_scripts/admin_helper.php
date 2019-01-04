@@ -470,7 +470,7 @@ function changePassword()
 				{
 					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
 					header('Location: treasuer_menu/settings.php');
-					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
 					//nowe i powtorzone musza byc takie same
 				}
 			}

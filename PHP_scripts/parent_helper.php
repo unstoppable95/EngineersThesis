@@ -384,7 +384,7 @@ function changeOldPassword()
 			{
 				$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
 				header('Location: treasuer_menu/settings.php');
-				echo "Stare hasło jest błędne"; 
+				echo "Stare hasło jest błędne";
 				//złe stare hasło
 			}
 		}

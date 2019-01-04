@@ -39,7 +39,7 @@ else
 
 	// zabezpieczenie przed sql injection
 
-	if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $login) , mysqli_real_escape_string($conn, $password))))
+	if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s'", mysqli_real_escape_string($conn, $login))))
 	{
 		$userCount = $result->num_rows;
 		$details = $result->fetch_assoc();
@@ -89,11 +89,7 @@ else
 			header('Location: index.php');
 		}
 	}
-
-	echo "<br />" . "login: " . $login . "<br />";
-	echo "<br />" . "haslo: " . $password . "<br />";
 	$conn->close();
 }
-
 ?>
 

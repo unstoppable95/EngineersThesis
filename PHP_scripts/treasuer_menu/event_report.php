@@ -25,9 +25,16 @@ class myPDF extends tFPDF {
         $totalAmount = $resultAmount["price"] * $result["total"];
         $resultAmountPaid = ($conn->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $totalAmountPaid = $resultAmountPaid["totalPaid"];
+
+        $cash = ($conn->query(sprintf("select sum(cash) as totalCash from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
+        $account = ($conn->query(sprintf("select sum(balance) totalAccount from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $this->Cell(100, 10, "Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
         $this->Cell(100, 10, "Suma wpłat uczestników: " . $totalAmountPaid . " zł", 0, 0, 'C');
+        $this->Ln();
+        $this->Cell(100, 10, "W tym na koncie: " . $cash['totalCash'] . " zł", 0, 0, 'C');
+        $this->Ln();
+        $this->Cell(100, 10, "W tym gotówka: " . $account['totalAccount'] . " zł", 0, 0, 'C');
         $this->Ln();
         $this->Ln();
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], 'Imię i nazwisko', 1, 0, 'C');

@@ -339,7 +339,7 @@ function fetch_payment_history()
 function changeOldPassword()
 {
 	session_start();
-	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' || empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0'|| empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0' )
+	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' || empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0' || empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0')
 	{
 		header('Location: parent_menu/p_settings.php');
 		exit();
@@ -354,30 +354,33 @@ function changeOldPassword()
 	}
 	else
 	{
-		$hash = password_hash($_POST['oldPassword'], PASSWORD_BCRYPT);
-		if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND hashedPassword='$hash'", mysqli_real_escape_string($conn, $_SESSION['user']))))
+		if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s'", mysqli_real_escape_string($conn, $_SESSION['user']))))
 		{
-			$userCount = $result->num_rows;
-			if ($userCount > 0)
+			$res = $result->fetch_assoc();
+			if (password_verify($_POST['oldPassword'], $res['hashedPassword']))
 			{
-				$newPassword = $_POST['newPassword'];
-				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
-				$reNewPassword = $_POST['reNewPassword'];
-				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
-				if($newPassword==$reNewPassword)
+				$userCount = $result->num_rows;
+				if ($userCount > 0)
 				{
-					$login = $_SESSION['user'];
-					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-					$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-					$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
-					$_SESSION['errorChangePassword'] ='';
-				}
-				else
-				{
-					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
-					header('Location: treasuer_menu/settings.php');
-					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
-					//nowe i powtorzone musza byc takie same
+					$newPassword = $_POST['newPassword'];
+					$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
+					$reNewPassword = $_POST['reNewPassword'];
+					$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+					if($newPassword == $reNewPassword)
+					{
+						$login = $_SESSION['user'];
+						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+						$_SESSION['errorChangePassword'] ='';
+					}
+					else
+					{
+						$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
+						header('Location: treasuer_menu/settings.php');
+						echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
+						//nowe i powtorzone musza byc takie same
+					}
 				}
 			}
 			else

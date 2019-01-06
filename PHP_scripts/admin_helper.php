@@ -189,7 +189,8 @@ function addStudentsFile()
 			{
 				$isUser = $result->num_rows;
 				if ($isUser <= 0)
-				{ //RODZICA NIE MA W SYSTEMIE
+				{
+					//RODZICA NIE MA W SYSTEMIE
 					$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
 					mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
 
@@ -430,6 +431,25 @@ function changeTreasurer()
 	echo "Zmieniane id: " . $_SESSION['changeID'];
 }
 
+function valid_pass($candidate) {
+	$r1='/[A-Z]/';  //Uppercase
+	$r2='/[a-z]/';  //lowercase
+	$r3='/[!@#$%^&*()\-_=+{};:,<.>]/';  //special chars
+	$r4='/[0-9]/';  //numbers
+
+	if(preg_match_all($r1,$candidate, $o)<1) return FALSE;
+
+	if(preg_match_all($r2,$candidate, $o)<1) return FALSE;
+
+	if(preg_match_all($r3,$candidate, $o)<1) return FALSE;
+
+	if(preg_match_all($r4,$candidate, $o)<1) return FALSE;
+
+	if(strlen($candidate)<8) return FALSE;
+
+	return TRUE;
+ }
+
 function changePassword()
 {
 	session_start();
@@ -448,19 +468,20 @@ function changePassword()
 	}
 	else
 	{
-		if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s'", mysqli_real_escape_string($conn, $_SESSION['user']))))
+		$result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s'", mysqli_real_escape_string($conn, $_SESSION['user'])));
+		$res = $result->fetch_assoc();
+		if (password_verify($_POST['oldPassword'], $res['hashedPassword']))
 		{
-			$res = $result->fetch_assoc();
-			if (password_verify($_POST['oldPassword'], $res['hashedPassword']))
+			$userCount = $result->num_rows;
+			if ($userCount > 0)
 			{
-				$userCount = $result->num_rows;
-				if ($userCount > 0)
+				$newPassword = $_POST['newPassword'];
+				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
+				$reNewPassword = $_POST['reNewPassword'];
+				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+				if($newPassword == $reNewPassword)
 				{
-					$newPassword = $_POST['newPassword'];
-					$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
-					$reNewPassword = $_POST['reNewPassword'];
-					$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
-					if($newPassword == $reNewPassword)
+					if (valid_pass($newPassword))
 					{
 						$login = $_SESSION['user'];
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
@@ -471,20 +492,24 @@ function changePassword()
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
-						header('Location: treasuer_menu/settings.php');
-						echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
-						//nowe i powtorzone musza byc takie same
+						$_SESSION['errorChangePassword'] ='Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
 					}
 				}
+				else
+				{
+					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
+					header('Location: treasuer_menu/settings.php');
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
+					//nowe i powtorzone musza byc takie same
+				}
 			}
-			else
-			{
-				$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
-				header('Location: treasuer_menu/settings.php');
-				echo "Stare hasło jest błędne";
-				//złe stare hasło
-			}
+		}
+		else
+		{
+			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
+			header('Location: treasuer_menu/settings.php');
+			echo "Stare hasło jest błędne";
+			//złe stare hasło
 		}
 	}
 	$conn->close();

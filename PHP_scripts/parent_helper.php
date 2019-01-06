@@ -1,5 +1,3 @@
-
-
 <?php
 
 if ((isset($_POST['changePassword'])))
@@ -654,4 +652,3 @@ function fetch_balance()
 }
 
 ?>
-

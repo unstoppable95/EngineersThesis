@@ -370,13 +370,12 @@ function sendPassword()
 function changeEmailTreasuer()
 {
 	session_start();
+	require_once "connection.php";
 	if (empty($_POST['trNewMail']) || $_POST['trNewMail'] == '0')
 	{
-		header('Location: menu_admin.php');
+		echo  '<script> location.replace("menu_admin.php"); </script>';
 		exit();
 	}
-
-	require_once "connection.php";
 
 	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
@@ -392,7 +391,7 @@ function changeEmailTreasuer()
 	}
 
 	$conn->close();
-	header('Location: menu_admin.php');
+	echo  '<script> location.replace("menu_admin.php"); </script>';
 }
 
 function changeTreasuer2()
@@ -400,7 +399,8 @@ function changeTreasuer2()
 	echo "<script>console.log( 'Debug Objectss: " . $_SESSION['changeID'] . "' );</script>";
 	if (empty($_POST['trMail']) || $_POST['trMail'] == '0')
 	{
-		header('Location: menu_admin.php');
+			echo  '<script> location.replace("menu_admin.php"); </script>';
+		//header('Location: menu_admin.php');
 		exit();
 	}
 
@@ -421,7 +421,9 @@ function changeTreasuer2()
 	}
 
 	$conn->close();
-	header('Location: menu_admin.php');
+	
+	echo  '<script> location.replace("menu_admin.php"); </script>';
+	//header('Location: menu_admin.php');
 }
 
 function changeTreasurer()
@@ -455,8 +457,8 @@ function changePassword()
 	session_start();
 	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' || empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0' || empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0')
 	{
-		header('Location: menu_admin.php');
-		exit();
+					echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+		//header('Location: menu_admin.php');
 	}
 
 	require_once "connection.php";
@@ -498,8 +500,8 @@ function changePassword()
 				else
 				{
 					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
-					header('Location: treasuer_menu/settings.php');
-					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
+								echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+		//header('Location: menu_admin.php');
 					//nowe i powtorzone musza byc takie same
 				}
 			}
@@ -507,13 +509,14 @@ function changePassword()
 		else
 		{
 			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
-			header('Location: treasuer_menu/settings.php');
-			echo "Stare hasło jest błędne";
+						echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+		//header('Location: menu_admin.php');
 			//złe stare hasło
 		}
 	}
 	$conn->close();
-	header('Location: admin_menu/a_settings.php');
+			echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+		//header('Location: menu_admin.php');
 }
 
 function randomPassword()
@@ -535,7 +538,8 @@ function addClassTreasurer()
 	session_start();
 	if (empty($_POST['className']) || $_POST['className'] == '0' || empty($_POST['name']) || $_POST['name'] == '0' || empty($_POST['surname']) || $_POST['surname'] == '0' || empty($_POST['email']) || $_POST['email'] == '0')
 	{
-		header('Location: menu_admin.php');
+					echo  '<script> location.replace("./menu_admin.php"); </script>';
+		//header('Location: menu_admin.php');
 		exit();
 	}
 
@@ -593,7 +597,8 @@ function addClassTreasurer()
 	}
 
 	$conn->close();
-	header('Location: admin_menu/a_addClass.php');
+	echo  '<script> location.replace("menu_admin.php"); </script>';
+	//header('Location: admin_menu/a_addClass.php');
 }
 
 function fetch()
@@ -674,9 +679,10 @@ function deleteFromDB()
 	
 	if ($res = $conn->query(sprintf("DELETE FROM class WHERE id = '" . 	$_SESSION['classToDelete'] . "'")))
 	{
+			echo  '<script> location.replace("menu_admin.php"); </script>';
 		//echo 'Pomyślnie usunieto klase'. $_SESSION['classToDelete'] . 'lalal';
 		//header('Location: menu_admin.php');
-		header('Location: menu_admin.php');
+		//header('Location: menu_admin.php');
 	}
 
 	$conn->close();

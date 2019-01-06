@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require "tfpdf/tfpdf.php";
 require_once "connection.php";
 
@@ -7,7 +7,7 @@ $width1Col = 70;
 $width2Col = $width3Col = 40;
 $height = 10;
 
-session_start();
+
 $conn = new MyDB();
 class myPDF extends tFPDF {
     

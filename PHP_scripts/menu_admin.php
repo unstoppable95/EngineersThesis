@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedIn']))
+{
+	header('Location: index.php');
+	exit();
+}
+
+require_once "admin_helper.php";
+
+?>
 <html>
 	<head>
 		<title>ADMIN-panel glowny</title>
@@ -16,18 +28,7 @@
 
 	</head>
 	
-<?php
-session_start();
 
-if (!isset($_SESSION['loggedIn']))
-{
-	header('Location: index.php');
-	exit();
-}
-
-require_once "admin_helper.php";
-
-?>
 	
 <body>
 

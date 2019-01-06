@@ -1,19 +1,3 @@
-<html>
-	<head>
-		<title>ADMIN-ustawienia</title>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
-	<!-- Our CSS -->
-	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
-
-	<!-- Example of icons -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-	
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	</head>
-
 <?php
 session_start();
 
@@ -30,6 +14,23 @@ if (isset($_SESSION['funChange'])) {
     $_SESSION['funChange'] = null;
 }
 ?>
+<html>
+	<head>
+		<title>ADMIN-ustawienia</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<!-- Our CSS -->
+	<link rel="stylesheet" type="text/css" href="a_style.css" title="Arkusz stylów CSS">
+
+	<!-- Example of icons -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+
+
 
 <body>
 

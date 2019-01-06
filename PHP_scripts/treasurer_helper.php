@@ -456,12 +456,14 @@ function payForEvent()
 				
 	}
 	else{ //jeżeli wpisałam kwoty
-		if($wantPay>$sumKidMoney){ 		$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';}
+		if($wantPay>$sumKidMoney){ 		
+			$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';
+		}
 		else{
 		 // cała gotówka reszta z konta
 			if($wantPay >= $accountCash){
 				$willBePaidCash = $accountCash;
-				$leftToPay = doubleval($leftToPay) - doubleval($accountCash);
+				$leftToPay = doubleval($wantPay) - doubleval($accountCash);
 				$willBePaidBalance = $leftToPay;
 			}
 			else{
@@ -722,7 +724,8 @@ function makePayment2()
 	}
 	
 	$conn->close();
-	header('Location: treasuer_menu/payments.php');
+	echo  '<script> location.replace("treasuer_menu/payments.php"); </script>';
+	//header('Location: treasuer_menu/payments.php');
 }
 
 
@@ -976,7 +979,7 @@ function editEvent()
 
 	$conn = new MyDB();
 	$currrentDate = date('Y-m-d');
-	$res = ($conn-ect>query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
+	$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION['changeEventID'] . "'")))->fetch_assoc();
 	if ($conn->connect_errno != 0)
 	{
 		echo "Blad: " . $conn->connect_errno;
@@ -1009,7 +1012,8 @@ function editEvent()
 					$result = $conn->query(sprintf("update event set date='%s' where id='" . $_SESSION['changeEventID'] . "'", mysqli_real_escape_string($conn, $newEventDate)));
 				}else{
 					$_SESSION['errorEditEvent'] = "Data musi być przyszła"; 
-					header('Location: treasuer_menu/class_event_list.php');
+					//header('Location: treasuer_menu/class_event_list.php');
+					echo  '<script> location.replace("treasuer_menu/class_event_list.php"); </script>';
 				}
 			}
 
@@ -1017,17 +1021,19 @@ function editEvent()
 		else
 		{
 				$_SESSION['errorEditEvent'] = "Nie można edytować zakończonej zbiórki"; 
-				header('Location: treasuer_menu/class_event_list.php');
+				echo  '<script> location.replace("treasuer_menu/class_event_list.php"); </script>';
+				//header('Location: treasuer_menu/class_event_list.php');
 		}
 	}
-	header('Location: treasuer_menu/class_event_list.php');
+	//header('Location: treasuer_menu/class_event_list.php');
+	echo  '<script> location.replace("treasuer_menu/class_event_list.php"); </script>';
 	$conn->close();
 }
 
 function deleteEvent()
 {
-	require_once "connection.php";
 	session_start();
+	require_once "connection.php";
 	$conn = new MyDB();
 	$currrentDate = date('Y-m-d');
 	$res = ($conn->query(sprintf("select * FROM event WHERE id = '" . $_SESSION["changeEventID"] . "'")))->fetch_assoc();
@@ -1039,10 +1045,15 @@ function deleteEvent()
 		if ($res = $conn->query(sprintf("DELETE FROM event WHERE id = '" . $_SESSION["changeEventID"] . "'")))
 		{
 			$_SESSION['errorDeleteEvent'] = "Usunieto zbiorke"; 
-				header('Location: treasuer_menu/class_event_list.php');
+			//	header('Location: treasuer_menu/class_event_list.php');
 			//echo 'Pomyslnie usunięto zbiórkę.';
+		}else{
+			$_SESSION['errorDeleteEvent'] = "Nie usunieto zbiorke tez ". $_SESSION["changeEventID"] .$res; 
 		}
+	}else{
+			$_SESSION['errorDeleteEvent'] = "Nie usunieto zbiorke"; 
 	}
+	echo  '<script> location.replace("treasuer_menu/class_event_list.php"); </script>';
 }
 function fetch_event_details()
 {
@@ -1051,7 +1062,7 @@ function fetch_event_details()
 	$conn = new MyDB();
 	$output = '';
 	$result = ($conn->query(sprintf("select count(*) as total from participation where event_id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
-
+	
 	$resultAmount = ($conn->query(sprintf("select price, completed, name  from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmount = $resultAmount["price"] * $result["total"];
 	$name = $resultAmount["name"];
@@ -1059,12 +1070,7 @@ function fetch_event_details()
 	$output.= "Liczba uczestników zbiórki: " . $result["total"];
 	$resultAmountPaid = ($conn->query(sprintf("select sum(amount_paid) as totalPaid from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
 	$totalAmountPaid = $resultAmountPaid["totalPaid"];
-
-	$cash = ($conn->query(sprintf("select sum(cash) as totalCash from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
-	$account = ($conn->query(sprintf("select sum(balance) totalAccount from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
-
-	$output.= "<br /> Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł<br /> Suma wpłat uczestników: " . number_format($totalAmountPaid, 2, ".", "") . " zł";
-	$output.= "<br>W tym na koncie: " . number_format($cash['totalCash'], 2, ".", "") . " zł" . "<br>" . "W tym gotówka: " . number_format($account['totalAccount'], 2, ".", "") . " zł";
+	$output.= "<br /> Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł<br /> Suma wpłat uczestników: " . $totalAmountPaid . " zł";
 	$output.= "<br /><br />";
 	$result = $conn->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_SESSION['selectedID']. "' order by surname,idx asc"));
 	$output.= ' 
@@ -1537,29 +1543,10 @@ function changeBankAccount()
 	header('Location: treasuer_menu/settings.php');
 }
 
-function valid_pass($candidate) {
-	$r1='/[A-Z]/';  //Uppercase
-	$r2='/[a-z]/';  //lowercase
-	$r3='/[!@#$%^&*()\-_=+{};:,<.>]/';  //special chars
-	$r4='/[0-9]/';  //numbers
-
-	if(preg_match_all($r1,$candidate, $o)<1) return FALSE;
-
-	if(preg_match_all($r2,$candidate, $o)<1) return FALSE;
-
-	if(preg_match_all($r3,$candidate, $o)<1) return FALSE;
-
-	if(preg_match_all($r4,$candidate, $o)<1) return FALSE;
-
-	if(strlen($candidate)<8) return FALSE;
-
-	return TRUE;
- }
-
 function changeOldPassword()
 {
 	session_start();
-	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' || empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0' || empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0')
+	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' ||empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0'||empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0' )
 	{
 		header('Location: treasuer_menu/settings.php');
 		exit();
@@ -1570,14 +1557,11 @@ function changeOldPassword()
 	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
-		echo "Bląd: " . $conn->connect_errno;
+		echo "Blad: " . $conn->connect_errno;
 	}
 	else
 	{
-		$result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s'", mysqli_real_escape_string($conn, $_SESSION['user'])));
-		$res = $result->fetch_assoc();
-		if (password_verify($_POST['oldPassword'], $res['hashedPassword']))
-		{
+		if ($result = @$conn->query(sprintf("SELECT * FROM username WHERE login='%s' AND password='%s'", mysqli_real_escape_string($conn, $_SESSION['user']) , mysqli_real_escape_string($conn, $_POST['oldPassword'])))){
 			$userCount = $result->num_rows;
 			if ($userCount > 0)
 			{
@@ -1585,38 +1569,28 @@ function changeOldPassword()
 				$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 				$reNewPassword = $_POST['reNewPassword'];
 				$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
-				if($newPassword == $reNewPassword)
-				{
-					if (valid_pass($newPassword))
-					{
-						$login = $_SESSION['user'];
-						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
-						$_SESSION['errorChangePassword'] ='';
-					}
-					else
-					{
-						$_SESSION['errorChangePassword'] ='Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
-					}
+				if($newPassword==$reNewPassword){
+					$login = $_SESSION['user'];
+					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+					$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$_SESSION['errorChangePassword'] ='';
 				}
-				else
-				{
+				else{
 					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
 					header('Location: treasuer_menu/settings.php');
-					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same";
-					//nowe i powtorzone musza byc takie same
+					echo "Nowe hasło i powtórzone nowe hasło muszą być takie same"; 
+				//nowe i powtorzone musza byc takie same
 				}
 			}
-		}
-		else
-		{
+		else{
 			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
 			header('Location: treasuer_menu/settings.php');
-			echo "Stare hasło jest błędne";
+			echo "Stare hasło jest błędne"; 
 			//złe stare hasło
-		}
+			}
 	}
+	}
+
 	$conn->close();
 	header('Location: treasuer_menu/settings.php');  // nie trzeba sie przelogowac przy zmiane hasła
 }
@@ -1643,8 +1617,7 @@ function changePassword()
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-		$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+		$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
 	}
 
 	$conn->close();

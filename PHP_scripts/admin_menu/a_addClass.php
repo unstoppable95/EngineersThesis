@@ -1,3 +1,19 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedIn'])) {
+	header('Location: index.php');
+	exit();
+}
+require_once "../admin_helper.php";
+
+if (isset($_SESSION['funAddClass'])) {
+	echo '<script language="javascript">';
+	echo 'alert("Dodano klasę i skarbnika! ")';
+	echo '</script>';
+	$_SESSION['funAddClass'] = null;
+}
+?>
 <html>
 <head>
 	<title>ADMIN-dodaj klase</title>
@@ -15,22 +31,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
-<?php
-session_start();
 
-if (!isset($_SESSION['loggedIn'])) {
-	header('Location: index.php');
-	exit();
-}
-require_once "../admin_helper.php";
-
-if (isset($_SESSION['funAddClass'])) {
-	echo '<script language="javascript">';
-	echo 'alert("Dodano klasę i skarbnika! ")';
-	echo '</script>';
-	$_SESSION['funAddClass'] = null;
-}
-?>
    
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">

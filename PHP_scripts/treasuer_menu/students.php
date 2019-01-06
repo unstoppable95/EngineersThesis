@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedIn'])) {
+    header('Location: ../index.php');
+    exit();
+}
+
+?>
 <html> 
 <head> 
     <title>Skarbnik-ustawienia</title>
@@ -14,15 +23,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
     
 </head>
-<?php
-session_start();
 
-if (!isset($_SESSION['loggedIn'])) {
-    header('Location: ../index.php');
-    exit();
-}
-
-?>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">

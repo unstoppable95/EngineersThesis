@@ -1,9 +1,4 @@
-
-
 <?php
-
-// pozwala koszystac z sesji
-
 session_start();
 
 // jezeli nie ma w poscie loginu lub hasla
@@ -70,26 +65,29 @@ else
 			$_SESSION['firstDisplayParent'] = true;
 			if ($typeDB['type'] == "a")
 			{
-				header('Location: menu_admin.php');
+				echo("<script>location.replace('menu_admin.php');</script>");
+				//header('Location: menu_admin.php');
 			}
 
 			if ($typeDB['type'] == "p")
 			{
-				header('Location: menu_parent.php');
+				echo("<script>location.replace('menu_parent.php');</script>");
+				//header('Location: menu_parent.php');
 			}
 
 			if ($typeDB['type'] == "t")
 			{
-				header('Location: menu_treasurer.php');
+				echo("<script>location.replace('menu_treasurer.php');</script>");
+				//header('Location: menu_treasurer.php');
 			}
 		}
 		else
 		{
 			$_SESSION['error'] = 'Nieprawidłowy login lub hasło!';
-			header('Location: index.php');
+			//header('Location: index.php');
+			echo("<script>location.replace('index.php');</script>");
 		}
 	}
 	$conn->close();
 }
 ?>
-

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require "tfpdf/tfpdf.php";
-require_once "connection.php";
+require "../tfpdf/tfpdf.php";
+require_once "../connection.php";
 
 $width1Col = 70;
 $width2Col = $width3Col = 40;

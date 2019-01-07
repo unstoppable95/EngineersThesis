@@ -445,13 +445,18 @@ function payForEvent()
 	
 	if($payAll == 1){ //chce opłacić wszystko 
 		if($leftToPay>$sumKidMoney){ 
-		$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';
+			$_SESSION["error_pay_event"]=$kid["name"].' '.$kid["surname"].' nie ma wystarczającej ilości pieniędzy';
 		}	
 		else{
 		 // cała gotówka reszta z konta
+		 if($accountCash>$leftToPay){
+			$willBePaidCash = $leftToPay;
+			$willBePaidBalance=0;
+		 }else{
 			$willBePaidCash = $accountCash;
 			$leftToPay = doubleval($leftToPay) - doubleval($accountCash);
 			$willBePaidBalance = $leftToPay;
+		 }
 		}
 				
 	}

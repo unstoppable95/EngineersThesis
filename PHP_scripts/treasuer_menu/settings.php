@@ -94,7 +94,8 @@ if (!isset($_SESSION['loggedIn'])) {
 		</div>
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
-				<button type="submit" name="school_year_id" class="btn_add btn">Pobierz raport</button>
+				<button type="submit" class="btn btn-default col-md-2 " onclick="window.open('year_report.php','_blank')" href="year_report.php" role="button">Generuj raport</button>
+				<button  name="school_year_id" class="btn_add btn">Pobierz raport</button>
 			 </div>
 		</div>
     </form>

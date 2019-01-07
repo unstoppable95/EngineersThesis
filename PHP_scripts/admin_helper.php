@@ -457,7 +457,7 @@ function changePassword()
 	session_start();
 	if (empty($_POST['newPassword']) || $_POST['newPassword'] == '0' || empty($_POST['oldPassword']) || $_POST['oldPassword'] == '0' || empty($_POST['reNewPassword']) || $_POST['reNewPassword'] == '0')
 	{
-					echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+		echo '<script> location.replace("./admin_menu/a_settings.php"); </script>';
 		//header('Location: menu_admin.php');
 	}
 
@@ -466,7 +466,7 @@ function changePassword()
 	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
-		echo "Blad: " . $conn->connect_errno;
+		echo "Bląd: " . $conn->connect_errno;
 	}
 	else
 	{
@@ -500,8 +500,8 @@ function changePassword()
 				else
 				{
 					$_SESSION['errorChangePassword'] = 'Nowe hasło i powtórzone nowe hasło muszą być takie same!';
-								echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
-		//header('Location: menu_admin.php');
+					echo '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+					//header('Location: menu_admin.php');
 					//nowe i powtorzone musza byc takie same
 				}
 			}
@@ -509,14 +509,14 @@ function changePassword()
 		else
 		{
 			$_SESSION['errorChangePassword'] = 'Stare hasło jest błędne';
-						echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
-		//header('Location: menu_admin.php');
+			echo '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+			//header('Location: menu_admin.php');
 			//złe stare hasło
 		}
 	}
 	$conn->close();
-			echo  '<script> location.replace("./admin_menu/a_settings.php"); </script>';
-		//header('Location: menu_admin.php');
+	echo '<script> location.replace("./admin_menu/a_settings.php"); </script>';
+	//header('Location: menu_admin.php');
 }
 
 function randomPassword()

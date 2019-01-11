@@ -127,7 +127,7 @@ if (!isset($_SESSION['loggedIn'])) {
     <form action="../treasurer_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
    <div class="modal-content">
 		<div class="modal-header">
-				<h6 class="text-center">Czy napewno chcesz usunąć ucznia?</h6>
+				<h6 class="text-center">Czy na pewno chcesz usunąć ucznia?</h6>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 				<span aria-hidden="true">&times;</span></button>
 		</div>
@@ -137,7 +137,7 @@ if (!isset($_SESSION['loggedIn'])) {
 					<div class="panel-body">
 						<div class="text-center">
 						<fieldset>
-							<!--<h6>Czy napewno chcesz zakończyć zbiórkę?</h6>-->
+							<!--<h6>Czy na pewno chcesz zakończyć zbiórkę?</h6>-->
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="deleteStudentEvent">Usuń</button>
 						</fieldset>
 						</div>

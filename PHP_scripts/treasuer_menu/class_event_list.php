@@ -357,7 +357,7 @@ $(document).ready(function(){
 	  */
 	  
 	$(document).on('click','.btn_detailsEvent',function(){
-	var id=$(this).data("id4");
+		var id=$(this).data("id4");
 
 		$.ajax({
 			url:"../treasurer_helper.php",
@@ -366,10 +366,9 @@ $(document).ready(function(){
 			//dataType:"text",
 			success:function(){
 				window.open('eventDetails.php','_blank');
-					//window.open('http://www.w3schools.com');
-                     }      					 
-                });   
-      });
+			}
+        });
+    });
 	
 	
 	function fetch_event_list()

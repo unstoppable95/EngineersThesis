@@ -1,7 +1,7 @@
 <?php
 session_start();
-require "tfpdf/tfpdf.php";
-require_once "connection.php";
+require "../tfpdf/tfpdf.php";
+require_once "../connection.php";
 
 $width1Col = 70;
 $width2Col = $width3Col = 40;
@@ -11,6 +11,41 @@ $height = 10;
 $conn = new MyDB();
 class myPDF extends tFPDF {
     
+    function pageWidth()
+    {
+        $width = $this->w;
+        $leftMargin = $this->lMargin;
+        $rightMargin = $this->rMargin;
+        return $width-$rightMargin-$leftMargin;
+    }
+
+    function centerTable($contentWidth)
+    {
+        $lMargin = ($this->w - $contentWidth) / 2;
+        $this->SetLeftMargin($lMargin);
+    }
+
+    function stopCenterTable()
+    {
+        $this->SetLeftMargin(10.00125);
+    }
+
+    function Footer()
+    {
+        $this->stopCenterTable();
+        $this->SetY(-15);
+        $this->SetFont('Arial','', 8);
+        $this->Cell(0, 10, $this->PageNo() . '/{nb}', 0, 0,'C');
+    }
+
+    function addTitle($text)
+    {
+        $this->SetFont('DejaVu', 'B', 14);
+        $this->Cell($this->pageWidth(), 10, $text, 0, 0, 'C');
+        $this->Ln();
+        $this->SetFont('DejaVu', '', 12);
+    }
+
     function headerTable($conn)
     {
         $tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
@@ -32,19 +67,21 @@ class myPDF extends tFPDF {
         $whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
         $whole_balance = doubleval($balance) + doubleval($kids_account_balance_all["balance"]);
         /////////////////////
-        $this->Cell(120, 10, "Suma pieniędzy zebranych na koncie klasowym: " . number_format($class_money, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->addTitle("Stan kont dzieci");
+        $this->Cell($this->pageWidth(), 10, "Suma pieniędzy zebranych na koncie klasowym: " . number_format($class_money, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(120, 10, "Suma pieniędzy na kontach dzieci: " . number_format($class_kids_money, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Cell($this->pageWidth(), 10, "Suma pieniędzy na kontach dzieci: " . number_format($class_kids_money, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(120, 10, "Suma pieniądzy zebranych w gotówce: " . number_format($whole_cash, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Cell($this->pageWidth(), 10, "Suma pieniądzy zebranych w gotówce: " . number_format($whole_cash, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(120, 10, "Suma pieniądzy zebranych na koncie: " . number_format($whole_balance, 2, ".", "") . " zł", 0, 0, 'L');
+        $this->Cell($this->pageWidth(), 10, "Suma pieniądzy zebranych na koncie: " . number_format($whole_balance, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
         $this->Ln();
-
+        $this->centerTable($GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col']);
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], 'Imię i nazwisko', 1, 0, 'C');
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], 'Konto klasowe', 1, 0, 'C');
         $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], 'Konto dziecka', 1, 0, 'C');
+        $this->stopCenterTable();
         $this->Ln();
     }
 
@@ -76,9 +113,11 @@ class myPDF extends tFPDF {
                 $child_class_account = intval($class_account_balance["x"]) - $expected_value;
                 $kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
                 /////////////////////
+                $this->centerTable($GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col']);
                 $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], $row["name"] . ' ' . $row["surname"], 1, 0, 'C');
                 $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], number_format($child_class_account, 2, ".", "") . ' zł', 1, 0, 'C');
                 $this->Cell($GLOBALS['width3Col'], $GLOBALS['height'], number_format($kid_cash_whole, 2, ".", "")  . ' zł', 1, 0, 'C');
+                $this->stopCenterTable();
                 $this->Ln();
             }
         }
@@ -94,7 +133,8 @@ $pdf = new myPDF();
 $pdf->AliasNbPages();
 $pdf->AddPage('P', 'A4', 0);
 $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
-$pdf->SetFont('DejaVu', '', 12); 
+$pdf->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
+
 $pdf->headerTable($conn);
 $pdf->viewTable($conn);
 $pdf->Output();

@@ -60,7 +60,7 @@ class myPDF extends tFPDF {
 
     function mainHeader($conn)
     {
-        $yearID = 1;
+        $yearID = $_POST['school_year_id'];
         $schoolYears = $conn->query(sprintf("SELECT * FROM school_year WHERE id = '" . $yearID . "'"));
         $year = mysqli_fetch_array($schoolYears);
 
@@ -206,7 +206,7 @@ class myPDF extends tFPDF {
                 $this->Ln();
 
                 $resultAmount = ($conn->query(sprintf("select price,completed from event where id ='" . $eventID . "' ")))->fetch_assoc();
-                $result = $conn->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $_SESSION['selectedID']. "' order by surname,idx asc"));
+                $result = $conn->query(sprintf("select ch.id as childID, ch.name as name , ch.surname as surname, p.amount_paid as amount_paid , (p.amount_paid+'" . $resultAmount["price"] . "') as idx from child ch, participation p where ch.id = p.child_id and p.event_id='" . $eventID . "' order by surname,idx asc"));
                 if (mysqli_num_rows($result) > 0)
                 {
                     while ($row2 = mysqli_fetch_array($result))

@@ -84,18 +84,13 @@ if (!isset($_SESSION['loggedIn'])) {
 		</div>
 	</div>
 </div>
-
-				<div id="school_year_id_options"></div>
  
 <div class="container">
-    <form action="../treasurer_helper.php" method="post"  class="form-vertical justify-content-center">
-		<div class="form-group row">
-			<div id="school_year_id_options"></div>	
-		</div>
+    <form action="year_report.php" method="post"  class="form-vertical justify-content-center">
+		<div id="school_year_id_options"></div>	
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
-				<button type="submit" class="btn btn-default col-md-2 " onclick="window.open('year_report.php','_blank')" href="year_report.php" role="button">Generuj raport</button>
-				<button  name="school_year_id" class="btn_add btn">Pobierz raport</button>
+				<button type="submit" class="btn_add btn col-md-2">Generuj raport</button>
 			 </div>
 		</div>
     </form>

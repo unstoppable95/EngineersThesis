@@ -82,7 +82,7 @@ class myPDF extends tFPDF {
 
     function generalReportHeaderTable($conn)
     {
-        $this->addTitle("1. Salda i gotówka dzieci");
+        $this->addTitle("1. Salda kont i gotówka dzieci");
         $tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
         
         $id = mysqli_fetch_array($tmpID);
@@ -249,6 +249,7 @@ class myPDF extends tFPDF {
         $this->Ln();
         $this->Cell($this->pageWidth(), $GLOBALS['height'], "Wartość miesięcznej składki: " . number_format($monthly_fee, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
+        $this->Ln();
         $this->centerTable($GLOBALS['width1Col'] + 2*$GLOBALS['width2Col']);
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], "Data", 1, 0, 'C');
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], "Nazwa", 1, 0, 'C');
@@ -331,11 +332,13 @@ class myPDF extends tFPDF {
     }
 }
 
+//pdf settings
 $pdf = new myPDF();
 $pdf->AliasNbPages();
 $pdf->AddPage('P', 'A4', 0);
 $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
 $pdf->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
+
 $pdf->mainHeader($conn);
 
 $pdf->generalReportHeaderTable($conn);

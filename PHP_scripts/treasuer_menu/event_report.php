@@ -11,15 +11,48 @@ session_start();
 $conn = new MyDB();
 class myPDF extends tFPDF {
     
+    function pageWidth()
+    {
+        $width = $this->w;
+        $leftMargin = $this->lMargin;
+        $rightMargin = $this->rMargin;
+        return $width-$rightMargin-$leftMargin;
+    }
+
+    function centerTable($contentWidth)
+    {
+        $lMargin = ($this->w - $contentWidth) / 2;
+        $this->SetLeftMargin($lMargin);
+    }
+
+    function stopCenterTable()
+    {
+        $this->SetLeftMargin(10.00125);
+    }
+
+    function Footer()
+    {
+        $this->stopCenterTable();
+        $this->SetY(-15);
+        $this->SetFont('Arial','', 8);
+        $this->Cell(0, 10, $this->PageNo() . '/{nb}', 0, 0,'C');
+    }
+
+    function addTitle($text)
+    {
+        $this->SetFont('DejaVu', 'B', 14);
+        $this->Cell($this->pageWidth(), 10, $text, 0, 0, 'C');
+        $this->Ln();
+        $this->SetFont('DejaVu', '', 12);
+    }
+
     function headerTable($conn)
     {
         $result = ($conn->query(sprintf("select count(*) as total from participation where event_id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $resultAmount = ($conn->query(sprintf("select price, completed, name from event where id ='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $name = $resultAmount["name"];
-        $this->Cell(100, 10, $name, 0, 0, 'C');
-        $this->Ln();
-        $this->SetFont('DejaVu', '', 12); 
-        $this->Cell(100, 10, "Liczba uczestników zbiórki: " . $result["total"], 0, 0, 'C');
+        $this->addTitle($name);
+        $this->Cell($this->pageWidth(), 10, "Liczba uczestników zbiórki: " . $result["total"], 0, 0, 'C');
         $this->Ln();
 
         $totalAmount = $resultAmount["price"] * $result["total"];
@@ -28,17 +61,19 @@ class myPDF extends tFPDF {
 
         $cash = ($conn->query(sprintf("select sum(cash) as totalCash from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
         $account = ($conn->query(sprintf("select sum(balance) totalAccount from participation where event_id='" . $_SESSION['selectedID'] . "' ")))->fetch_assoc();
-        $this->Cell(100, 10, "Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł", 0, 0, 'C');
+        $this->Cell($this->pageWidth(), 10, "Całkowity koszt zbiórki: " . number_format($totalAmount, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(100, 10, "Suma wpłat uczestników: " . number_format($totalAmountPaid, 2, ".", "") . " zł", 0, 0, 'C');
+        $this->Cell($this->pageWidth(), 10, "Suma wpłat uczestników: " . number_format($totalAmountPaid, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(100, 10, "W tym na koncie: " . number_format($cash['totalCash'], 2, ".", "") . " zł", 0, 0, 'C');
+        $this->Cell($this->pageWidth(), 10, "W tym na koncie: " . number_format($cash['totalCash'], 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
-        $this->Cell(100, 10, "W tym gotówka: " . number_format($account['totalAccount'], 2, ".", "")  . " zł", 0, 0, 'C');
+        $this->Cell($this->pageWidth(), 10, "W tym gotówka: " . number_format($account['totalAccount'], 2, ".", "")  . " zł", 0, 0, 'C');
         $this->Ln();
         $this->Ln();
+        $this->centerTable($GLOBALS['width1Col'] + $GLOBALS['width2Col']);
         $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], 'Imię i nazwisko', 1, 0, 'C');
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], 'Kwota wpłacona', 1, 0, 'C');
+        $this->stopCenterTable();
         $this->Ln();
     }
 
@@ -52,8 +87,10 @@ class myPDF extends tFPDF {
             while ($row = mysqli_fetch_array($result))
             {
                 /////////////////////
+                $this->centerTable($GLOBALS['width1Col'] + $GLOBALS['width2Col']);
                 $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], $row["name"] . ' ' . $row["surname"], 1, 0, 'C');
                 $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], number_format($row["amount_paid"], 2, ".", "") . ' zł', 1, 0, 'C');
+                $this->stopCenterTable();
                 $this->Ln();
             }
         }
@@ -69,7 +106,8 @@ $pdf = new myPDF();
 $pdf->AliasNbPages();
 $pdf->AddPage('P', 'A4', 0);
 $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
-$pdf->SetFont('DejaVu', '', 15); 
+$pdf->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
+
 $pdf->headerTable($conn);
 $pdf->viewTable($conn);
 $pdf->Output();

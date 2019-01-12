@@ -82,7 +82,7 @@ class myPDF extends tFPDF {
 
     function generalReportHeaderTable($conn)
     {
-        $this->addTitle("1. Salda kont i gotówka dzieci");
+        $this->addTitle("1. Stan kont dzieci");
         $tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
         
         $id = mysqli_fetch_array($tmpID);

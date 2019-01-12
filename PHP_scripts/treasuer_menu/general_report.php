@@ -67,7 +67,7 @@ class myPDF extends tFPDF {
         $whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
         $whole_balance = doubleval($balance) + doubleval($kids_account_balance_all["balance"]);
         /////////////////////
-        $this->addTitle("Salda kont i gotówka dzieci");
+        $this->addTitle("Stan kont dzieci");
         $this->Cell($this->pageWidth(), 10, "Suma pieniędzy zebranych na koncie klasowym: " . number_format($class_money, 2, ".", "") . " zł", 0, 0, 'C');
         $this->Ln();
         $this->Cell($this->pageWidth(), 10, "Suma pieniędzy na kontach dzieci: " . number_format($class_kids_money, 2, ".", "") . " zł", 0, 0, 'C');

@@ -116,6 +116,19 @@ if ($_SESSION['amountOfChild'] == 1)
 	</nav>  
 
 <div class="container">
+	<div class="col-md-8 offset-sm-2 text-center text-danger" >
+		<?php
+		if (isset($_SESSION['info_unsubscribe_event']))
+		{
+			echo $_SESSION['info_unsubscribe_event'];
+			unset($_SESSION['info_unsubscribe_event']);
+		}
+		?>
+	</div>
+ </div>
+
+
+<div class="container">
 	<div class="row">
 		<div id="child_name" class="mt-2 col-md-12 text-center"></div>
 	</div>
@@ -175,7 +188,36 @@ if ($_SESSION['amountOfChild'] == 1)
 	</form>
 </div>
 </div>
-		
+
+
+<!--confirm unsubscrive event-->
+<div id="unsubscribeEventModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="parent_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h6 class="text-center">Czy na pewno chcesz wypisać ucznia z wydarzenia?</h6>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="unsubscribeEvent">Usuń</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </form>
+ </div>
+</div>
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -294,21 +336,17 @@ echo $_SESSION['firstDisplayParent']; ?>';
 
 $(document).on('click','.btn_delete',function(){
 	var id=$(this).data("id3");
-	if(confirm("Czy jestes pewny, ze chcesz wypisac dziecko z tego wydarzenia?"))  
-           {
 	$.ajax({
 		url:"parent_helper.php",
 		method:"POST",
-		data:{function2call: 'delete', id:id},
+		data:{function2call: 'saveEventID', id:id},
 		dataType:"text",
 		success:function(data){
-			alert(data);
+			//alert(data);
 			fetch_data();
 			fetch_balance();
-			
                      }  
-                });  
-           }  
+                });   
       });  
  }); 
   

@@ -5,6 +5,16 @@ if ((isset($_POST['changePassword'])))
 	changeOldPassword();
 }
 
+if ((isset($_POST['RequiredNewPasswordAccept'])))
+{
+	changePassword();
+}
+
+if ((isset($_POST['unsubscribeEvent'])))
+{
+	deleteFromDB();
+}
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -57,14 +67,17 @@ if ((isset($_POST['function2call'])))
 	case 'fetch_paid_months':
 		fetch_paid_months();
 		break;
+	case 'saveEventID':
+		saveEventID();
+		break;
 	}
 }
 
-if ((isset($_POST['RequiredNewPasswordAccept'])))
+function saveEventID()
 {
-	changePassword();
+	session_start();
+	$_SESSION['eventIDUnsubscribe'] = $_POST["id"];
 }
-
 
 function fetch_paid_months()
 {
@@ -492,13 +505,12 @@ function fetch()
 				$output.= ' 
 			<tbody>					
                 <tr>  
-                <!--    <td' . $color . '>' . $row["id"] . '</td>  -->
                     <td ' . $color . '>' . $row["name"] . '</td> 
 					<td ' . $color . '>' . $paid . '</td>  					 
                     <td ' . $color . '>' . $row["price"] . ' zł</td>  
                     <td ' . $color . '>' . $row["date"] . '</td>
-					<td ' . $color . '><button type="button"data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Wypisz</button></td>
-                </tr>  
+					<td ' . $color . '><button type="button" data-toggle="modal" data-target="#unsubscribeEventModal"  data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Wypisz</button></td>
+				</tr>  
 			<tbody>
            ';
 			}
@@ -527,10 +539,10 @@ function deleteFromDB()
 	require_once "connection.php";
 
 	$conn = new MyDB();
-
+	
 	// adding paid money to account
 
-	$amount_paid_tmp = $conn->query(sprintf("SELECT amount_paid FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild']));
+	$amount_paid_tmp = $conn->query(sprintf("SELECT amount_paid FROM participation where event_id='" . $_SESSION['eventIDUnsubscribe'] . "' AND child_id = " . $_SESSION['choosenChild']));
 	$x = mysqli_fetch_array($amount_paid_tmp);
 	$amount_paid = $x["amount_paid"];
 	$curr = $conn->query(sprintf("SELECT balance as b FROM account WHERE child_id =" . $_SESSION['choosenChild']));
@@ -539,11 +551,16 @@ function deleteFromDB()
 	$newBalance = $currentBalance + $amount_paid;
 	$conn->query(sprintf("UPDATE account SET balance='%s' WHERE child_id = '%s'", mysqli_real_escape_string($conn, $newBalance) , mysqli_real_escape_string($conn, $_SESSION['choosenChild'])));
 
-	if ($res = $conn->query(sprintf("DELETE FROM participation where event_id='" . $_POST["id"] . "' AND child_id = " . $_SESSION['choosenChild'])))
+	if ($res = $conn->query(sprintf("DELETE FROM participation where event_id='" . $_SESSION['eventIDUnsubscribe'] . "' AND child_id = " . $_SESSION['choosenChild'])))
 	{
-		echo 'Pomyslnie wypisano dziecko';
+		$info = "Pomyślnie wypisano dziecko";
 	}
-	
+	else
+	{
+		$info = "Nie można wypisać dziecka";
+	}
+	$_SESSION["info_unsubscribe_event"] = $info;
+	header('Location: menu_parent.php');
 }
 
 function fetch_child_list()

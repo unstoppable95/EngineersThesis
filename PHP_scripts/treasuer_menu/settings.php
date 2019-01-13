@@ -86,7 +86,7 @@ if (!isset($_SESSION['loggedIn'])) {
 </div>
  
 <div class="container">
-    <form action="year_report.php" method="post"  class="form-vertical justify-content-center">
+    <form action="year_report.php" method="post"  class="form-vertical justify-content-center" target="_blank">
 		<div id="school_year_id_options"></div>	
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">

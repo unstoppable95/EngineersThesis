@@ -7,6 +7,7 @@ $width1Col = 70;
 $width2Col = $width3Col = 40;
 $height = 10;
 
+$yearID = $_POST['school_year_id'];
 
 $conn = new MyDB();
 class myPDF extends tFPDF {
@@ -60,13 +61,12 @@ class myPDF extends tFPDF {
 
     function mainHeader($conn)
     {
-        $yearID = $_POST['school_year_id'];
-        $schoolYears = $conn->query(sprintf("SELECT * FROM school_year WHERE id = '" . $yearID . "'"));
+        $schoolYears = $conn->query(sprintf("SELECT * FROM school_year WHERE id = '" . $GLOBALS['yearID'] . "'"));
         $year = mysqli_fetch_array($schoolYears);
 
         $this->addTitle("Raport roczny " . $year['start_year'] . "/" . $year['end_year']);
 
-        $result = $conn->query(sprintf("SELECT * FROM class WHERE parent_id=" . $_SESSION['userID']));
+        $result = $conn->query(sprintf("SELECT * FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID']));
         $class = mysqli_fetch_array($result);
         $this->Cell($this->pageWidth(), 10, "Klasa " . $class['name'], 0, 0, 'C');
         $this->Ln();
@@ -88,7 +88,7 @@ class myPDF extends tFPDF {
         $id = mysqli_fetch_array($tmpID);
         $_SESSION['userID'] = $id["id"]; //userID = treasuerID
         /////////////////////
-        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . " )"));
         $bal = mysqli_fetch_array($tmpbalance);
         $balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
         $cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
@@ -96,7 +96,7 @@ class myPDF extends tFPDF {
         $class_account_id = $bal["id"];
         $class_money =  doubleval($balance) + doubleval($cash);
 
-        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " )"));
+        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . " )"));
         $kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
         $class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
         $whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
@@ -122,7 +122,7 @@ class myPDF extends tFPDF {
 
     function generalReportViewTable($conn)
     {
-        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
+        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . ") order by surname, name"));
         if (mysqli_num_rows($result) > 0)
         {
             while ($row = mysqli_fetch_array($result))
@@ -142,7 +142,7 @@ class myPDF extends tFPDF {
                 }
                 $month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
                 $months = mysqli_fetch_array($month_count);
-                $monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id='" . $_SESSION['userID'] . "') " ));
+                $monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . ") " ));
                 $fee = mysqli_fetch_array($monthly_fee);
                 $expected_value = intval($months["date"]) * intval($fee["fee"]); 
                 $child_class_account = intval($class_account_balance["x"]) - $expected_value;
@@ -167,7 +167,7 @@ class myPDF extends tFPDF {
     {
         $this->addTitle("2. Wydarzenia");
 
-        $events = $conn->query(sprintf("select * from event where class_id=(select id from class where school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') order by date desc"));
+        $events = $conn->query(sprintf("select * from event where class_id=(select id from class where school_year_id=" . $GLOBALS['yearID'] . " AND parent_id='" . $_SESSION['userID'] . "') order by date desc"));
         if (mysqli_num_rows($events) > 0)
 	    {
 		    while ($row = mysqli_fetch_array($events))
@@ -230,7 +230,7 @@ class myPDF extends tFPDF {
         $id = mysqli_fetch_array($tmpID);
         $_SESSION['userID'] = $id["id"]; //userID = treasuerID
 
-        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash,monthly_fee FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
+        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash,monthly_fee FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] . " and parent_id = " . $_SESSION['userID'] . " )"));
         $bal = mysqli_fetch_array($tmpbalance);
         $balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
         $cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
@@ -238,7 +238,7 @@ class myPDF extends tFPDF {
         $class_account_id = $bal["id"];
         $class_money =  doubleval($balance) + doubleval($cash);
 
-        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id = " . $_SESSION['userID'] . " )"));
+        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] . " and parent_id = " . $_SESSION['userID'] . " )"));
         $kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
         $class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
         $this->Cell($this->pageWidth(), $GLOBALS['height'], "Ilość pieniędzy zebranych na koncie klasowym: " . number_format($class_money, 2, ".", "") . " zł", 0, 0, 'C');
@@ -263,7 +263,7 @@ class myPDF extends tFPDF {
         $tmpID = $conn->query(sprintf("SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "'"));
         $id = mysqli_fetch_array($tmpID);
         $_SESSION['userID'] = $id["id"]; //userID = treasuerID
-        $result = $conn->query(sprintf("SELECT date, name, SUM(price) as price from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id= " . $_SESSION['userID'] . "))  group by name,date order by date desc"));
+        $result = $conn->query(sprintf("SELECT date, name, SUM(price) as price from expense WHERE class_account_id = (SELECT id FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] . " AND parent_id= " . $_SESSION['userID'] . "))  group by name,date order by date desc"));
         if (mysqli_num_rows($result) > 0)
 	    {
             while ($row = mysqli_fetch_array($result))
@@ -292,7 +292,7 @@ class myPDF extends tFPDF {
 
     function transferReportViewTable($conn)
     {
-        $result = $conn->query(sprintf("SELECT * FROM transfer WHERE class_id=(SELECT id FROM class WHERE school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') order by date desc"));
+        $result = $conn->query(sprintf("SELECT * FROM transfer WHERE class_id=(SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] . " AND parent_id='" . $_SESSION['userID'] . "') order by date desc"));
        
         if (mysqli_num_rows($result) > 0)
         {

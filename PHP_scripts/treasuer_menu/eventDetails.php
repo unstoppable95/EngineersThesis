@@ -70,7 +70,7 @@ if (!isset($_SESSION['loggedIn'])) {
 		<div class="text-center" id="accounts_amount">
 	</div>
 	<div class="row">
-		<button class="btn btn-default col-md-2 " onclick="window.open('event_report.php','_blank')" href="event_report.php" role="button">Generuj raport</button>
+		<button class="btn btn-default col-md-2 " onclick="window.open('event_report.php','_blank')" role="button">Generuj raport</button>
 	</div>
 	<div class="col-md-8 offset-sm-2 text-center text-danger" >
 				<?php
@@ -90,8 +90,7 @@ if (!isset($_SESSION['loggedIn'])) {
 <div id="payForEventModal" class="modal fade" abindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered container">
     <form action="../treasurer_helper.php" method="post" name="payForEvent" id="payForEvent" enctype="multipart/form-data">
-	<!--gvg<p></p>ffdfdf-->
-   <div class="modal-content">
+	<div class="modal-content">
 		<div class="modal-header">
 				<h3 class="text-center">Opłać wydarzenie</h3>
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -115,8 +114,7 @@ if (!isset($_SESSION['loggedIn'])) {
 									<label><input type="radio" name="payAll" value="payAllval">Opłać całość</label>
 								</div>
 							</div>
-								<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
-
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="payForChildEvent">Opłać</button>
 						</fieldset>
 						</div>
 					</div>

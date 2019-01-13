@@ -108,12 +108,11 @@ if ($_SESSION['amountOfChild'] == 1)
 	</div>
 	<div class="row">
 		<h5 class="col-md text-center">Stan kont dzieci:</h5>
-		<button class="btn btn-default col-md-2 " onclick="window.open('treasuer_menu/general_report.php','_blank')" href="treasuer_menu/general_report.php" role="button">Generuj raport</button>
+		<button class="btn btn-default col-md-2 " onclick="window.open('treasuer_menu/general_report.php','_blank')" role="button">Generuj raport</button>
 	</div>
 </div>
 <div id="students_balances_list" class="container-fluid"></div>
 
-<!--<div id="class_event" class="container-fluid "></div>-->
 
 
 <!--MODAL CHANGE PASSWORD-->

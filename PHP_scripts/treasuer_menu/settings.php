@@ -176,6 +176,14 @@ if (!isset($_SESSION['loggedIn'])) {
     </form>
 </div>
 
+<div class="container justify-content-center">
+	<div class="row text-center">
+		<div class="offset-sm-1 col-sm-10">
+			<button class="btn btn-default" onclick="window.open('manual_treasurer.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
+		</div>
+	</div>
+</div>
+
 
 <!--MODAL CHANGE PARENR MAIL -->
 <div id="changeParMailModal" class="modal fade">

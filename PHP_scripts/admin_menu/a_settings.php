@@ -74,26 +74,33 @@ if (isset($_SESSION['funChange'])) {
 					<input type="password" name="newPassword" class="form-control"/>
 					<label for="reNewPassword" class="text-center col-form-label" required>Powtórz nowe hasło:</label>
 					<input type="password" name="reNewPassword" class="form-control"/>
-			</div>
-			<div class="col-md-8 offset-sm-2 text-center text-danger" >
-				<?php
-					if (isset($_SESSION['errorChangePassword']))
-					{
-						echo $_SESSION['errorChangePassword'];
-						unset($_SESSION['errorChangePassword']);
-
-					}
-				?>
 				</div>
-		</div>
+				<div class="col-md-8 offset-sm-2 text-center text-danger" >
+					<?php
+						if (isset($_SESSION['errorChangePassword']))
+						{
+							echo $_SESSION['errorChangePassword'];
+							unset($_SESSION['errorChangePassword']);
+						}
+					?>
+				</div>
+			</div>
+			<div class="row text-center">
+				<div class="offset-sm-1 col-sm-10">
+					<button type="submit" name="changePassword" class="btn_add btn">Zatwierdź</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="container justify-content-center">
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
-				<button type="submit" name="changePassword" class="btn_add btn">Zatwierdź</button>
-			 </div>
+				<button class="btn btn-default" onclick="window.open('manual_admin.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
+			</div>
 		</div>
-    </form>
-</div>
-	
+	</div>
+
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

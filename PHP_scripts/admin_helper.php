@@ -2,6 +2,7 @@
 
 if ((isset($_POST['changePassword'])))
 {
+	//in settings
 	changePassword();
 }
 

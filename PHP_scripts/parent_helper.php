@@ -2,11 +2,13 @@
 
 if ((isset($_POST['changePassword'])))
 {
+	//in settings
 	changeOldPassword();
 }
 
 if ((isset($_POST['RequiredNewPasswordAccept'])))
 {
+	//after first login
 	changePassword();
 }
 

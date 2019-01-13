@@ -2,6 +2,7 @@
 
 if ((isset($_POST['changePassword'])))
 {
+	//in settings
 	changeOldPassword();
 }
 
@@ -30,6 +31,7 @@ if ((isset($_POST['addChildParent'])))
 
 if ((isset($_POST['RequiredNewPasswordAccept'])))
 {
+	//after first login
 	changePassword();
 }
 
@@ -1653,7 +1655,8 @@ function changePassword()
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
 		$login = $_SESSION['user'];
 		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		$result = $conn->query(sprintf("UPDATE username SET password='%s',first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+		$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+		$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
 	}
 
 	$conn->close();

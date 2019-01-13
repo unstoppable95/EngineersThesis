@@ -139,7 +139,7 @@ if ($_SESSION['amountOfChild'] == 1)
 <!--MODAL CHANGE PASSWORD-->
 <div id="userModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered container">
-    <form action="treasurer_helper.php" method="post" id="user_formuser_form_password" enctype="multipart/form-data">
+    <form action="parent_helper.php" method="post" id="user_formuser_form_password" enctype="multipart/form-data">
     <div class="modal-content">
 		<div class="modal-header">
 		<h3 class="text-center">Zmień hasło</h3>

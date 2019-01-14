@@ -83,7 +83,42 @@ if ((isset($_POST['function2call'])))
 	case 'saveIDToDelete':
 		saveIDToDelete();
 		break;
+
+	case 'fetchClassYear':
+		endYearClasses();
+		break;
 	}
+}
+
+function endYearClasses()
+{
+	session_start();
+	require_once "connection.php";
+
+	$conn = new MyDB();
+	$output= '  
+	  <div class="table-responsive">
+           <table class="table table-bordered">
+		     <thead class="thead-dark"> 
+                <tr>
+                     <th scope="col">Nazwa klasy</th>
+					 <th scope="col">Czy kolejny rok</th>
+                </tr>
+				</thead><tbody>';
+	$result = $conn->query("SELECT * FROM class");
+	if (mysqli_num_rows($result) > 0)
+	{
+		while ($row = mysqli_fetch_array($result))
+		{
+			$output .=		
+                '<tr>  
+					<td>' . $row["name"] . '</td>  					 
+                    <td><input type="checkbox" name="' . "class" . $row['name'] . '" value='.$row['name'] . '> </td>
+                </tr>';
+		}
+	}
+	$output.= '</tbody></table></div>';
+    echo $output;
 }
 
 function closeYear()
@@ -728,9 +763,7 @@ function showDetails()
 	$className = $conn->query(sprintf("SELECT name FROM class WHERE id = '" . $_POST["id"] . "'"));
 	$studentsList = $conn->query(sprintf("SELECT * FROM child WHERE class_id = '" . $_POST["id"] . "' order by surname"));
 	$res = mysqli_fetch_array($result);
-	$output.= '<h5>Lista uczniów klasy: ' . mysqli_fetch_array($className) ["name"] . '</h5>
-
-		   ';
+	$output.= '<h5>Lista uczniów klasy: ' . mysqli_fetch_array($className) ["name"] . '</h5>';
 	$output.= '  
       <div class="table-responsive">
 		<table class="table table-striped table-bordered">

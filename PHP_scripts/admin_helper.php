@@ -158,13 +158,16 @@ function closeYear()
 			$resultNewClassID = $conn->query("SELECT * FROM class ORDER BY id desc LIMIT 1");
 			$resNewClassID = mysqli_fetch_array($resultNewClassID);
 			
+			//set nextClass value in old class row
+			$resultUpdateNextClass= $conn->query(sprintf("UPDATE class SET next_class = " . $resNewClassID['id'] . " WHERE id = " . $resClass['id']));
+
 			//change class in child table
 			$resultEditClassInChild = $conn->query(sprintf("UPDATE child SET class_id = " . $resNewClassID['id'] . " WHERE class_id = " . $resClass['id']));
 
+			// TODO zrzut do XML'a - stany kont dzieci - Account + classAcount
+
 			//clean all accounts in new class
-			$resultEditClassInChild = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));
-			
-			// TODO zrzut do XML'a - stany kont dzieci - Account + classAcount		
+			$resultCleanAccounts = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));
 		}
 	 }
 

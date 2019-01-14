@@ -504,12 +504,12 @@ function changePassword()
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
-						$_SESSION['errorChangePassword'] ='';
+						$_SESSION['errorChangePassword'] = '';
 						//$_SESSION['errorChangePassword'] ='Hasło zmienione poprawnie';
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] ='Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
+						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
 					}
 				}
 				else

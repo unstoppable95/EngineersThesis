@@ -56,6 +56,15 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
             <div class="col-md-3"></div>
             <div class="col-md-6">
 				<div class="form-group">
+					<div class="col-md-8 offset-sm-2 text-center text-danger" >
+						<?php
+							if (isset($_SESSION['infoChangePasswordFirst']))
+							{
+								echo $_SESSION['infoChangePasswordFirst'];
+								unset($_SESSION['infoChangePasswordFirst']);
+							}
+						?>
+						</div>
 					<label for="login">Login</label>
 					<input type="text" name="login" class="form-control" id="login" placeholder="Email"/>
 				</div>

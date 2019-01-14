@@ -405,11 +405,11 @@ function changeOldPassword()
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
-						$_SESSION['errorChangePassword'] ='';
+						$_SESSION['errorChangePassword'] = '';
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] ='Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
+						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
 					}
 				}
 				else
@@ -455,14 +455,34 @@ function changePassword()
 	{
 		$newPassword = $_POST['newPassword'];
 		$newPassword = htmlentities($newPassword, ENT_QUOTES, "UTF-8");
-		$login = $_SESSION['user'];
-		$login = htmlentities($login, ENT_QUOTES, "UTF-8");
-		$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-		$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+		$reNewPassword = $_POST['reNewPassword'];
+		$reNewPassword = htmlentities($reNewPassword, ENT_QUOTES, "UTF-8");
+		if($newPassword == $reNewPassword)
+		{
+				if (valid_pass($newPassword))
+				{
+					$login = $_SESSION['user'];
+					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
+					$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+					$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$_SESSION['infoChangePasswordFirst'] = 'Dokonano prawidłowej zmiany hasła. <br> Zaloguj się ponownie na swoje konto.';
+					header('Location: logout.php');
+				}
+				else
+				{
+					$_SESSION['errorChangePasswordFirst'] = 'Zmiana hasła nie powiodła się. Hasło nie spełnia wymagań.';
+					header('Location: menu_parent.php');
+				}
+		}
+		else
+		{
+			$_SESSION['errorChangePasswordFirst'] = 'Zmiana hasła nie powiodła się. Podane hasła nie są identyczne.';
+			header('Location: menu_parent.php');
+		}
 	}
 
 	$conn->close();
-	header('Location: logout.php');
+
 }
 
 function fetch()

@@ -93,6 +93,16 @@ if (isset($_SESSION['funChange'])) {
 		</form>
 	</div>
 
+	<div class="container">
+		<div class="row">
+			<div class="col text-center">
+				<form action="../admin_helper.php" class="form-vertical justify-content-center" method="post">
+					<button class="btn btn-default" name="closeYear">Zakończ rok szkolny</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
 	<div class="container justify-content-center">
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">

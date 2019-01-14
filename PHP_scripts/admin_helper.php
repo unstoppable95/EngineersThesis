@@ -1,5 +1,10 @@
 <?php
 
+if ((isset($_POST['closeYear'])))
+{
+	closeYear();
+}
+
 if ((isset($_POST['changePassword'])))
 {
 	//in settings
@@ -40,10 +45,12 @@ if ((isset($_POST['addStudentsFile'])))
 {
 	addStudentsFile();
 }
+
 if ((isset($_POST['deleteEvent'])))
 {
 	deleteFromDB();
 }
+
 if ((isset($_POST['function2call'])))
 {
 	$function2call = $_POST['function2call'];
@@ -79,12 +86,18 @@ if ((isset($_POST['function2call'])))
 	}
 }
 
+function closeYear()
+{
+	header('Location: menu_admin.php');
+}
+
 function saveClassID()
 {
 	session_start();
 	$_SESSION['classIDCSV'] = $_POST["id"];
 	//debug_to_console("Ustawiono id csv");
 }
+
 function debug_to_console( $data ) {
     $output = $data;
     if ( is_array( $output ) )
@@ -92,6 +105,7 @@ function debug_to_console( $data ) {
 
     echo "<script>console.log( 'Debug Objects: " . $output . "' );</script>";
 }
+
 function saveIDToDelete()
 {
 	session_start();

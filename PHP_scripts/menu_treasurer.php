@@ -132,12 +132,31 @@ if ($_SESSION['amountOfChild'] == 1)
 						<div class="text-center">
 						<fieldset>
 							<div class="form-group">
+								<p>Hasło powinno składać się z minimum 8 znaków. Powinno zawierać co najmniej:</p>
+								<ul class="text-left">
+									<li>jedną wielką literę</li>
+									<li>jedną cyfrę</li>
+									<li>jeden znak specjalny</li>
+								</ul>
 								<div class="row">
 									<label for="newPassword">Nowe hasło:</label>
 									<input type="password" name="newPassword" class="form-control"/>
 								</div>
+								<div class="row">
+									<label for="newPassword">Potwierdź hasło:</label>
+									<input type="password" name="reNewPassword" class="form-control"/>
 								</div>
-									<button type="submit" class="btn btn-lg btn-primary btn-block"  name="RequiredNewPasswordAccept">Zatwierdź</button>
+							</div>
+							<div class="col-md-8 offset-sm-2 text-center text-danger" >
+								<?php
+									if (isset($_SESSION['errorChangePasswordFirst']))
+									{
+										echo $_SESSION['errorChangePasswordFirst'];
+										unset($_SESSION['errorChangePasswordFirst']);
+									}
+								?>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block"  name="RequiredNewPasswordAccept">Zatwierdź</button>
 						</fieldset>
 						</div>
 					</div>

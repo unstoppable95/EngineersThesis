@@ -1,5 +1,16 @@
 <?php
 
+
+if ((isset($_POST['submitSelectedClasses'])))
+{
+	if(!empty($_POST['selectedClasses'])){
+        foreach($_POST['selectedClasses'] as $selected)
+        {
+			echo $selected . "</br>";
+		}
+	 }
+}
+
 if ((isset($_POST['closeYear'])))
 {
 	closeYear();
@@ -98,27 +109,31 @@ function endYearClasses()
 	$conn = new MyDB();
 	$output= '  
 	  <div class="table-responsive">
-           <table class="table table-bordered">
-		     <thead class="thead-dark"> 
-                <tr>
-                     <th scope="col">Nazwa klasy</th>
-					 <th scope="col">Czy kolejny rok</th>
-                </tr>
-				</thead><tbody>';
-	$result = $conn->query("SELECT * FROM class");
-	if (mysqli_num_rows($result) > 0)
-	{
-		while ($row = mysqli_fetch_array($result))
-		{
-			$output .=		
-                '<tr>  
-					<td>' . $row["name"] . '</td>  					 
-                    <td><input type="checkbox" name="' . "class" . $row['name'] . '" value='.$row['name'] . '> </td>
-                </tr>';
-		}
-	}
-	$output.= '</tbody></table></div>';
-    echo $output;
+		<form action="../admin_helper.php" method="post" name="editEvent1" id="editEvent1" enctype="multipart/form-data">
+			<table class="table table-bordered">
+				<thead class="thead-dark">
+					<tr>
+						<th scope="col">Nazwa klasy</th>
+						<th scope="col">Czy kolejny rok</th>
+					</tr>
+					</thead><tbody>';
+			$result = $conn->query("SELECT * FROM class WHERE school_year_id=" . $_SESSION["school_year_id"]);
+			if (mysqli_num_rows($result) > 0)
+			{
+				while ($row = mysqli_fetch_array($result))
+				{
+					$output .=
+						'<tr>
+							<td>' . $row["name"] . '</td>
+							<td><input type="checkbox" name="selectedClasses[]" value=' . $row['id'] . '> </td>
+						</tr>';
+				}
+			}
+			$output.= '</tbody></table>
+			<button type="submit" name="submitSelectedClasses" class="btn_add btn">Zatwierdź</button>
+		</form>
+	</div>';
+	echo $output;
 }
 
 function closeYear()

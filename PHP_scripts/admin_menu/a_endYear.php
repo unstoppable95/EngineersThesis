@@ -1,11 +1,12 @@
 <?php
 session_start();
 
+require_once "../admin_helper.php";
+
 if (!isset($_SESSION['loggedIn'])) {
     header('Location: index.php');
     exit();
 }
-require_once "../admin_helper.php";
 
 if (isset($_SESSION['funChange'])) {
     echo '<script language="javascript">';

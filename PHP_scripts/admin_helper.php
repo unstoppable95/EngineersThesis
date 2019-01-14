@@ -3,16 +3,6 @@
 
 if ((isset($_POST['submitSelectedClasses'])))
 {
-	if(!empty($_POST['selectedClasses'])){
-        foreach($_POST['selectedClasses'] as $selected)
-        {
-			echo $selected . "</br>";
-		}
-	 }
-}
-
-if ((isset($_POST['closeYear'])))
-{
 	closeYear();
 }
 
@@ -138,6 +128,46 @@ function endYearClasses()
 
 function closeYear()
 {
+	session_start();
+	require_once "connection.php";
+
+	$conn = new MyDB();
+	
+	$resultYear = $conn->query("SELECT * FROM  school_year ORDER BY end_year desc LIMIT 1");
+	$resYear = mysqli_fetch_array($resultYear);
+	
+	//insert row with next year
+	$result = $conn->query(sprintf("INSERT INTO school_year (start_year, end_year) VALUES (" . ($resYear['start_year'] + 1) . "," . ($resYear['end_year'] + 1) . ")"));
+
+	if(!empty($_POST['selectedClasses'])){
+        foreach($_POST['selectedClasses'] as $selected)
+        {
+			//get old class --> to copy data to new class
+			$resultClass = $conn->query(sprintf("SELECT * FROM  class WHERE id = " . $selected));
+			$resClass = mysqli_fetch_array($resultClass);
+			
+			//get number from name and increment by 1
+			preg_match_all('!\d+!', $resClass['name'], $matches);
+			$oldNumber = implode(' ', $matches[0]);
+			$newName = str_replace($oldNumber, $oldNumber + 1, $resClass['name']);
+
+			//insert new class with the same treasurer and bank_account_number, trigger on classAcount creates new account automatically
+			$resultNewClass = $conn->query(sprintf("INSERT INTO class (name, parent_id, bank_account_number) VALUES ('" . $newName . "','" . $resClass['parent_id'] . "','" . $resClass['bank_account_number'] . "')"));
+			
+			//get ID of the recetly add class
+			$resultNewClassID = $conn->query("SELECT * FROM class ORDER BY id desc LIMIT 1");
+			$resNewClassID = mysqli_fetch_array($resultNewClassID);
+			
+			//change class in child table
+			$resultEditClassInChild = $conn->query(sprintf("UPDATE child SET class_id = " . $resNewClassID['id'] . " WHERE class_id = " . $resClass['id']));
+
+			//clean all accounts in new class
+			$resultEditClassInChild = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));
+			
+			// TODO zrzut do XML'a - stany kont dzieci - Account + classAcount		
+		}
+	 }
+
 	header('Location: menu_admin.php');
 }
 

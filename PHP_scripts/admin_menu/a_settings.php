@@ -87,7 +87,7 @@ if (isset($_SESSION['funChange'])) {
 			</div>
 			<div class="row text-center">
 				<div class="offset-sm-1 col-sm-10">
-					<button type="submit" name="changePassword" class="btn_add btn">Zatwierdź</button>
+					<button type="submit" name="changePassword" class="btn_add btn">Zmień hasło</button>
 				</div>
 			</div>
 		</form>
@@ -95,16 +95,13 @@ if (isset($_SESSION['funChange'])) {
 
 	<div class="container">
 		<div class="row">
-			<div class="col text-center">
-				<!-- <form action="../admin_helper.php" class="form-vertical justify-content-center" method="post"> -->
+			<div class="col text-center mb-3">
 				<button class="btn btn-default" onclick="window.open('a_endYear.php')" role="button">Zakończ rok szkolny</button>
-					<!-- <button class="btn btn-default" name="closeYear">Zakończ rok szkolny</button> -->
-				</form>
 			</div>
 		</div>
 	</div>
 
-	<div class="container justify-content-center">
+	<div class="container">
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
 				<button class="btn btn-default" onclick="window.open('manual_admin.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>

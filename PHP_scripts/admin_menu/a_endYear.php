@@ -62,20 +62,8 @@ if (isset($_SESSION['funChange'])) {
 	</nav>    
 
 
-   <h3 class="text-center">Zamykanie roku szkolnego</h3>
+	<h3 class="text-center">Zamykanie roku szkolnego</h3>
 	<div id="classList" class="container-fluid"> </div>
-
-	<div class="container">
-		<div class="row">
-			<div class="col text-center">
-				<form action="../admin_helper.php" class="form-vertical justify-content-center" method="post">
-					<button class="btn btn-default" name="closeYear">Zakończ rok szkolny</button>
-				</form>
-			</div>
-		</div>
-	</div>
-
-
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

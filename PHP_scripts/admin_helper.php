@@ -120,7 +120,14 @@ function endYearClasses()
 				}
 			}
 			$output.= '</tbody></table>
-			<button type="submit" name="submitSelectedClasses" class="btn_add btn">Zatwierdź</button>
+
+			<div class="container">
+				<div class="row text-center">
+					<div class="offset-sm-1 col-sm-10">
+						<button type="submit" name="submitSelectedClasses" class="btn btn_add">Zakończ rok szkolny</button>
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>';
 	echo $output;
@@ -137,7 +144,11 @@ function closeYear()
 	$resYear = mysqli_fetch_array($resultYear);
 	
 	//insert row with next year
-	$result = $conn->query(sprintf("INSERT INTO school_year (start_year, end_year) VALUES (" . ($resYear['start_year'] + 1) . "," . ($resYear['end_year'] + 1) . ")"));
+	$resultNewSchoolYear = $conn->query(sprintf("INSERT INTO school_year (start_year, end_year) VALUES (" . ($resYear['start_year'] + 1) . "," . ($resYear['end_year'] + 1) . ")"));
+
+	//get the ID of new year --> set session
+	$resultNewYearID = $conn->query("SELECT * FROM school_year ORDER BY id DESC LIMIT 1");
+	$resNewYearID = mysqli_fetch_array($resultNewYearID);
 
 	if(!empty($_POST['selectedClasses'])){
         foreach($_POST['selectedClasses'] as $selected)
@@ -154,7 +165,7 @@ function closeYear()
 			//insert new class with the same treasurer and bank_account_number, trigger on classAcount creates new account automatically
 			$resultNewClass = $conn->query(sprintf("INSERT INTO class (name, parent_id, bank_account_number) VALUES ('" . $newName . "','" . $resClass['parent_id'] . "','" . $resClass['bank_account_number'] . "')"));
 			
-			//get ID of the recetly add class
+			//get ID of the recently add class
 			$resultNewClassID = $conn->query("SELECT * FROM class ORDER BY id desc LIMIT 1");
 			$resNewClassID = mysqli_fetch_array($resultNewClassID);
 			
@@ -170,7 +181,8 @@ function closeYear()
 			$resultCleanAccounts = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));
 		}
 	 }
-
+	unset($_SESSION["school_year_id"]);
+	$_SESSION["school_year_id"] = $resNewYearID['id'];
 	header('Location: menu_admin.php');
 }
 

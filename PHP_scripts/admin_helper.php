@@ -6,6 +6,11 @@ if ((isset($_POST['xmlTEST'])))
 	exportXML();
 }
 
+if ((isset($_POST['xmlTESTimport'])))
+{
+	importXML();
+}
+
 if ((isset($_POST['submitSelectedClasses'])))
 {
 	closeYear();
@@ -96,6 +101,42 @@ if ((isset($_POST['function2call'])))
 	}
 }
 
+function importXML()
+{
+	require_once "connection.php";
+	$conn = new MyDB();
+
+	$classID = 13;
+
+	$dom = new DOMDocument();
+	$dom->load('xmlTEST.xml');
+
+	$currentClassBalance = $dom->getElementsByTagName('classBalance')[0]->nodeValue;
+	$currentClassCash= $dom->getElementsByTagName('classCash')[0]->nodeValue;
+
+	//TODO change class_id as class with treasuererID
+	$resultClassAccount = $conn->query(sprintf("UPDATE class_account SET balance = " . $currentClassBalance . ", cash =" . $currentClassCash . " WHERE class_id = " . $classID));
+
+	$currentChildID = $dom->getElementsByTagName('childID');
+	//$currentChildBalance = $dom->getElementsByTagName('balance');
+	//$currentChildCash = $dom->getElementsByTagName('cash');
+
+	// echo $currentClassID, PHP_EOL;
+	// echo $currentClassBalance, PHP_EOL;
+	// echo $currentClassCash, PHP_EOL;
+
+	foreach ($currentChildID as $id) {
+		//doubled nextSibling - white characters
+		$childID = $id->nodeValue;
+		$balance = $id->nextSibling->nextSibling->nodeValue;
+		$cash = $id->nextSibling->nextSibling->nextSibling->nextSibling->nodeValue;
+
+		//TODO child_id have to agree with class of treasurer
+		$resultAccountUpdate = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = " . $balance . ", account.cash = " . $cash . " WHERE account.child_id = " . $childID . " AND child.class_id = " . $classID));
+	}
+
+}
+
 function exportXML()
 {
 	require_once "connection.php";
@@ -104,7 +145,6 @@ function exportXML()
 	$classID = 13;
 
 	$dom = new DOMDocument('1.0', 'UTF-8');
-
 	$xmlRoot = $dom->createElement("xml");
 	$xmlRoot = $dom->appendChild($xmlRoot);
 
@@ -113,9 +153,8 @@ function exportXML()
 	$resClassAccount = mysqli_fetch_array($resultClassAccount);
 	$currentClassAccount = $dom->createElement("classaccount");
 	$currentClassAccount = $xmlRoot->appendChild($currentClassAccount);
-	$currentClassAccount->appendChild($dom->createElement('classID', $resClassAccount['class_id']));
-	$currentClassAccount->appendChild($dom->createElement('balance', $resClassAccount['balance']));
-	$currentClassAccount->appendChild($dom->createElement('cash', $resClassAccount['cash']));
+	$currentClassAccount->appendChild($dom->createElement('classBalance', $resClassAccount['balance']));
+	$currentClassAccount->appendChild($dom->createElement('classCash', $resClassAccount['cash']));
 
 	//accounts
 	$currentAccount = $dom->createElement("accounts");
@@ -135,7 +174,8 @@ function exportXML()
 	}
 
 	$dom->formatOutput = true;
-	$dom->save('xmlAccounts' . $classID . '.xml');
+	//$dom->save('xmlAccounts' . $classID . '.xml');
+	$dom->save('xmlTEST.xml');
 	header('Location: menu_admin.php');
 }
 

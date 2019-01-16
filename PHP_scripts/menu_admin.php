@@ -76,7 +76,15 @@ require_once "admin_helper.php";
 		</form>
 	</div>
 
-
+	<div class="container">
+		<form action="admin_helper.php" class="form-vertical justify-content-center" method="post">
+			<div class="row text-center">
+				<div class="offset-sm-1 col-sm-10">
+					<button type="submit" name="xmlTESTimport" class="btn_add btn">Import XML</button>
+				</div>
+			</div>
+		</form>
+	</div>
 
 
 <!--MODAL DETAILS -->

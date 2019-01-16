@@ -416,6 +416,7 @@ CREATE TRIGGER `delParticipationAfterDelEvent` BEFORE DELETE ON `event` FOR EACH
  DECLARE curDate DATE; 
  DECLARE eventDate DATE;
 DECLARE v_child_id, v_event_id , v_amount_paid INTEGER;
+DECLARE v_balance , v_cash decimal;
  DECLARE v_count INTEGER;
  DECLARE v_loop_counter INTEGER;
 declare my_cursor cursor for select * from participation where event_id=OLD.id;
@@ -431,10 +432,10 @@ SET v_loop_counter =0;
  
  
  myLOOP: LOOP
- fetch my_cursor into  v_event_id, v_child_id, v_amount_paid;
+ fetch my_cursor into  v_event_id, v_child_id, v_amount_paid,v_cash,v_balance;
   SET v_loop_counter =v_loop_counter+1;
   IF(select datediff(eventDate,curDate) >=0) THEN
-update account set balance=balance+v_amount_paid where 	child_id=v_child_id; 
+update account set balance=balance+v_amount_paid, cash=cash+v_cash where 	child_id=v_child_id; 
 END IF;
  
   delete from participation where event_id=v_event_id and child_id =v_child_id;

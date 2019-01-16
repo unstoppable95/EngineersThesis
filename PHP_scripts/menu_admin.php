@@ -66,6 +66,16 @@ require_once "admin_helper.php";
 	<div id="class_list" class="container-fluid "></div>
 </form>
 
+	<div class="container">
+		<form action="admin_helper.php" class="form-vertical justify-content-center" method="post">
+			<div class="row text-center">
+				<div class="offset-sm-1 col-sm-10">
+					<button type="submit" name="xmlTEST" class="btn_add btn">Export XML</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
 
 
 

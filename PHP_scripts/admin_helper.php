@@ -1,6 +1,11 @@
 <?php
 
 
+if ((isset($_POST['xmlTEST'])))
+{
+	exportXML();
+}
+
 if ((isset($_POST['submitSelectedClasses'])))
 {
 	closeYear();
@@ -91,6 +96,49 @@ if ((isset($_POST['function2call'])))
 	}
 }
 
+function exportXML()
+{
+	require_once "connection.php";
+	$conn = new MyDB();
+
+	$classID = 13;
+
+	$dom = new DOMDocument('1.0', 'UTF-8');
+
+	$xmlRoot = $dom->createElement("xml");
+	$xmlRoot = $dom->appendChild($xmlRoot);
+
+	//classaccount
+	$resultClassAccount = $conn->query(sprintf("SELECT * FROM class_account WHERE class_id = " . $classID));
+	$resClassAccount = mysqli_fetch_array($resultClassAccount);
+	$currentClassAccount = $dom->createElement("classaccount");
+	$currentClassAccount = $xmlRoot->appendChild($currentClassAccount);
+	$currentClassAccount->appendChild($dom->createElement('classID', $resClassAccount['class_id']));
+	$currentClassAccount->appendChild($dom->createElement('balance', $resClassAccount['balance']));
+	$currentClassAccount->appendChild($dom->createElement('cash', $resClassAccount['cash']));
+
+	//accounts
+	$currentAccount = $dom->createElement("accounts");
+	$currentAccount = $xmlRoot->appendChild($currentAccount);
+
+	$resultAccount = $conn->query(sprintf("SELECT * FROM account JOIN child ON account.child_id = child.id WHERE child.class_id = " . $classID));
+	if (mysqli_num_rows($resultAccount) > 0)
+	{
+		while ($row = mysqli_fetch_array($resultAccount))
+		{
+			$currentChild = $dom->createElement("child");
+			$currentChild = $currentAccount->appendChild($currentChild);
+			$currentChild->appendChild($dom->createElement('childID', $row['child_id']));
+			$currentChild->appendChild($dom->createElement('balance', $row['balance']));
+			$currentChild->appendChild($dom->createElement('cash', $row['cash']));
+		}
+	}
+
+	$dom->formatOutput = true;
+	$dom->save('xmlAccounts' . $classID . '.xml');
+	header('Location: menu_admin.php');
+}
+
 function endYearClasses()
 {
 	session_start();
@@ -175,7 +223,8 @@ function closeYear()
 			//change class in child table
 			$resultEditClassInChild = $conn->query(sprintf("UPDATE child SET class_id = " . $resNewClassID['id'] . " WHERE class_id = " . $resClass['id']));
 
-			// TODO zrzut do XML'a - stany kont dzieci - Account + classAcount
+			//create XML file with account and classAcount TODO
+			//exportXML($selected);
 
 			//clean all accounts in new class
 			$resultCleanAccounts = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));

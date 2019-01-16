@@ -142,7 +142,6 @@ insert into account (child_id,balance ) values (NEW.id,0);
 select monthly_fee into v_monthly_fee from class_account where class_id=NEW.class_id;
 select count(*) into v_child_count from child where class_id = NEW.class_id;
 
-update class_account set expected_budget=expected_budget+10*v_monthly_fee where class_id=NEW.class_id;
 
 
 SET v_loop_counter=0;
@@ -197,8 +196,6 @@ set charge= differenceInMonths*monthlyFee;
 
 delete from class_account_payment where child_id=OLD.id;
 
-update class_account set expected_budget=expected_budget-10*monthlyFee+charge where class_id=classaccountID;
-
 insert into class_account_payment (amount,type,class_account_id,school_year_id) values (charge,"auto",classaccountID,school_year);
 
 
@@ -235,7 +232,7 @@ INSERT INTO `class` (`id`, `name`, `parent_id`, `bank_account_number`, `school_y
 -- Wyzwalacze `class`
 --
 DELIMITER $$
-CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_account (balance,expenses, 	expected_budget,class_id) values(0,0,0,NEW.id)
+CREATE TRIGGER `addClassAccount` AFTER INSERT ON `class` FOR EACH ROW INSERT into class_account (balance,cash,class_id) values(0,0,NEW.id)
 $$
 DELIMITER ;
 DELIMITER $$
@@ -264,8 +261,6 @@ CREATE TABLE `class_account` (
   `balance` decimal(11,2) DEFAULT NULL,
   `cash` decimal(11,2) NOT NULL,
   `monthly_fee` decimal(11,2) NOT NULL DEFAULT '4.00',
-  `expenses` int(11) DEFAULT NULL,
-  `expected_budget` int(11) DEFAULT '0',
   `class_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
@@ -273,10 +268,10 @@ CREATE TABLE `class_account` (
 -- Zrzut danych tabeli `class_account`
 --
 
-INSERT INTO `class_account` (`id`, `balance`, `cash`, `monthly_fee`, `expenses`, `expected_budget`, `class_id`) VALUES
-(9, '11.00', '25.00', '4.00', 0, 104, 9),
-(11, '60.00', '10.00', '4.00', 0, 760, 11),
-(12, '0.00', '0.00', '4.00', 0, 160, 12);
+INSERT INTO `class_account` (`id`, `balance`, `cash`, `monthly_fee`, `class_id`) VALUES
+(9, '11.00', '25.00', '4.00', 9),
+(11, '60.00', '10.00', '4.00', 11),
+(12, '0.00', '0.00', '4.00', 12);
 
 -- --------------------------------------------------------
 

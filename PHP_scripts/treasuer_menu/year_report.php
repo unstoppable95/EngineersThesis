@@ -159,7 +159,10 @@ class myPDF extends tFPDF {
         else
 	    {
             $sumOfWidth = $GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col'];
+            $this->centerTable($sumOfWidth);
             $this->Cell($sumOfWidth, $GLOBALS['height'], 'Nie dodano jeszcze uczniów do tej klasy', 1, 0, 'C');
+            $this->stopCenterTable();
+            $this->Ln();
         }
     }
 
@@ -256,7 +259,7 @@ class myPDF extends tFPDF {
         $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], "Cena", 1, 0, 'C');
         $this->Ln();
         $this->stopCenterTable();
-        }
+    }
 
     function expensesViewTable($conn)
     {
@@ -275,7 +278,15 @@ class myPDF extends tFPDF {
                 $this->stopCenterTable();
                 $this->Ln();
             }
-	    }
+        }
+        else
+        {
+            $sumOfWidth = $GLOBALS['width1Col'] + 2*$GLOBALS['width2Col'];
+            $this->centerTable($sumOfWidth);
+            $this->Cell($sumOfWidth, $GLOBALS['height'], 'Brak wydatków klasowych', 1, 0, 'C');
+            $this->stopCenterTable();
+            $this->Ln();
+        }
     }
 
     function transferReportHeaderTable($conn)
@@ -326,7 +337,9 @@ class myPDF extends tFPDF {
         else
         {
             $sumOfWidth = $GLOBALS['width1Col'] + 3 * $GLOBALS['width2Col'];
+            $this->centerTable($sumOfWidth);
             $this->Cell($sumOfWidth, $GLOBALS['height'], 'Brak transferów w tym roku', 1, 0, 'C');
+            $this->stopCenterTable();
             $this->Ln();
         }
     }

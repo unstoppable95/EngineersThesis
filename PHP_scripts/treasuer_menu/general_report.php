@@ -124,7 +124,10 @@ class myPDF extends tFPDF {
         else
 	    {
             $sumOfWidth = $GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col'];
+            $this->centerTable($sumOfWidth);
             $this->Cell($sumOfWidth, $GLOBALS['height'], 'Nie dodano jeszcze uczniów do tej klasy', 1, 0, 'C');
+            $this->stopCenterTable();
+            $this->Ln();
         }
     }
 }

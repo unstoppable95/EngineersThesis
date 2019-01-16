@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 14 Sty 2019, 19:21
+-- Czas generowania: 16 Sty 2019, 17:17
 -- Wersja serwera: 10.1.36-MariaDB
 -- Wersja PHP: 7.2.10
 
@@ -967,7 +967,8 @@ ALTER TABLE `school_year`
 --
 ALTER TABLE `transfer`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `school_year_transfer_FK` (`school_year`);
+  ADD KEY `school_year_transfer_FK` (`school_year`),
+  ADD KEY `transfer_class_fk` (`class_id`);
 
 --
 -- Indeksy dla tabeli `username`
@@ -1116,7 +1117,8 @@ ALTER TABLE `payment`
 -- Ograniczenia dla tabeli `transfer`
 --
 ALTER TABLE `transfer`
-  ADD CONSTRAINT `school_year_transfer_FK` FOREIGN KEY (`school_year`) REFERENCES `school_year` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `school_year_transfer_FK` FOREIGN KEY (`school_year`) REFERENCES `school_year` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `transfer_class_fk` FOREIGN KEY (`class_id`) REFERENCES `class` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ograniczenia dla tabeli `username`

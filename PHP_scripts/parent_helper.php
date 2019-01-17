@@ -409,7 +409,7 @@ function changeOldPassword()
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
+						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jedną małą literę, wielką literę, cyfrę i symbol';
 					}
 				}
 				else

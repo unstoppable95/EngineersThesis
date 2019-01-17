@@ -42,71 +42,61 @@ if ((isset($_SESSION['loggedIn'])) && ($_SESSION['loggedIn'] == true))
 
 <body>
 	<div class="container">
-	<form action="login.php" method="post" class="form-signin">
-	
-		<div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-				<h2>Zaloguj się</h2>
-                 <hr>
-            </div>
-		</div>
-		
-		<div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-				<div class="form-group">
-					<div class="col-md-8 offset-sm-2 text-center text-danger" >
-						<?php
-							if (isset($_SESSION['infoChangePasswordFirst']))
-							{
-								echo $_SESSION['infoChangePasswordFirst'];
-								unset($_SESSION['infoChangePasswordFirst']);
-							}
-						?>
-						</div>
-					<label for="login">Login</label>
-					<input type="text" name="login" class="form-control" id="login" placeholder="Email"/>
-				</div>
-			</div>
-		</div>
-		
-		<div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-				<div class="form-group">
-				<label for="password">Hasło</label>
-				<input type="password" name="password" class="form-control" id="password" placeholder="Hasło"/>
-				<div class="col-md-8 offset-sm-2 text-center text-danger" >
-				<?php
-					if (isset($_SESSION['error']))
-					{
-						echo $_SESSION['error'];
-						unset($_SESSION['error']);
-					}
-				?>
-				</div>
+		<form action="login.php" method="post" class="form-signin">
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<h2>Zaloguj się</h2>
+					<hr>
 				</div>
 			</div>
 
-			
-		</div>
-		<div class="row" style="padding-top: 1rem">
-            <div class="col-md-3"></div>
-            <div class="col-md-6">
-			<button type="submit" class="btn btn-primary" class="fa fa-sign-in">Zaloguj się</button>
-			<a class="btn btn-link" data-toggle="modal" data-target="#mailReminder"><small>Zapomniałeś hasła?</small></a>
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-md-8 offset-sm-2 text-center text-danger" >
+							<?php
+								if (isset($_SESSION['infoChangePasswordFirst']))
+								{
+									echo $_SESSION['infoChangePasswordFirst'];
+									unset($_SESSION['infoChangePasswordFirst']);
+								}
+							?>
+							</div>
+						<label for="login">Login</label>
+						<input type="text" name="login" class="form-control" id="login" placeholder="Email"/>
+					</div>
+				</div>
 			</div>
-		</div>
+			
+			<div class="row">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label for="password">Hasło</label>
+						<input type="password" name="password" class="form-control" id="password" placeholder="Hasło"/>
+						<div class="col-md-8 offset-sm-2 text-center text-danger" >
+							<?php
+								if (isset($_SESSION['error']))
+								{
+									echo $_SESSION['error'];
+									unset($_SESSION['error']);
+								}
+							?>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="padding-top: 1rem">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<button type="submit" class="btn btn-primary" class="fa fa-sign-in">Zaloguj się</button>
+					<a class="btn btn-link" data-toggle="modal" data-target="#mailReminder"><small>Zapomniałeś hasła?</small></a>
+				</div>
+			</div>
+		</form>
 	</div>
-	<div>
-		
-		</div>
-	<!--<p class="help-block">
-		<a class="btn btn-link" data-toggle="modal" data-target="#mailReminder"><small>Zapomniałeś hasła?</small></a>
-	</p>-->
-	</form>
-	
 	
 	<!--MODAL REMIND PASSWORD -->
 	<div id="mailReminder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

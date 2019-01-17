@@ -549,8 +549,10 @@ function sendPassword()
 		$isLogin = ($conn->query(sprintf("SELECT * FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->num_rows;
 		if ($isLogin > 0)
 		{
-			$passwd = ($conn->query(sprintf("SELECT password FROM username WHERE login = '%s'", mysqli_real_escape_string($conn, $myEmail))))->fetch_assoc();
-			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $passwd["password"]);
+			$newPassword = randomPassword();
+			$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
+			$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $myEmail)));
+			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword);
 			echo "<script>
 			alert('Twoje hasło zostało wysłane na podany adres email!');
 			window.location.href='index.php';
@@ -695,7 +697,7 @@ function changePassword()
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
+						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jedną małą literę, wielką literę, cyfrę i symbol';
 					}
 				}
 				else
@@ -722,7 +724,7 @@ function changePassword()
 
 function randomPassword()
 {
-	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!?@#$%^*-_+';
 	$pass = array(); //remember to declare $pass as an array
 	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
 	for ($i = 0; $i < 8; $i++)
@@ -730,7 +732,6 @@ function randomPassword()
 		$n = rand(0, $alphaLength);
 		$pass[] = $alphabet[$n];
 	}
-
 	return implode($pass); //turn the array into a string
 }
 

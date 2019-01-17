@@ -1609,7 +1609,7 @@ function changeOldPassword()
 					}
 					else
 					{
-						$_SESSION['errorChangePassword'] ='Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jeden symbol, jedną wielką literę i cyfrę';
+						$_SESSION['errorChangePassword'] = 'Zmiana hasła nie powiodła się. Hasło powinno zawierać minimum 8 znaków, w tym co najmniej jedną małą literę, wielką literę, cyfrę i symbol';
 					}
 				}
 				else
@@ -1735,7 +1735,7 @@ function addEvent()
 
 function randomPassword()
 {
-	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!?@#$%^*-_+';
 	$pass = array(); //remember to declare $pass as an array
 	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
 	for ($i = 0; $i < 8; $i++)
@@ -1743,7 +1743,6 @@ function randomPassword()
 		$n = rand(0, $alphaLength);
 		$pass[] = $alphabet[$n];
 	}
-
 	return implode($pass); //turn the array into a string
 }
 

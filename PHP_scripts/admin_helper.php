@@ -207,12 +207,14 @@ function endYearClasses()
 						</tr>';
 				}
 			}
+			// hidden button to submit form in jquery
 			$output.= '</tbody></table>
 
 			<div class="container">
 				<div class="row text-center">
 					<div class="offset-sm-1 col-sm-10">
-						<button type="submit" name="submitSelectedClasses" class="btn btn_add">Zakończ rok szkolny</button>
+						<button type="submit" name="submitSelectedClasses" class="invisible" id="hiddenButton" style="display: none;"></button>
+						<button type="button" data-toggle="modal" data-target="#confirmYearCloseModal" class="btn btn-default">Zakończ rok szkolny</button>
 					</div>
 				</div>
 			</div>

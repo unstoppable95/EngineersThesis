@@ -53,7 +53,7 @@ else
 
 			unset($_SESSION['error']);
 			$result->free_result();
-			$typeUser = "select type from username where login='$login' and password='$password'";
+			$typeUser = "select type from username where login='$login'";
 			$typeDB = ($conn->query($typeUser))->fetch_assoc();
 			$_SESSION['type'] = $typeDB['type'];
 

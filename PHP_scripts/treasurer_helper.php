@@ -1604,7 +1604,7 @@ function changeOldPassword()
 						$login = $_SESSION['user'];
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+						$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $login)));
 						$_SESSION['errorChangePassword'] ='Hasło zostało zmienione.';
 					}
 					else
@@ -1662,7 +1662,7 @@ function changePassword()
 					$login = $_SESSION['user'];
 					$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 					$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-					$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+					$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $login)));
 					$_SESSION['infoChangePasswordFirst'] = 'Dokonano prawidłowej zmiany hasła. <br> Zaloguj się ponownie na swoje konto.';
 					header('Location: logout.php');
 				}
@@ -1797,7 +1797,7 @@ function addChildParent()
 			$parentEmail = htmlentities($parentEmail, ENT_QUOTES, "UTF-8");
 		}
 
-		// id klasy zalgodowanego skarbnika
+		// id klasy zalogowanego skarbnika
 
 		$classID1 = $conn->query(sprintf("SELECT id FROM class where school_year_id=".$_SESSION["school_year_id"]." and parent_id=(SELECT id FROM parent WHERE email = '" . $_SESSION['user'] . "' )"));
 		$classID = mysqli_fetch_array($classID1) ["id"];
@@ -1817,8 +1817,8 @@ function addChildParent()
 					$parentIDdb = $details['id'];
 
 					// dodanie do username
-
-					$conn->query(sprintf("insert into username (login,password,type,first_login,parent_id) values ('%s' , '$passwd' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+					$hash = password_hash($passwd, PASSWORD_BCRYPT);
+					$conn->query(sprintf("insert into username (login,hashedPassword,type,first_login,parent_id) values ('%s' , '$hash' ,'p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
 					$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 				}
 			}

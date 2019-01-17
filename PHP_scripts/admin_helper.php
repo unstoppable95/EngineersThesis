@@ -404,7 +404,7 @@ function addStudentsFile()
 
 						// dodanie do username
 						$hash = password_hash($passwd, PASSWORD_BCRYPT);
-						$conn->query(sprintf("insert into username (login,password,hashedPassword,type,first_login,parent_id) values ('%s' , '$passwd','$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+						$conn->query(sprintf("insert into username (login,hashedPassword,type,first_login,parent_id) values ('%s','$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
 						$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 					}
 					else
@@ -499,7 +499,7 @@ function addStudent()
 
 					// dodanie do username
 					$hash = password_hash($passwd, PASSWORD_BCRYPT);
-					$conn->query(sprintf("insert into username (login,password,hashedPassword,dhtype,first_login,parent_id) values ('%s' , '$passwd', '$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+					$conn->query(sprintf("insert into username (login,hashedPassword,dhtype,first_login,parent_id) values ('%s', '$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
 					$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 				}
 			}
@@ -551,7 +551,7 @@ function sendPassword()
 		{
 			$newPassword = randomPassword();
 			$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-			$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $myEmail)));
+			$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $myEmail)));
 			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword);
 			echo "<script>
 			alert('Twoje hasło zostało wysłane na podany adres email!');
@@ -691,7 +691,7 @@ function changePassword()
 						$login = $_SESSION['user'];
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
-						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
+						$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $login)));
 						$_SESSION['errorChangePassword'] ='Hasło zostało zmienione.';
 					}
 					else
@@ -779,7 +779,7 @@ function addClassTreasurer()
 
 					// dodanie do username
 					$hash = password_hash($passwd, PASSWORD_BCRYPT);
-					$conn->query(sprintf("insert into username (login, password, hashedPassword, type, first_login, parent_id) values ('%s' , '$passwd','$hash','t',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $email)));
+					$conn->query(sprintf("insert into username (login, hashedPassword, type, first_login, parent_id) values ('%s','$hash','t',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $email)));
 					$result = $conn->query(sprintf("insert into class (name,parent_id) values ('%s' ,'$parentIDdb')", mysqli_real_escape_string($conn, $className)));
 				}
 			}

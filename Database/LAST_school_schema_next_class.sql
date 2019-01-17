@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 16 Sty 2019, 17:17
+-- Czas generowania: 17 Sty 2019, 20:20
 -- Wersja serwera: 10.1.36-MariaDB
 -- Wersja PHP: 7.2.10
 
@@ -825,7 +825,6 @@ DELIMITER ;
 
 CREATE TABLE `username` (
   `login` varchar(100) COLLATE utf8_polish_ci NOT NULL,
-  `password` varchar(50) COLLATE utf8_polish_ci NOT NULL,
   `hashedPassword` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `type` varchar(1) COLLATE utf8_polish_ci NOT NULL,
   `first_login` tinyint(1) NOT NULL,
@@ -836,40 +835,40 @@ CREATE TABLE `username` (
 -- Zrzut danych tabeli `username`
 --
 
-INSERT INTO `username` (`login`, `password`, `hashedPassword`, `type`, `first_login`, `parent_id`) VALUES
-('adamowies@gmail.com', 'Gruby506123', '$2y$10$rtj6juxlajM0VKlNRMNazuzlUgJnZc2zrP5qbAHCtoh0Sae56NCdi', 'p', 0, 28),
-('admin', 'admin', '$2y$10$z35.UJTgzfxRye8qFvy4iePTud1v5KfAoTT4ZP2II71HC1kkYEst6', 'a', 0, NULL),
-('akieron@gmail.com', 'TheKing99#', '$2y$10$T8bu1Qh3rer2bqZE6/40be/VSvUZO6kveUSLzV2GQq4mqa8mM71HG', 'p', 0, 14),
-('annazurczak1@gmail.com', 'Dollares$54', '$2y$10$syqinYoXAA9H7ylBcDt3B.GHGxjjBdp1FqhSU323ke5IMAde0eS5u', 't', 0, 1),
-('aw@gmail.com', 'Posortowane8*', '$2y$10$lWhDN3hbJITJZ2BcpkeKF.c84SflBHnwvq1j9wBrpIXjcQNwnZljW', 't', 0, 31),
-('fdembski@gmail.com', 'Dollars44$a', '$2y$10$dmevasmiYCbyGb.bAsyoEu3w4zpcvDYjGpVxi1iRZcvq9bt9pDqSC', 't', 0, 12),
-('gpocieszna@gmail.com', 'Lumpeks', '$2y$10$WEuXviG.t2a810c4sTx1COHu9IIrC4AdldgqwOHpjKyLQNaBXDyVG', 'p', 0, 13),
-('grzywam@gmail.com', 'Rudolf77*', '$2y$10$UXHWqSM8W4WwabBbWDh4yeOvcxEwbfqS1HO7gb.afUOB6Lrp43/W6', 'p', 0, 24),
-('gzurczak@wp.pl', '1MXMDSeq', '$2y$10$FlNpQBGiAhucjqo70g15..qGztRhLqHPNIe4voNfM3Ynn5ZA3vJmW', 'p', 1, 6),
-('ikozica@wp.pl', 'Superduper33#', '$2y$10$BMZPamGmdmj.D6N1S8N0LePhiRkY84PAJFcwheYysvMTDUQYU3HM2', 'p', 0, 20),
-('januszkowalski@gmail.com', '3Edcvfr4$', '$2y$10$Jc8teBFFxwcok5gVJsU4SO1UZZ5i3wUNSYLrMGu/maWpJi07k0WJ2', 't', 0, 11),
-('jkowalski@onet.pl', 'v3v0hdpz', '$2y$10$UOBtjUQulzeNRK2oQMUgM.MetVgPvnv60Fr8A68/mf6EPwNyQIOr2', 't', 1, 35),
-('jmalepszy@gmail.com', 'Simba77$', '$2y$10$/JxhsEcEaEth8.KBWTb69.4LAlzq3UXks1KWLPSYBSfNavM78C4wy', 'p', 0, 25),
-('kalinalisowska678@gmail.com', 'NUqpaLrx', '$2y$10$G7bRWxbs1sPFofJyDQ6mje64BSsU.elrTIKWIBN3NzoUDp76D1heG', 'p', 1, 22),
-('kgwarek123@gmail.com', 'Haslo123!', '$2y$10$CFa.nYmwrBVDyk8.3fd5IubsfSCrwIXsRowJcSGmSElMMw1H39TyS', 'p', 0, 23),
-('kiwaszczuk@gmail.com', 'i', '$2y$10$6Q1DDvUo.tsMUzNw.m13wO.GtzeEZpCO6g7yeP9.jpLNj3PdRzDT.', 'p', 0, 30),
-('kluczykmamamamamma@gmail.com', 'W9xjFwcI', '$2y$10$XDZvpevGs74iGYfh7bPlPeKGe6MXYz6Jhqf2GXg54jwwJg2/yTwZS', 'p', 1, 10),
-('ludwikmazur@gmail.com', 'Euroko89&amp;', '$2y$10$rxJpc2gezATeHMUydF5JQOlITIkDAmBbmVXST/6nefbzKm8c4UvTi', 'p', 0, 29),
-('mirekrzepeckiyy@gmail.com', 'Onetonet22@', '$2y$10$Rv5THTPAfkgdbKzlzhSPjuUTWtnd5411iSvWnynmLyrH/S3iFKsva', 'p', 0, 21),
-('mkajoch55@gmail.com', 'Grazyna77$', '$2y$10$eyStTRT4upsXPSLNxNUIFOKEuHGmsa.JcDG/6luJz2WVMfo/XCGEe', 'p', 0, 19),
-('nieznany012@wp.pl', 'd', '$2y$10$rLHwI0/Mw1/IqQ82Pj7E3OBU18/nsyFbRbbtTKTojK1whzFdEn3vu', 'p', 0, 5),
-('olejnikbozena@gmail.com', 'Zupagoraca55$', '$2y$10$IbSbIf1ADKrRMUgVxajlEeYfHqo4RVP6euJu4C3HYAmbmB8c9rX8.', 'p', 0, 15),
-('pati3285485@onet.pl', 'Suchar567&lt;&gt;&#039;', '$2y$10$oAtqIEPOT1w7zgjoc/qaqeeRgzdxKYFdevdfj0yhqlRKq3RDHnj4u', 'p', 0, 8),
-('pawlaykpiotrxd@onet.pl', 'O9hDxrsy', '$2y$10$3Dj6rwBDlBzg4b8L8hQLHu66oRKka9Td.J0YmjyIeoZys0O4RyVYi', 'p', 1, 3),
-('piotrpawlaczyk21@gmail.com', 'sQSiaWr8', '$2y$10$dJe/IMMfH2GJaMxIk.fUTeD4pspID0aeb7IgGRGYwdITpbJ85zHUC', 'p', 1, 4),
-('rafalhazard1977@gmail.com', '0zROYATC', '$2y$10$1BcNcQ2v/XcBLVyWC129UOWCz8iB7ZYMgSfrWG5zrgG/cE6GcA3NG', 'p', 1, 17),
-('restowkarol@gmail.com', 'Romeo66^', '$2y$10$2Sr3hPGceOmxwZ6BVsp.q.Q/GLFYVS8daqGXi/gJbq6VjvxiiXZdC', 'p', 0, 26),
-('robert23891@wp.pl', 'robciu', '$2y$10$KCcHzwiGA80sg5xlJCfSY.Vje2JBUAgmfF1bxATN0yg988A9uttAC', 't', 0, 2),
-('tkrycha@gmail.com', 's', '$2y$10$mxxG6Qo2Wsn41g01xA8fGOeThk3BiumLS/Y27CogDmhQcRUWMBQ0W', 'p', 0, 27),
-('wagonkarolina181@gmail.com', 'NIieayHU', '$2y$10$fP.bZJ6Pzf9nZSAMPuzBkuGb0O79/d7PBbvmgC1Xz5.O2spbLgsHO', 'p', 1, 18),
-('waldeknowackihehe@gmail.com', '1QARsjnm', '$2y$10$P1Gftd.HXkGotUIa4DYMDu3pyQXGkhz0IlNna4z.srAC889t7QIHS', 'p', 1, 9),
-('wiktoriakaczmarek@gmail.com', '3ip24Ahu', '$2y$10$g2oME1UmXJaDTRqVR43KCuc0gcnBpawwzBshVsxaGrpjyhfILzp0.', 'p', 1, 16),
-('wkhdhd@wp.pl', 'UqexXx5B', '$2y$10$VsByIxyE0P/RGMdW3kOYJ.wW9HZyC6CoenClS/hqfyWuOxtMlko6e', 'p', 1, 7);
+INSERT INTO `username` (`login`, `hashedPassword`, `type`, `first_login`, `parent_id`) VALUES
+('adamowies@gmail.com', '$2y$10$iJZy72bPXHAVv7Gaqbjex.tcos0CDXaexWFbTlygDLDBZSRsDziGa', 'p', 0, 28),
+('admin', '$2y$10$z35.UJTgzfxRye8qFvy4iePTud1v5KfAoTT4ZP2II71HC1kkYEst6', 'a', 0, NULL),
+('akieron@gmail.com', '$2y$10$HxSKgG3SJI.KVeH2LBufZeKB4X20h8dcmCJRIWc72zYXxcgkUNVaq', 'p', 0, 14),
+('annazurczak1@gmail.com', '$2y$10$qVrIE/Jlox/MLuvr76F85eMkvi91J7uWrdK9L.tcDONBzpz4.RKNy', 't', 0, 1),
+('aw@gmail.com', '$2y$10$K.GeKNCFUISx3cR15ludFeEIcrU0GF.PhF9IbRhDtmZW5AyEyyqSy', 't', 0, 31),
+('fdembski@gmail.com', '$2y$10$uyE/e4ZrLiIZ8oK2aOXQtuEPoCJaFpFzJu0ONRBlOkiIHLnLJesg2', 't', 0, 12),
+('gpocieszna@gmail.com', '$2y$10$B.2mZMvayVD0C9wokafdl.9o3t53gnMzLsM1doBay8rmiahhW0K9q', 'p', 0, 13),
+('grzywam@gmail.com', '$2y$10$2Im9WbNN8SNF3sbO8PuGm.NjAIHQwAJsFviQHtv62pShmBs1T0ocO', 'p', 0, 24),
+('gzurczak@wp.pl', '$2y$10$xuUQAZioFXLyVRrUKP.2pOFbWCezSqFCmiAZ3SdT0cmTm6ykYCxpC', 'p', 1, 6),
+('ikozica@wp.pl', '$2y$10$.tGo7fyzd.2D3d4v6.TrV..Waej3RQKFd6PFGeRMinYq/3acQ1dnC', 'p', 0, 20),
+('januszkowalski@gmail.com', '$2y$10$1qWHXK1Jj7T9LxfRetcwd.i0I2ZnfawQkY7r.HwdmfXMnPKx.sXlO', 't', 0, 11),
+('jkowalski@onet.pl', '$2y$10$3NnLt5svcaU1GXqG5KMYPeLvDkJqubyrfz770aVUMgvpbjjWMIN4i', 't', 1, 35),
+('jmalepszy@gmail.com', '$2y$10$UkBY0lIhZVeZGXXMTcvTTeWiC4yfnasiXOjjTZtqAEhrWUO0YHVsG', 'p', 0, 25),
+('kalinalisowska678@gmail.com', '$2y$10$4tktwkJ939pPdIlqfQR23ed26pJ/rwaQDJ9hyEzH7yb9q2Eau2Kv2', 'p', 1, 22),
+('kgwarek123@gmail.com', '$2y$10$.m/APdqf0vWu9VllzHvdFuIW92ZTLRktq2SpEUwkfQl9sXmh90UbW', 'p', 0, 23),
+('kiwaszczuk@gmail.com', '$2y$10$8MrlMxx41Ddhz3WRKROPuOk54EJelfhPgN3wJPDP5rFL2ALG68tiS', 'p', 0, 30),
+('kluczykmamamamamma@gmail.com', '$2y$10$KT74Cy8NHRdrn/bm53B47ejqY88vO3RgNb9P2VV4gvdtsgbPSX/tO', 'p', 1, 10),
+('ludwikmazur@gmail.com', '$2y$10$rh1mMtBks2DQie7ypU5BT.9Ad.QzxYGNdojKvu.WuHHv8CnjUmmui', 'p', 0, 29),
+('mirekrzepeckiyy@gmail.com', '$2y$10$t3AoUH3ionIbTkKSnuvr.ebA7Az6aIY6f8TvNBOK4eG2hBet0C/5W', 'p', 0, 21),
+('mkajoch55@gmail.com', '$2y$10$nG5j8whf6KZEIRoVPpckyuVxSMCoAfIpJ8gwfrpiV1Au5rrdoZzQa', 'p', 0, 19),
+('nieznany012@wp.pl', '$2y$10$KEOUjOZPJYyotZCZIRiGCeV3l32E.pCMIpnM3LUReG.wbgsvXF/wu', 'p', 0, 5),
+('olejnikbozena@gmail.com', '$2y$10$LLbW.dkvT84P59jBeK/SPOsERRyPzRwptquQwF/ElHciIR1zgFZa2', 'p', 0, 15),
+('pati3285485@onet.pl', '$2y$10$mnWaheKnmUCkG9pVBxja3ObPgyOimjkf6g3EMv6nQaFCBiqYQcmh.', 'p', 0, 8),
+('pawlaykpiotrxd@onet.pl', '$2y$10$shgp9Gp8.fZ4DO1BollWOOyLmnWNbjPnTqxPB6N11cl6ehuyIAi7W', 'p', 1, 3),
+('piotrpawlaczyk21@gmail.com', '$2y$10$1Yec31Hmka4L0V.63LcILOf9pVpgMTwUY0PzYuki5CoVa5mRbVmf6', 'p', 1, 4),
+('rafalhazard1977@gmail.com', '$2y$10$xi5r15HKGw0EDGPT6ryefOwKUSZzPVp4olRr/p8GByfRDgDnVpns6', 'p', 1, 17),
+('restowkarol@gmail.com', '$2y$10$BpLA5SjYG8XgsqIpzRnQieOaTULJINe5iMNwwQhfR1CSVi6MyLW/y', 'p', 0, 26),
+('robert23891@wp.pl', '$2y$10$nmsUx1B0YC9McJec1MTFq.42bSZ2zWQtPwq2/eDbjJb7FjWgISIxS', 't', 0, 2),
+('tkrycha@gmail.com', '$2y$10$tkj.BI.R6KJnfdD8AHYKiOi0bviWjfgW5wuc7bQj8CtYtIwiiS.Sy', 'p', 0, 27),
+('wagonkarolina181@gmail.com', '$2y$10$t/3SDULBAeDMvJnvZuzjF.fWvjfJczZ8O5tCLDEtXe/s2WZ608MIK', 'p', 1, 18),
+('waldeknowackihehe@gmail.com', '$2y$10$HljNstgGQVA3agbO4.PVw.azf6cjwn9vYTP0r.Bu.IJSovPycMXrm', 'p', 1, 9),
+('wiktoriakaczmarek@gmail.com', '$2y$10$z9cmSWMh2n8DDYVwIsTZ9eb1d7hizJTPnLl3J41/m3hv1x4fS4U4a', 'p', 1, 16),
+('wkhdhd@wp.pl', '$2y$10$2TJUP//h5J2KbCkyQ8WFPejTQutErcR0qnlIa19e2pUt8eVbeRDTC', 'p', 1, 7);
 
 --
 -- Indeksy dla zrzutów tabel

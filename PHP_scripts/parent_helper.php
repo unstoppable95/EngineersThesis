@@ -405,7 +405,7 @@ function changeOldPassword()
 						$login = htmlentities($login, ENT_QUOTES, "UTF-8");
 						$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 						$result = $conn->query(sprintf("UPDATE username SET password='%s', hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $newPassword) , mysqli_real_escape_string($conn, $login)));
-						$_SESSION['errorChangePassword'] = '';
+						$_SESSION['errorChangePassword'] ='Hasło zostało zmienione.';
 					}
 					else
 					{

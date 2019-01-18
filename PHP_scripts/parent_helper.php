@@ -683,7 +683,7 @@ function fetch_balance()
 		$output.='<h5 class="text-center">Stan konta dziecka: ' . number_format($res["balance"], 2, ".", "") . ' zł' . '</h5>';
 		
 		$result = $conn->query(sprintf("SELECT email from parent WHERE id IN 
-		(SELECT parent_id FROM class WHERE school_year_id = " . $_SESSION["school_year_id"] . " AND id = 
+		(SELECT parent_id FROM class WHERE school_year_id = " . $_SESSION["school_year_id"] . " AND id IN 
 		(SELECT class_id FROM child WHERE parent_id = " . $_SESSION['userID'] . "))"));
 		$res = mysqli_fetch_array($result);
 		$output.= '<h5 class="text-center">Email skarbnika: <a href="mailto:' . $res["email"] . '">' .  $res["email"] . '</a></h5>';

@@ -89,7 +89,7 @@ require_once "admin_helper.php";
 
 <!--MODAL DETAILS -->
 <div id="userModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered container">
+ <div class="modal-dialog modal-lg modal-dialog-centered container">
     <form method="post" enctype="multipart/form-data" id="user_form">
    <div class="modal-content">
 		<div class="modal-header">

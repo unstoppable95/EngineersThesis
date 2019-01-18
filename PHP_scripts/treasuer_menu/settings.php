@@ -160,6 +160,14 @@ if (!isset($_SESSION['loggedIn'])) {
 </div>
 
 <div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
+			  <h5>Zmień numery konta bankowego</h5>
+		</div>
+	</div>
+</div>
+
+<div class="container">
     <form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-3">

@@ -225,7 +225,7 @@ if ($_SESSION['amountOfChild'] == 1)
 					<div class="panel-body">
 						<div class="text-center">
 						<fieldset>
-							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="unsubscribeEvent">Usuń</button>
+							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="unsubscribeEvent">Wypisz</button>
 						</fieldset>
 						</div>
 					</div>

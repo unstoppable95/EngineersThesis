@@ -499,7 +499,7 @@ function addStudent()
 
 					// dodanie do username
 					$hash = password_hash($passwd, PASSWORD_BCRYPT);
-					$conn->query(sprintf("insert into username (login,hashedPassword,dhtype,first_login,parent_id) values ('%s', '$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
+					$conn->query(sprintf("insert into username (login,hashedPassword,type,first_login,parent_id) values ('%s', '$hash','p',TRUE,'$parentIDdb')", mysqli_real_escape_string($conn, $parentEmail)));
 					$result = $conn->query(sprintf("insert into child (name,surname,date_of_birth,parent_id,class_id) values ('%s' , '%s' ,'%s','$parentIDdb','$classID')", mysqli_real_escape_string($conn, $childName) , mysqli_real_escape_string($conn, $childSurname) , mysqli_real_escape_string($conn, $childBirthdate)));
 				}
 			}

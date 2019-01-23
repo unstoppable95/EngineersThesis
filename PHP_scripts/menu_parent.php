@@ -288,7 +288,7 @@ echo $_SESSION['firstDisplayParent']; ?>';
 	fetch_data();
 	
 	
-		function fetch_child_name()
+	function fetch_child_name()
 	{
 		$.ajax({
 			url:"parent_helper.php",
@@ -303,7 +303,7 @@ echo $_SESSION['firstDisplayParent']; ?>';
 	fetch_child_name();
 	
 	
-		function fetch_child_list()
+	function fetch_child_list()
 	{
 		$.ajax({
 			url:"parent_helper.php",
@@ -313,7 +313,6 @@ echo $_SESSION['firstDisplayParent']; ?>';
 				$('#child_list').html(data);
 			}
 		});
-		
 	}
 	fetch_child_list();
 	

@@ -672,8 +672,6 @@ function choose()
 {
 	session_start();
 	$_SESSION['choosenChild'] = $_POST["id"];
-	//$ale = "Wybrales dziecko o id: " . $_SESSION['choosenChild'];
-	//echo $ale;
 }
 
 function fetch_balance()

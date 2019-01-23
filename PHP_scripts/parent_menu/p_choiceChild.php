@@ -104,23 +104,19 @@ $(document).ready(function(){
     }
     fetch_data();
 
-    $(document).on('click','.btn_choose',function(){
-    var id=$(this).data("id3");
-    if(confirm("Czy jestes pewny, ze chcesz zmienic dziecko?"))  
-           {
-    $.ajax({
-        url:"../parent_helper.php",
-        method:"POST",
-        data:{function2call: 'choose', id:id},
-        dataType:"text",
-        success:function(data){
-            alert(data);            
-                     }  
-                });  
-           }  
-      });
+    $(document).on('click','.btn_choose', function(){
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"../parent_helper.php",
+			method:"POST",
+			data:{function2call: 'choose', id:id},
+			dataType:"text",
+			success:function(data){
+				window.open('../menu_parent.php','_self');
+			}
+		});
+	});
 
-    
  }); 
   
 

@@ -327,7 +327,7 @@ class myPDF extends tFPDF {
                 }
                 $this->centerTable($GLOBALS['width1Col'] + 3*$GLOBALS['width2Col']);
                 $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], $row["date"], 1, 0, 'C');
-                $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], number_format($row["cash"], 2, ".", "") . " zł", 1, 0, 'C');
+                $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], number_format($cash, 2, ".", "") . " zł", 1, 0, 'C');
                 $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], $type, 1, 0, 'C');
                 $this->Cell($GLOBALS['width2Col'], $GLOBALS['height'], $account, 1, 0, 'C');
                 $this->stopCenterTable();

@@ -1257,7 +1257,7 @@ function fetch_event_list()
 	$result = $conn->query(sprintf("select * from event where class_id=(select id from class where school_year_id=".$_SESSION["school_year_id"]." and parent_id='" . $_SESSION['userID'] . "') order by date desc"));
 	$output.= '  
 		<div class="col-md-2  float-md-right p-3" >
-		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_self\')" class="btn btn-default btn-block">Dodaj zbiórke</button> 
+		<button type="button" onclick="window.open(\'addOnceEvent.php\',\'_blank\')" class="btn btn-default btn-block">Dodaj zbiórkę</button> 
 		</div>
 		<div class="table-responsive">
            <table class="table table-striped table-bordered">

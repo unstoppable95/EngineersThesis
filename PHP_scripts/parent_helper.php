@@ -494,7 +494,7 @@ function fetch()
 	$output = '';
 	if (isset($_SESSION["choosenChild"]))
 	{
-		$result = $conn->query(sprintf("SELECT e.id,e.name,e.price,e.date, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") and e.school_year_id=".$_SESSION['school_year_id']." order by sortx desc"));
+		$result = $conn->query(sprintf("SELECT e.id,e.name,e.price,e.date,completed, (e.price-p.amount_paid) as sortx from event e join participation p on e.id = p.event_id and p.child_id=" . $_SESSION['choosenChild'] . " WHERE e.id IN (SELECT event_id FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . ") and e.school_year_id=".$_SESSION['school_year_id']." order by sortx desc"));
 		$output.= '  
       <div class="table-responsive">
            <table class="table table-striped table-bordered">
@@ -521,20 +521,27 @@ function fetch()
 					$color = '';
 				}
 
+				if ($row['completed'] == 1)
+				{
+					$color = ' bgcolor = #009E90 ';
+					$disabledState = " disabled";
+				}
+				else
+				{
+					$disabledState = '';
+				}
+
 				$payedTmp = $conn->query(sprintf("SELECT * FROM participation WHERE child_id =" . $_SESSION['choosenChild'] . " AND event_id=" . $row["id"]));
 				$res = mysqli_fetch_array($payedTmp);
 				$paid = $res["amount_paid"];
-				$output.= ' 
-			<tbody>					
-                <tr>  
+				
+				$output.= '<tbody><tr>  
                     <td ' . $color . '>' . $row["name"] . '</td> 
-					<td ' . $color . '>' . $paid . '</td>  					 
+					<td ' . $color . '>' . $paid . ' zł</td>  					 
                     <td ' . $color . '>' . $row["price"] . ' zł</td>  
-                    <td ' . $color . '>' . $row["date"] . '</td>
-					<td ' . $color . '><button type="button" data-toggle="modal" data-target="#unsubscribeEventModal"  data-id3="' . $row["id"] . '" class="btn_delete btn btn-default">Wypisz</button></td>
-				</tr>  
-			<tbody>
-           ';
+					<td ' . $color . '>' . $row["date"] . '</td>
+					<td ' . $color . '><button type="button" data-toggle="modal" data-target="#unsubscribeEventModal"  data-id3="' . $row["id"] . '" class="btn_delete btn btn-default"' . $disabledState . '>Wypisz</button></td>
+					</tr> </tbody>';
 			}
 		}
 		else

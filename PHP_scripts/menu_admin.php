@@ -141,7 +141,7 @@ require_once "admin_helper.php";
 								<input type="email" name="trNewMail" class="form-control"/>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-lg btn-primary btn-block"  name="changeNewTreasurer">Zatwierdź</button>
+							<button type="submit" class="btn btn-lg btn-primary btn-block" name="changeNewTreasurer">Zatwierdź</button>
 						</fieldset>
 						</div>
 					</div>
@@ -259,6 +259,40 @@ require_once "admin_helper.php";
 	</div>
 </div>
 
+<!--MODAL CHANGE name of class -->
+<div id="changeClassName" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered container">
+    <form action="admin_helper.php" method="post" id="editEvent1" enctype="multipart/form-data">
+   <div class="modal-content">
+		<div class="modal-header">
+				<h3 class="text-center">Zmiana nazwy klasy</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+				<span aria-hidden="true">&times;</span></button>
+		</div>
+		<div class="modal-body">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="text-center">
+						<fieldset>
+							<div class="form-group">
+								<div class="row">
+								<label for="newClassName">Nowa nazwa klasy:</label>
+								<input type="text" name="newClassName" class="form-control"/>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-lg btn-primary btn-block"  name="changeClassName">Zatwierdź</button>
+						</fieldset>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+  </form>
+ </div>
+</div>
+
 <!--confirm delete class-->
 <div id="eventDeleteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
  <div class="modal-dialog modal-dialog-centered container">
@@ -306,46 +340,35 @@ $(document).ready(function(){
 				$('#class_list').html(data);
 			}
 		});
-		
 	}
 	fetch_data();
 
 	
-// delete
-
-$(document).on('click','.btn_delete_class',function(){
-	var id=$(this).data("id3");
-	$.ajax({
-		url:"admin_helper.php",
-		method:"POST",
-		data:{function2call: 'saveIDToDelete', id:id },
-		dataType:"text",
-		success:function(data){
-			//alert(data);
-			//alert(id);
-	
-			
-                     }  
-                });  
-             
-      }); 
+// delete class
+	$(document).on('click','.btn_delete_class',function(){
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"admin_helper.php",
+			method:"POST",
+			data:{function2call: 'saveIDToDelete', id:id },
+			dataType:"text",
+			success:function(data){
+			}  
+		});  		
+    }); 
 	  
-	  //save classID to load date from CSV
-$(document).on('click','.btn_addStudentsCSV',function(){
-	var id=$(this).data("id3");
-	$.ajax({
-		url:"admin_helper.php",
-		method:"POST",
-		data:{function2call: 'saveClassID', id:id },
-		dataType:"text",
-		success:function(data){
-			
-	
-			
-                     }  
-                });  
-             
-      }); 
+	//save classID to load date from CSV
+	$(document).on('click','.btn_addStudentsCSV',function(){
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"admin_helper.php",
+			method:"POST",
+			data:{function2call: 'saveClassID', id:id },
+			dataType:"text",
+			success:function(data){
+			}  
+		});          
+    }); 
 	  
 	$(document).on('click','.btn_details',function(){
 	var id=$(this).data("id3");
@@ -391,7 +414,18 @@ $(document).on('click','.btn_addStudentsCSV',function(){
                 });         
       });
 	  
-	  
+	//change name of class
+	$(document).on('click','.btn_name_class',function(){
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"admin_helper.php",
+			method:"POST",
+			data:{function2call: 'saveIDToChangeName', id:id },
+			dataType:"text",
+			success:function(data){
+			}  
+		});        
+    }); 
 	  
  }); 
  

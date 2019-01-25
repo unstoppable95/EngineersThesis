@@ -11,6 +11,11 @@ if ((isset($_POST['xmlTESTimport'])))
 	importXML();
 }
 
+if ((isset($_POST['changeClassName'])))
+{
+	changeClassName();
+}
+
 if ((isset($_POST['submitSelectedClasses'])))
 {
 	closeYear();
@@ -98,7 +103,18 @@ if ((isset($_POST['function2call'])))
 	case 'fetchClassYear':
 		endYearClasses();
 		break;
+	
+	case 'saveIDToChangeName':
+		saveIDToChangeName();
+	break;
 	}
+	
+}
+
+function saveIDToChangeName()
+{
+	session_start();
+	$_SESSION['changeClassID'] = $_POST["id"];
 }
 
 function importXML()
@@ -570,6 +586,34 @@ function sendPassword()
 	$conn->close();
 }
 
+
+function changeClassName()
+{
+	session_start();
+	require_once "connection.php";
+	if (empty($_POST['newClassName']) || $_POST['newClassName'] == '0')
+	{
+		echo  '<script> location.replace("menu_admin.php"); </script>';
+		exit();
+	}
+
+	$conn = new MyDB();
+	if ($conn->connect_errno != 0)
+	{
+		echo "Blad: " . $conn->connect_errno;
+	}
+	else
+	{
+		$newClassName= $_POST['newClassName'];
+		$newClassName = htmlentities($newClassName, ENT_QUOTES, "UTF-8");
+		$conn->query(sprintf("UPDATE class SET name='%s' where id = " .  $_SESSION['changeClassID'], mysqli_real_escape_string($conn, $newClassName)));
+	}
+
+	$conn->close();
+	echo  '<script> location.replace("menu_admin.php"); </script>';
+}
+
+
 function changeEmailTreasuer()
 {
 	session_start();
@@ -829,7 +873,8 @@ function fetch()
 					
 					<th scope="col">Dodaj ucznia do klasy</th>
 					<th scope="col">Dodaj uczniów z pliku</th>-->
-					
+
+					<th scope="col">Nazwa klasy</th>
 					<th scope="col">Usuń klasę</th>
 
                 </tr>
@@ -851,6 +896,7 @@ function fetch()
 					<button type="button" data-toggle="modal" data-target="#changeTrModal" data-id3="' . $row["id"] . '" class="btn_trChange btn btn-default">Zmień skarbnika</button></td>
 					<td><button type="button" onclick="window.open(\'./admin_menu/addStudent.php\',\'_self\')" data-id3="' . $row["id"] . '" class="btn_addStudent btn btn-default">Ucznia</button></td>
 					<td><button type="button" data-toggle="modal" data-target="#addStudentCSVModal" data-id3="' . $row["id"] . '" class="btn_addStudentsCSV btn btn-default">Z pliku</button></td>
+					<td><button type="button" data-toggle="modal" data-target="#changeClassName" data-id3="' . $row["id"] . '" class="btn_name_class btn btn-default">Zmień</button></td> 
 					<td><button type="button" data-toggle="modal" data-target="#eventDeleteModal" data-id3="' . $row["id"] . '" class="btn_delete_class btn btn-default">Usuń</button></td> 
 				</tr>  
 			<tbody>

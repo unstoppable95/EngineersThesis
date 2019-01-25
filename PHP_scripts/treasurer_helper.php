@@ -1691,8 +1691,9 @@ function addEvent()
 		exit();
 	}
 
+	require_once "mailer.php";
 	require_once "connection.php";
-
+	
 	$conn = new MyDB();
 	if ($conn->connect_errno != 0)
 	{
@@ -1720,7 +1721,8 @@ function addEvent()
 
 				$conn->query(sprintf("insert into participation (event_id,child_id,amount_paid) values ('%s','%s', 0)", mysqli_real_escape_string($conn, $eventID) , mysqli_real_escape_string($conn, $row["id"]) ));
 				$parent = ($conn->query(sprintf("select * from parent where id=(select parent_id from child where id='" . $row["id"] . "')")))->fetch_assoc();
-				mail($parent["email"], "Dodano nową zbiórkę: $eventName", "Dzień dobry, chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiła się nowa zbiórka o nazwie $eventName i cenie $eventPrice. Odbędzie się ono $eventDate. SystemSKARBNIKklasowy");
+				$myMail = new MyMailer();
+				$myMail->sendMail($parent["email"], "Dodano nową zbiórkę: $eventName", "Dzień dobry,<br>chcielibyśmy poinformować, że w systemie SkrabnikKlasowy pojawiła się nowa zbiórka o nazwie $eventName i cenie $eventPrice zł. Wydarzenie odbędzie się $eventDate.<br><br>System SkarbnikKlasowy");
 			}
 		}
 		else
@@ -1755,6 +1757,7 @@ function addChildParent()
 		exit();
 	}
 
+	require_once "mailer.php";
 	require_once "connection.php";
 
 	$conn = new MyDB();
@@ -1807,8 +1810,9 @@ function addChildParent()
 			if ($isUser <= 0)
 			{ //RODZICA NIE MA W SYSTEMIE
 				$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
-				mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
-
+				$myMail = new MyMailer();
+				$myMail->sendMail($parentEmail, "Haslo pierwszego logowania rodzica", "Dzień dobry,<br>Twoje hasło pierwszego logowania to: $passwd<br><br>System SkarbnikKlasowy");
+				
 				// szukamy id nowego rodzica
 
 				if ($result = @$conn->query(sprintf("SELECT * FROM parent WHERE email='%s'", mysqli_real_escape_string($conn, $parentEmail))))

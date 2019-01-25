@@ -374,7 +374,7 @@ function addStudentsFile()
 	}
 
 	// odczytanie i insert do bazy danych  -> nazwa pliku
-
+	require_once "mailer.php";
 	require_once "connection.php";
 
 	$conn = new MyDB();
@@ -409,7 +409,8 @@ function addStudentsFile()
 				{
 					//RODZICA NIE MA W SYSTEMIE
 					$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
-					mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
+					$myMail = new MyMailer();
+					$myMail->sendMail($parentEmail, "Haslo pierwszego logowania rodzica", "Dzień dobry,<br>Twoje hasło pierwszego logowania to: $passwd<br><br>System SkarbnikKlasowy");
 
 					// szukamy id nowego rodzica
 
@@ -456,6 +457,7 @@ function addStudent()
 		exit();
 	}
 
+	require_once "mailer.php";
 	require_once "connection.php";
 
 	$conn = new MyDB();
@@ -504,7 +506,8 @@ function addStudent()
 			if ($isUser <= 0)
 			{ //RODZICA NIE MA W SYSTEMIE
 				$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','p')", mysqli_real_escape_string($conn, $parentName) , mysqli_real_escape_string($conn, $parentSurname) , mysqli_real_escape_string($conn, $parentEmail)));
-				mail($parentEmail, "Haslo pierwszego logowania rodzica", "Twoje hasło pierwszego logowanie to: $passwd");
+				$myMail = new MyMailer();
+				$myMail->sendMail($parentEmail, "Haslo pierwszego logowania rodzica", "Dzień dobry,<br>Twoje hasło pierwszego logowania to: $passwd<br><br>System SkarbnikKlasowy");
 
 				// szukamy id nowego rodzica
 
@@ -551,6 +554,7 @@ function sendPassword()
 		exit();
 	}
 
+	require_once "mailer.php";
 	require_once "connection.php";
 
 	$conn = new MyDB();
@@ -568,7 +572,8 @@ function sendPassword()
 			$newPassword = randomPassword();
 			$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 			$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $myEmail)));
-			mail($myEmail, "Odzyskiwanie hasła", "Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword);
+			$myMail = new MyMailer();
+			$myMail->sendMail($parentEmail, "Odzyskiwanie hasła", "Dzień dobry,<br>Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword . "<br><br>System SkarbnikKlasowy");
 			echo "<script>
 			alert('Twoje hasło zostało wysłane na podany adres email!');
 			window.location.href='index.php';
@@ -617,6 +622,7 @@ function changeClassName()
 function changeEmailTreasuer()
 {
 	session_start();
+	require_once "mailer.php";
 	require_once "connection.php";
 	if (empty($_POST['trNewMail']) || $_POST['trNewMail'] == '0')
 	{
@@ -634,7 +640,8 @@ function changeEmailTreasuer()
 		$newTreasurerEmail = $_POST['trNewMail'];
 		$newTreasurerEmail = htmlentities($newTreasurerEmail, ENT_QUOTES, "UTF-8");
 		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from class where id='" . $_SESSION['changeID'] . "')", mysqli_real_escape_string($conn, $newTreasurerEmail)));
-		mail($newTreasurerEmail, "Zmiana adresu email", "Mail w systemie skarbnik klasowy został zmieniony pomyślnie. Pozdrawiamy System Skarbnik Klasowy");
+		$myMail = new MyMailer();
+		$myMail->sendMail($newTreasurerEmail, "Zmiana adresu email", "Dzień dobry,<brMail w systemie skarbnik klasowy został zmieniony pomyślnie<br><br>System SkarbnikKlasowy");
 	}
 
 	$conn->close();
@@ -788,6 +795,7 @@ function addClassTreasurer()
 		exit();
 	}
 
+	require_once "mailer.php";
 	require_once "connection.php";
 
 	$conn = new MyDB();
@@ -812,6 +820,8 @@ function addClassTreasurer()
 			{ //SKARBNIKA NIE MA W SYSTEMIE
 				$result = $conn->query(sprintf("insert into parent (name,surname,email,type) values ('%s' , '%s' ,'%s','t')", mysqli_real_escape_string($conn, $name) , mysqli_real_escape_string($conn, $surname) , mysqli_real_escape_string($conn, $email)));
 				$passwd = randomPassword();
+				$myMail = new MyMailer();
+				$myMail->sendMail($email, "Haslo pierwszego logowania skarbnika", "Dzień dobry,<br>Twoje hasło pierwszego logowania to: $passwd<br><br>System SkarbnikKlasowy");
 				mail($email, "Haslo pierwszego logowania skarbnika", "Twoje hasło pierwszego logowanie to: $passwd");
 
 				// szukamy id nowego rodzica

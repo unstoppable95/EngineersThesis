@@ -104,7 +104,7 @@ if (isset($_SESSION['funChange'])) {
 	<div class="container">
 		<div class="row text-center">
 			<div class="offset-sm-1 col-sm-10">
-				<button class="btn btn-default" onclick="window.open('manual_admin.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
+				<button class="btn btn-default" onclick="window.open('../Instrukcja Obsługi.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
 			</div>
 		</div>
 	</div>

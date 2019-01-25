@@ -187,7 +187,7 @@ if (!isset($_SESSION['loggedIn'])) {
 <div class="container justify-content-center">
 	<div class="row text-center">
 		<div class="offset-sm-1 col-sm-10">
-			<button class="btn btn-default" onclick="window.open('manual_treasurer.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
+			<button class="btn btn-default" onclick="window.open('../Instrukcja Obsługi.pdf','_blank')" role="button">Pobierz instrukcję obsługi</button>
 		</div>
 	</div>
 </div>

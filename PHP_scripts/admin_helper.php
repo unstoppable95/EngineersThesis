@@ -3,7 +3,7 @@
 
 if ((isset($_POST['xmlTEST'])))
 {
-	exportXML();
+	exportXML("11");
 }
 
 if ((isset($_POST['xmlTESTimport'])))
@@ -153,12 +153,11 @@ function importXML()
 
 }
 
-function exportXML()
+function exportXML($classID)
 {
+	require_once "mailer.php";
 	require_once "connection.php";
 	$conn = new MyDB();
-
-	$classID = 13;
 
 	$dom = new DOMDocument('1.0', 'UTF-8');
 	$xmlRoot = $dom->createElement("xml");
@@ -176,7 +175,7 @@ function exportXML()
 	$currentAccount = $dom->createElement("accounts");
 	$currentAccount = $xmlRoot->appendChild($currentAccount);
 
-	$resultAccount = $conn->query(sprintf("SELECT * FROM account JOIN child ON account.child_id = child.id WHERE child.class_id = " . $classID));
+	$resultAccount = $conn->query(sprintf("SELECT * FROM account JOIN child ON account.child_id = child.id WHERE child.class_id = '" . $classID . "'"));
 	if (mysqli_num_rows($resultAccount) > 0)
 	{
 		while ($row = mysqli_fetch_array($resultAccount))
@@ -190,8 +189,12 @@ function exportXML()
 	}
 
 	$dom->formatOutput = true;
-	//$dom->save('xmlAccounts' . $classID . '.xml');
-	$dom->save('xmlTEST.xml');
+	$dom->save('xmlAccounts' . $classID . '.xml');
+	$resultEmail = $conn->query(sprintf("SELECT email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = $classID)")); 
+	$resEmail = mysqli_fetch_array($resultEmail);
+	$myMail = new MyMailer();
+	$myMail->sendMail($resEmail['email'], "Plik XML z saldami uczniów", "Dzień dobry,<br>W załączniku znajduje się plik XML, który można wczytać na początku roku.<br><br>System SkarbnikKlasowy", "xmlAccounts" . $classID . ".xml");
+
 	header('Location: menu_admin.php');
 }
 
@@ -278,11 +281,11 @@ function closeYear()
 			//set nextClass value in old class row
 			$resultUpdateNextClass= $conn->query(sprintf("UPDATE class SET next_class = " . $resNewClassID['id'] . " WHERE id = " . $resClass['id']));
 
+			//create XML file with account and classAcount TODO
+			exportXML($selected);
+
 			//change class in child table
 			$resultEditClassInChild = $conn->query(sprintf("UPDATE child SET class_id = " . $resNewClassID['id'] . " WHERE class_id = " . $resClass['id']));
-
-			//create XML file with account and classAcount TODO
-			//exportXML($selected);
 
 			//clean all accounts in new class
 			$resultCleanAccounts = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = '0', account.cash = '0' WHERE child.class_id = " . $resNewClassID['id']));
@@ -641,7 +644,7 @@ function changeEmailTreasuer()
 		$newTreasurerEmail = htmlentities($newTreasurerEmail, ENT_QUOTES, "UTF-8");
 		$conn->query(sprintf("UPDATE parent SET email='%s' where id=(select parent_id from class where id='" . $_SESSION['changeID'] . "')", mysqli_real_escape_string($conn, $newTreasurerEmail)));
 		$myMail = new MyMailer();
-		$myMail->sendMail($newTreasurerEmail, "Zmiana adresu email", "Dzień dobry,<brMail w systemie skarbnik klasowy został zmieniony pomyślnie<br><br>System SkarbnikKlasowy");
+		$myMail->sendMail($newTreasurerEmail, "Zmiana adresu email", "Dzień dobry,<br>Mail w systemie skarbnik klasowy został zmieniony pomyślnie<br><br>System SkarbnikKlasowy");
 	}
 
 	$conn->close();
@@ -822,7 +825,6 @@ function addClassTreasurer()
 				$passwd = randomPassword();
 				$myMail = new MyMailer();
 				$myMail->sendMail($email, "Haslo pierwszego logowania skarbnika", "Dzień dobry,<br>Twoje hasło pierwszego logowania to: $passwd<br><br>System SkarbnikKlasowy");
-				mail($email, "Haslo pierwszego logowania skarbnika", "Twoje hasło pierwszego logowanie to: $passwd");
 
 				// szukamy id nowego rodzica
 

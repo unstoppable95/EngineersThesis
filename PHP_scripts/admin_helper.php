@@ -359,7 +359,6 @@ function addStudentsFile()
 	if ($uploadOk == 0)
 	{
 		echo "Sorry, your file was not uploaded.";
-
 		// if everything is ok, try to upload file
 
 	}
@@ -576,7 +575,7 @@ function sendPassword()
 			$newHash = password_hash($newPassword, PASSWORD_BCRYPT);
 			$result = $conn->query(sprintf("UPDATE username SET hashedPassword='$newHash', first_login=FALSE WHERE login='%s'", mysqli_real_escape_string($conn, $myEmail)));
 			$myMail = new MyMailer();
-			$myMail->sendMail($parentEmail, "Odzyskiwanie hasła", "Dzień dobry,<br>Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword . "<br><br>System SkarbnikKlasowy");
+			$myMail->sendMail($myEmail, "Odzyskiwanie hasła", "Dzień dobry,<br>Twoje nowe hasło w systemie skarbnik klasowy to: " . $newPassword . "<br><br>System SkarbnikKlasowy");
 			echo "<script>
 			alert('Twoje hasło zostało wysłane na podany adres email!');
 			window.location.href='index.php';

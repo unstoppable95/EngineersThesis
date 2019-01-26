@@ -1546,7 +1546,8 @@ function changeBankAccount()
 	echo $newAccountNumber;
 	echo $login;
 	$conn->close();
-	header('Location: treasuer_menu/settings.php');
+	echo  '<script> location.replace("treasuer_menu/settings.php"); </script>';
+	//header('Location: treasuer_menu/settings.php');
 }
 
 function valid_pass($candidate) {

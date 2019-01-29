@@ -184,6 +184,31 @@ if (!isset($_SESSION['loggedIn'])) {
     </form>
 </div>
 
+<div class="container">
+	<div class="row">
+		<div class="col-md-12 mt-5 text-center">
+			  <h5>Import sald uczniów z pliku XML</h5>
+		</div>
+	</div>
+</div>
+
+<!--Import .xml file-->
+<div class="container">
+<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+		<div class="form-group row">
+			<div class="col-md-6 offset-sm-4">
+				<input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file" >
+			</div>
+		</div>
+		<div class="row text-center">
+			<div class="offset-sm-1 col-sm-10">
+				<button type="submit"  name="xmlImport" class="btn_add btn">Importuj</button>
+			</div>
+		</div>
+    </form>
+</div>
+
+
 <div class="container justify-content-center">
 	<div class="row text-center">
 		<div class="offset-sm-1 col-sm-10">

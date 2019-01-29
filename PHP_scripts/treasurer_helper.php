@@ -1,5 +1,10 @@
 <?php
 
+if ((isset($_POST['xmlImport'])))
+{
+	importXML();
+}
+
 if ((isset($_POST['changePassword'])))
 {
 	//in settings
@@ -174,6 +179,104 @@ if ((isset($_POST['function2call'])))
 		saveStudentID();
 		break;
 	}
+}
+
+function importXML()
+{
+	session_start();
+
+	// UPLOAD PLIKU na SERWER
+	/*
+	$target_dir = "\uploadsXML\\";
+	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+	$target_file =  basename($_FILES["myFile"]["name"]);
+	$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+	$uploadOk = 1;
+
+	// Check if file already exists
+
+	if (file_exists($target_file))
+	{
+		echo "Sorry, file already exists.";
+		$uploadOk = 0;
+	}
+
+	// Check file size
+
+	if ($_FILES["myFile"]["size"] > 500000)
+	{
+		echo "Sorry, your file is too large.";
+		$uploadOk = 0;
+	}
+
+	// Allow certain file formats
+
+	if ($imageFileType != "xml")
+	{
+		echo "Sorry, only xml files are allowed.";
+		$uploadOk = 0;
+	}
+
+	// Check if $uploadOk is set to 0 by an error
+
+	if ($uploadOk == 0)
+	{
+		echo "Sorry, your file was not uploaded.";
+		// if everything is ok, try to upload file
+	}
+	else
+	{
+		define('SITE_ROOT', realpath(dirname(__FILE__)));
+		if (move_uploaded_file($_FILES["myFile"]["name"], SITE_ROOT . $target_file))
+		{
+			echo "The file " . basename($_FILES["myFile"]["name"]) . " has been uploaded.";
+		}
+		else
+		{
+			echo "Sorry, there was an error uploading your file.";
+		}
+	}
+	*/
+
+	/////////////////////////
+
+	require_once "connection.php";
+	$conn = new MyDB();
+
+	$classIDresult = $conn->query(sprintf("SELECT id FROM class WHERE parent_id = " . $_SESSION['userID']));
+	$classIDres = mysqli_fetch_array($classIDresult);
+	$classID = $classIDres['id'];
+
+	$dom = new DOMDocument();
+
+	$dom->load( $_FILES['myFile']['tmp_name'] );
+
+	$currentClassBalance = $dom->getElementsByTagName('classBalance')[0]->nodeValue;
+	$currentClassCash= $dom->getElementsByTagName('classCash')[0]->nodeValue;
+
+	//TODO change class_id as class with treasuererID
+	$resultClassAccount = $conn->query(sprintf("UPDATE class_account SET balance = " . $currentClassBalance . ", cash =" . $currentClassCash . " WHERE class_id = " . $classID));
+
+	$currentChildID = $dom->getElementsByTagName('childID');
+	//$currentChildBalance = $dom->getElementsByTagName('balance');
+	//$currentChildCash = $dom->getElementsByTagName('cash');
+
+	// echo $currentClassID, PHP_EOL;
+	// echo $currentClassBalance, PHP_EOL;
+	// echo $currentClassCash, PHP_EOL;
+
+	foreach ($currentChildID as $id) {
+		//doubled nextSibling - white characters
+		$childID = $id->nodeValue;
+		$balance = $id->nextSibling->nextSibling->nodeValue;
+		$cash = $id->nextSibling->nextSibling->nextSibling->nextSibling->nodeValue;
+
+		//TODO child_id have to agree with class of treasurer
+		$resultAccountUpdate = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = " . $balance . ", account.cash = " . $cash . " WHERE account.child_id = " . $childID . " AND child.class_id = " . $classID));
+	}
+
+	header('Location: menu_treasurer.php');
+
 }
 
 function generate_school_year_raport(){

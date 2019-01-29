@@ -194,10 +194,10 @@ if (!isset($_SESSION['loggedIn'])) {
 
 <!--Import .xml file-->
 <div class="container">
-<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center">
+<form action="../treasurer_helper.php" method="post" class="form-vertical justify-content-center" enctype="multipart/form-data">
 		<div class="form-group row">
 			<div class="col-md-6 offset-sm-4">
-				<input type="file" name="fileToUpload" id="fileToUpload" class="form-control-file" >
+				<input type="file" name="myFile" id="myFile" class="form-control-file">
 			</div>
 		</div>
 		<div class="row text-center">

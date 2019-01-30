@@ -12,17 +12,7 @@ class MyMailer {
     {
         $mail = new PHPMailer(true);                            // Passing `true` enables exceptions                            
         $mail->CharSet = "UTF-8";
-            
-        //Server settings
-        //$mail->SMTPDebug = 0;                                 // Enable verbose debug output
-        //$mail->isSMTP();                                      // Set mailer to use SMTP
-        //$mail->Host = 'serwer1907769.home.pl';                // Specify main and backup SMTP servers
-        //$mail->SMTPAuth = true;                               // Enable SMTP authentication
-        //$mail->Username = 'info@skarbnikklasowy.pl';          // SMTP username
-        //$mail->Password = 'skarbnik123';                      // SMTP password
-        //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-        //$mail->Port = 465;                                    // TCP port to connect to
-
+    
         $mail->setFrom('info@skarbnikklasowy.pl');
         //Recipients
         $mail->addAddress($to);              

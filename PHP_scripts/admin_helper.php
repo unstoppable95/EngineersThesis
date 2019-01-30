@@ -401,7 +401,7 @@ function addStudentsFile()
 	// usuniecie pliku z serwera
 
 	unlink($filename);
-	header('Location: menu_admin.php');
+	echo  '<script> location.replace("menu_admin.php"); </script>';
 }
 
 function addStudent()

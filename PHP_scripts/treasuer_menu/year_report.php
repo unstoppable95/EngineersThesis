@@ -9,6 +9,8 @@ $height = 10;
 
 $yearID = $_POST['school_year_id'];
 
+$actualIDclass;
+
 $conn = new MyDB();
 class myPDF extends tFPDF {
 
@@ -68,6 +70,7 @@ class myPDF extends tFPDF {
 
         $result = $conn->query(sprintf("SELECT * FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID']));
         $class = mysqli_fetch_array($result);
+        $GLOBALS['actualIDclass'] = $class['id'];
         $this->Cell($this->pageWidth(), 10, "Klasa " . $class['name'], 0, 0, 'C');
         $this->Ln();
         $parts = array(0 => 2, 2 => 4, 6 => 4, 10 => 4, 14 => 4, 18 => 4, 22 => 4);
@@ -343,27 +346,52 @@ class myPDF extends tFPDF {
             $this->Ln();
         }
     }
+
+    function findOld($conn)
+    {
+        $result = $conn->query(sprintf("SELECT * FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $_SESSION["school_year_id"]));
+        $class = mysqli_fetch_array($result);
+        $actualIDclass = $class['id'];
+
+        do {
+            $findClassResult = $conn->query(sprintf("SELECT * FROM class WHERE next_class = " . $actualIDclass));
+            $findClassRes = mysqli_fetch_array($findClassResult);
+            $actualIDclass = $findClassRes['id'];
+            echo $actualIDclass;
+        }
+        while ($findClassRes['school_year_id'] != $_POST['school_year_id']);
+        echo  '<script> location.replace("../year_reports/' .  $actualIDclass . '_' . $_POST['school_year_id'] . '.pdf"); </script>';
+    }
 }
 
 //pdf settings
-$pdf = new myPDF();
-$pdf->AliasNbPages();
-$pdf->AddPage('P', 'A4', 0);
-$pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
-$pdf->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
+if ($_SESSION["school_year_id"] ==  $_POST['school_year_id'])
+{
+    $pdf = new myPDF();
+    $pdf->AliasNbPages();
+    $pdf->AddPage('P', 'A4', 0);
+    $pdf->AddFont('DejaVu', '', 'DejaVuSansCondensed.ttf', true);
+    $pdf->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
 
-$pdf->mainHeader($conn);
+    $pdf->mainHeader($conn);
 
-$pdf->generalReportHeaderTable($conn);
-$pdf->generalReportViewTable($conn);
+    $pdf->generalReportHeaderTable($conn);
+    $pdf->generalReportViewTable($conn);
 
-$pdf->eventReportTable($conn);
+    $pdf->eventReportTable($conn);
 
-$pdf->expensesHeaderTable($conn);
-$pdf->expensesViewTable($conn);
+    $pdf->expensesHeaderTable($conn);
+    $pdf->expensesViewTable($conn);
 
-$pdf->transferReportHeaderTable($conn);
-$pdf->transferReportViewTable($conn);
-$pdf->Output();
+    $pdf->transferReportHeaderTable($conn);
+    $pdf->transferReportViewTable($conn);
+    $pdf->Output('../year_reports/' . $actualIDclass . '_' . $yearID . '.pdf', 'F');
+    $pdf->Output();
+}
+else
+{
+    $pdf = new myPDF();
+    $pdf->findOld($conn);
+}
 
 ?>

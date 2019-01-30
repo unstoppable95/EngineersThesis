@@ -91,15 +91,15 @@ class myPDF extends tFPDF {
         $id = mysqli_fetch_array($tmpID);
         $_SESSION['userID'] = $id["id"]; //userID = treasuerID
         /////////////////////
-        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . " )"));
-        $bal = mysqli_fetch_array($tmpbalance);
-        $balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
-        $cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
+        $tmpbalance = $conn->query(sprintf("SELECT id, balance,cash FROM class_account WHERE class_id = (SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] . " AND parent_id = " . $_SESSION['userID'] . " )"));
+	    $bal = mysqli_fetch_array($tmpbalance);
+	    $balance = $bal["balance"]; //ilość pieniędzy klasowych na koncie
+	    $cash = $bal["cash"]; //ilość pieniędzy klasowych w gotówce
 
         $class_account_id = $bal["id"];
         $class_money =  doubleval($balance) + doubleval($cash);
 
-        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . " )"));
+        $kids_account_balance = $conn->query(sprintf("SELECT SUM(balance) as balance , SUM(cash) as cash FROM account join child on (account.child_id = child.id) where child.class_id = (SELECT id FROM class WHERE school_year_id=" . $GLOBALS['yearID'] ." AND parent_id = " . $_SESSION['userID'] . " )"));
         $kids_account_balance_all = mysqli_fetch_array($kids_account_balance);
         $class_kids_money = doubleval($kids_account_balance_all["balance"]) + doubleval($kids_account_balance_all["cash"]);
         $whole_cash = doubleval($cash) + doubleval($kids_account_balance_all["cash"]);
@@ -125,12 +125,12 @@ class myPDF extends tFPDF {
 
     function generalReportViewTable($conn)
     {
-        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . ") order by surname, name"));
+        $result = $conn->query(sprintf("SELECT * FROM child WHERE class_id=(SELECT id FROM class WHERE school_year_id=" . $_SESSION["school_year_id"] . " and parent_id='" . $_SESSION['userID'] . "') order by surname, name"));
         if (mysqli_num_rows($result) > 0)
         {
             while ($row = mysqli_fetch_array($result))
             {
-                $class_account_balanceTMP = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE child_id = ".$row["id"] ));
+                $class_account_balanceTMP = $conn->query(sprintf("SELECT IFNULL(SUM(amount),0) AS x FROM class_account_payment WHERE school_year_id=" . $_SESSION["school_year_id"] . " and child_id = " . $row["id"] ));
                 $class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
                 $account_balanceTMP = $conn->query(sprintf("SELECT cash,balance  FROM account WHERE child_id = ".$row["id"] ));
                 $account_balance = mysqli_fetch_array($account_balanceTMP);
@@ -145,11 +145,13 @@ class myPDF extends tFPDF {
                 }
                 $month_count = $conn->query(sprintf("SELECT TIMESTAMPDIFF(MONTH,concat(" . $current_year . " ,'-09-01'),CURDATE()) as date FROM DUAL"));
                 $months = mysqli_fetch_array($month_count);
-                $monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE parent_id=" . $_SESSION['userID'] . " AND school_year_id=" . $GLOBALS['yearID'] . ") " ));
+                $monthly_fee = $conn->query(sprintf("SELECT monthly_fee AS fee FROM class_account WHERE class_id=(SELECT id FROM class WHERE school_year_id=" . $_SESSION["school_year_id"] . " and parent_id='" . $_SESSION['userID'] . "') " ));
                 $fee = mysqli_fetch_array($monthly_fee);
-                $expected_value = intval($months["date"]) * intval($fee["fee"]); 
-                $child_class_account = intval($class_account_balance["x"]) - $expected_value;
                 $kid_cash_whole = doubleval($account_balance["cash"]) + doubleval($account_balance["balance"]);
+          
+                $child_class_account = '';
+                $expected_value = intval($months["date"]) * doubleval($fee["fee"]); 
+                $child_class_account = doubleval($class_account_balance["x"]) - $expected_value;
                 /////////////////////
                 $this->centerTable($GLOBALS['width1Col'] + $GLOBALS['width2Col'] + $GLOBALS['width3Col']);
                 $this->Cell($GLOBALS['width1Col'], $GLOBALS['height'], $row["name"] . ' ' . $row["surname"], 1, 0, 'C');

@@ -184,7 +184,7 @@ function importXML()
 	require_once "connection.php";
 	$conn = new MyDB();
 
-	$classIDresult = $conn->query(sprintf("SELECT id FROM class WHERE parent_id = " . $_SESSION['userID']));
+	$classIDresult = $conn->query(sprintf("SELECT id FROM class WHERE parent_id = " . $_SESSION['userID'] . " AND school_year_id=" . $_SESSION["school_year_id"]));
 	$classIDres = mysqli_fetch_array($classIDresult);
 	$classID = $classIDres['id'];
 
@@ -212,17 +212,10 @@ function importXML()
 
 }
 
-function generate_school_year_raport(){
-	//spojrz w todo nizej i niech sie zapisuje jakos na serwer w sensie ze jak raz byl generewonay to pobiera ten stary 
-	//aktualnie nie wywoluje tego, problem z przekazaniem tego parametru dalej
-}
-
 function fetch_school_year_id_options(){
 	session_start();
 	require_once "connection.php";
 	$conn = new MyDB();
-	//TODO jakos trzeba sprawdzic czy ta klasa była juz w tym roku szkolnym bo class ma school_year_id ale jak zmieni sie rok to id clasy tez bedzie nowa klasa
-	//mozde clasa wskaznik na poprzednia klase albo cos w tym stylu taki lancuszek sie zrobi 
 	$school_year = $conn->query(sprintf("SELECT * FROM school_year"));
 	$output ='<div class="col-md-6 offset-sm-3 form-group row"><label for="school_year_id" class="text-center col-form-label">Wybierz rok szkolny:</label><select name="school_year_id" class="form-control">';
 	if (mysqli_num_rows($school_year) > 0)

@@ -98,10 +98,7 @@ if ($_SESSION['amountOfChild'] == 1)
 
 
 
-<div class="container-fluid">
-	<!--<div class="row">
-		<div id="class_name" class="col-md-12 text-center"></div>
-	</div>-->				
+<div class="container-fluid">			
 	<div class="col-md-8 offset-sm-2 text-center text-danger" >
 				<?php
 					if (isset($_SESSION['errorEditEvent']))
@@ -217,7 +214,6 @@ if ($_SESSION['amountOfChild'] == 1)
 					<div class="panel-body">
 						<div class="text-center">
 						<fieldset>
-							<!--<h6>Czy na pewno chcesz zakończyć zbiórkę?</h6>-->
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit" name="endEvent">Zakończ</button>
 						</fieldset>
 						</div>
@@ -245,7 +241,6 @@ if ($_SESSION['amountOfChild'] == 1)
 					<div class="panel-body">
 						<div class="text-center">
 						<fieldset>
-							<!--<h6>Czy na pewno chcesz zakończyć zbiórkę?</h6>-->
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="deleteEvent">Usuń</button>
 						</fieldset>
 						</div>
@@ -338,23 +333,6 @@ $(document).ready(function(){
            
       });
 	
-
-	/*$(document).on('click','.btn_detailsEvent',function(){
-	var id=$(this).data("id4");
-
-		$.ajax({
-			url:"../treasurer_helper.php",
-			method:"POST",
-			data:{function2call: 'fetch_event_details', id:id},
-			dataType:"text",
-				success:function(data){
-					$('#event_details').html(data);
-			
-			
-                     }      					 
-                });   
-      });
-	  */
 	  
 	$(document).on('click','.btn_detailsEvent',function(){
 		var id=$(this).data("id4");
@@ -414,7 +392,6 @@ $(document).ready(function(){
                 });   
       });
  
-
 		
  }); 
   </script>

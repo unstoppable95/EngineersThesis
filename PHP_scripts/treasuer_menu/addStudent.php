@@ -25,45 +25,6 @@ if (!isset($_SESSION['loggedIn']))
 </head>
 
 <body>
-<!--
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-		<a class="navbar-brand">Konto skarbnika</a>
-			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-				<li class="nav-item">
-					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="expenses.php">Wydatki klasowe</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="class_event_list.php">Zbiórki klasowe / Wydarzenia</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="payments.php">Wpłaty</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="students.php">Uczniowie</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="settings.php">Ustawienia</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
-				</li>
-			</ul>
-
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
-			</li>
-			</ul>
-	  </div>
-</nav> -->   
-
 <div class="container">
 	<div class="row text-center">
 		<h5 class="col-md-12" >Dane nowego ucznia:</h5>
@@ -110,7 +71,6 @@ if (!isset($_SESSION['loggedIn']))
 				<button type="submit" name="addChildParent" class="btn_add btn" onclick="return validate(this.form);">Zatwierdź</button>
 			 </div>
 		</div>
-		<!--<input type="submit" name="addChildParent" class="btn_add" value="Zatwierdz" onclick="return validate(this.form);"/>-->
 
 	</form>
 </div>

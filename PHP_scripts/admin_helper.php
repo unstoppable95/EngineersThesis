@@ -1,16 +1,6 @@
 <?php
 
 
-if ((isset($_POST['xmlTEST'])))
-{
-	exportXML("11");
-}
-
-if ((isset($_POST['xmlTESTimport'])))
-{
-	importXML();
-}
-
 if ((isset($_POST['changeClassName'])))
 {
 	changeClassName();
@@ -117,41 +107,6 @@ function saveIDToChangeName()
 	$_SESSION['changeClassID'] = $_POST["id"];
 }
 
-function importXML()
-{
-	require_once "connection.php";
-	$conn = new MyDB();
-
-	$classID = 13;
-
-	$dom = new DOMDocument();
-	$dom->load('xmlTEST.xml');
-
-	$currentClassBalance = $dom->getElementsByTagName('classBalance')[0]->nodeValue;
-	$currentClassCash= $dom->getElementsByTagName('classCash')[0]->nodeValue;
-
-	//TODO change class_id as class with treasuererID
-	$resultClassAccount = $conn->query(sprintf("UPDATE class_account SET balance = " . $currentClassBalance . ", cash =" . $currentClassCash . " WHERE class_id = " . $classID));
-
-	$currentChildID = $dom->getElementsByTagName('childID');
-	//$currentChildBalance = $dom->getElementsByTagName('balance');
-	//$currentChildCash = $dom->getElementsByTagName('cash');
-
-	// echo $currentClassID, PHP_EOL;
-	// echo $currentClassBalance, PHP_EOL;
-	// echo $currentClassCash, PHP_EOL;
-
-	foreach ($currentChildID as $id) {
-		//doubled nextSibling - white characters
-		$childID = $id->nodeValue;
-		$balance = $id->nextSibling->nextSibling->nodeValue;
-		$cash = $id->nextSibling->nextSibling->nextSibling->nextSibling->nodeValue;
-
-		//TODO child_id have to agree with class of treasurer
-		$resultAccountUpdate = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = " . $balance . ", account.cash = " . $cash . " WHERE account.child_id = " . $childID . " AND child.class_id = " . $classID));
-	}
-
-}
 
 function exportXML($classID)
 {
@@ -281,7 +236,7 @@ function closeYear()
 			//set nextClass value in old class row
 			$resultUpdateNextClass= $conn->query(sprintf("UPDATE class SET next_class = " . $resNewClassID['id'] . " WHERE id = " . $resClass['id']));
 
-			//create XML file with account and classAcount TODO
+			//create XML file with account and classAcount
 			exportXML($selected);
 
 			//change class in child table
@@ -654,7 +609,7 @@ function changeTreasuer2()
 	echo "<script>console.log( 'Debug Objectss: " . $_SESSION['changeID'] . "' );</script>";
 	if (empty($_POST['trMail']) || $_POST['trMail'] == '0')
 	{
-			echo  '<script> location.replace("menu_admin.php"); </script>';
+		echo  '<script> location.replace("menu_admin.php"); </script>';
 		//header('Location: menu_admin.php');
 		exit();
 	}
@@ -936,30 +891,14 @@ function deleteFromDB()
 	
 	if ($res = $conn->query(sprintf("DELETE FROM class WHERE id = '" . 	$_SESSION['classToDelete'] . "'")))
 	{
-			echo  '<script> location.replace("menu_admin.php"); </script>';
+		echo  '<script> location.replace("menu_admin.php"); </script>';
 		//echo 'Pomyślnie usunieto klase'. $_SESSION['classToDelete'] . 'lalal';
-		//header('Location: menu_admin.php');
 		//header('Location: menu_admin.php');
 	}
 
 	$conn->close();
 }
-/*
-function showTreasuerData(){
-	require_once "connection.php";
 
-	$conn = new MyDB();
-	$output = '';
-	$result = $conn->query(sprintf("SELECT name, surname, email FROM parent WHERE id = (SELECT parent_id FROM class WHERE id = '" . $_POST["id"] . "and school_year_id=".$_SESSION["school_year_id"].";)"));
-	$res = mysqli_fetch_array($result);
-	$output.= '
-		   Imię: ' . $res["name"] . '
-		   Nazwisko: ' . $res["surname"] . ' 
-		   ';
-	echo $output;
-}
-
-*/
 function showDetails()
 {
 	require_once "connection.php";

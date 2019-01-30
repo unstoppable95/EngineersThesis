@@ -99,12 +99,8 @@ if (!isset($_SESSION['loggedIn'])) {
 							<div class="row">
 								<label for="classBalance">Wpłata na konto klasowe:</label>
 								<input type="number" step="0.01" min="0"  name="classBalance" class="form-control"/>
-							<!--	<label for="classCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
-								<input type="number" step="0.01" min="0"  name="classCash" class="form-control"/>-->
 								<label for="childBalance">Wpłata na konto ucznia:</label>
 								<input type="number" step="0.01" min="0"  name="childBalance" class="form-control"/>
-								<!--<label for="childCash">Wprowadż kwotę, jaką chcesz wpłacić gotówką</label>
-								<input type="number" step="0.01" min="0"  name="childCash" class="form-control"/>-->
 							</div>
 							<div class="row">
 							<div class="col-md-10 offset-sm-1">
@@ -123,19 +119,6 @@ if (!isset($_SESSION['loggedIn'])) {
 							</div>
 						</div>
 						</div>
-		<!--<form action="parent_helper.php" method="post" id="user_form" enctype="multipart/form-data">-->
-				<!--Kwota: <input type="number" step="0.01" min="0"  name="amountOfMoney" /> <br /><br />
-				
-				<input type="radio" name="typeOfAccount" value="normal" checked> Wpłać na konto dziecka<br />
-				<input type="radio" name="typeOfAccount" value="class"> Wpłać na konto klasowe<br />
-				<br />
-				 <select name="paymentType">
-					<option value="gotowka">Gotówka</option>
-					<option value="konto">Na konto</option>
-				</select>-->
-
-		<!--</form>-->
-		
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_edit"  name="makePayment2">Wpłać</button>
 						</fieldset>
 						</div>
@@ -177,21 +160,16 @@ function fetch_students_list_payments()
 	  
 	  
 	$(document).on('click','.btn_makePayment',function(){
-    var id=$(this).data("id3");
+    	var id=$(this).data("id3");
         $.ajax({
             url:"../treasurer_helper.php",
             method:"POST",
             data:{function2call: 'makePayment', id:id},
             dataType:"text",
-                success:function(data){
-                     }                          
-                });
-    
-          
-      });
-    
-      
-      
+            success:function(data){
+            }                          
+        });
+    });
  }); 
   
 

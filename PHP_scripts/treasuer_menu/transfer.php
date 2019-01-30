@@ -133,9 +133,7 @@ if ($_SESSION['amountOfChild'] == 1)
 		</div>
 </form>
 </div>
- <!--
-    Z konta<input type="range"  id="sideRange" name="side" min="0" max="1" style="display:inline-block; vertical-align:middle">Na konto -->
- <!-- </div>-->
+
 
 </form>
 </div>

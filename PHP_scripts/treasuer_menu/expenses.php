@@ -124,21 +124,6 @@ if (!isset($_SESSION['loggedIn'])) {
 		</div>
 </div>
 
-<!--
-
-<!--MODAL STUDENT DETAILS
-<div id="classAccBalanceDetails" class="modal fade">
- <div class="modal-dialog">
- <form action="../treasurer_helper.php" method="post" id="user_form" enctype="multipart/form-data"> 
-   <div class="modal-content">
-
-    <h2>WPŁATY NA KONTO KLASOWE UCZNIA</h2>
-    <div id="details"></div>
-    
-   </div>
-   </form> 
- </div>
-</div> -->
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

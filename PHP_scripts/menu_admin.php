@@ -32,7 +32,6 @@ require_once "admin_helper.php";
 	
 <body>
 
-<!-- #TO-DO set data-target and 2x aria argument value -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -66,25 +65,6 @@ require_once "admin_helper.php";
 	<div id="class_list" class="container-fluid "></div>
 </form>
 
-	<div class="container">
-		<form action="admin_helper.php" class="form-vertical justify-content-center" method="post">
-			<div class="row text-center">
-				<div class="offset-sm-1 col-sm-10">
-					<button type="submit" name="xmlTEST" class="btn_add btn">Export XML</button>
-				</div>
-			</div>
-		</form>
-	</div>
-
-	<div class="container">
-		<form action="admin_helper.php" class="form-vertical justify-content-center" method="post">
-			<div class="row text-center">
-				<div class="offset-sm-1 col-sm-10">
-					<button type="submit" name="xmlTESTimport" class="btn_add btn">Import XML</button>
-				</div>
-			</div>
-		</form>
-	</div>
 
 
 <!--MODAL DETAILS -->
@@ -309,7 +289,6 @@ require_once "admin_helper.php";
 					<div class="panel-body">
 						<div class="text-center">
 						<fieldset>
-							<!--<h6>Czy na pewno chcesz zakończyć zbiórkę?</h6>-->
 							<button type="submit" class="btn btn-lg btn-primary btn-block btn_delete" name="deleteEvent">Usuń</button>
 						</fieldset>
 						</div>
@@ -329,22 +308,22 @@ require_once "admin_helper.php";
 
 
 <script>
-$(document).ready(function(){
-	function fetch_data()
-	{
-		$.ajax({
-			url:"admin_helper.php",
-			method:"POST",
-			data:{function2call:'fetch'},
-			success:function(data){
-				$('#class_list').html(data);
-			}
-		});
-	}
-	fetch_data();
+	$(document).ready(function(){
+		function fetch_data()
+		{
+			$.ajax({
+				url:"admin_helper.php",
+				method:"POST",
+				data:{function2call:'fetch'},
+				success:function(data){
+					$('#class_list').html(data);
+				}
+			});
+		}
+		fetch_data();
 
-	
-// delete class
+		
+	// delete class
 	$(document).on('click','.btn_delete_class',function(){
 		var id=$(this).data("id3");
 		$.ajax({
@@ -355,7 +334,7 @@ $(document).ready(function(){
 			success:function(data){
 			}  
 		});  		
-    }); 
+	}); 
 	  
 	//save classID to load date from CSV
 	$(document).on('click','.btn_addStudentsCSV',function(){
@@ -371,21 +350,17 @@ $(document).ready(function(){
     }); 
 	  
 	$(document).on('click','.btn_details',function(){
-	var id=$(this).data("id3");
-	
+		var id=$(this).data("id3");
 		$.ajax({
 			url:"admin_helper.php",
 			method:"POST",
 			data:{function2call: 'details', id:id},
 			dataType:"text",
 				success:function(data){
-				$('#parent_data').html(data);
-			
-                     }  
-                });
-	 
-           
-      }); 
+					$('#parent_data').html(data);
+				}  
+		});  
+    }); 
 	  
 	  
 	$(document).on('click','.btn_trChange',function(){
@@ -395,10 +370,10 @@ $(document).ready(function(){
 			method:"POST",
 			data:{function2call: 'changeTreasuer', id:id},
 			dataType:"text",
-				success:function(data){			
-                     }      					 
-                });         
-      });
+			success:function(data){			
+            }      					 
+        });         
+    });
 	  
 	  
 	  

@@ -30,37 +30,8 @@ if (!isset($_SESSION['loggedIn'])) {
 		<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-		<a class="navbar-brand">Konto skarbnika</a>
-			<!--<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-				<li class="nav-item">
-					<a class="nav-link" href="../menu_treasurer.php">Strona główna</a>
-				</li>
-				<li class="nav-item active">
-					<a class="nav-link" href="expenses.php">Wydatki klasowe<span class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="class_event_list.php">Zbiórki klasowe / Wydarzenia</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="payments.php">Wpłaty</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="students.php">Uczniowie</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="settings.php">Ustawienia</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="../menu_parent.php">Konto rodzica</a>
-				</li>
-			</ul>
-
-			<ul class="navbar-nav ml-auto">
-				<li class="nav-item">
-					<a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i>Wyloguj się</a>
-			</li>
-			</ul>-->
-	  </div>
+			<a class="navbar-brand">Konto skarbnika</a>		
+	  	</div>
 </nav>    
 
 <div class="container">
@@ -165,9 +136,8 @@ $(document).ready(function(){
 			data:{function2call: 'payForEventTmp', childID:childID, eventID:eventID},
 			dataType:"text",
 				success:function(data){
-					//alert(data);
 					$('.account_info').html(data);
-                    }
+                }
             });
 		});
 

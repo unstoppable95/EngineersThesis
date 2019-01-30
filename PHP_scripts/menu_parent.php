@@ -360,7 +360,6 @@ $(document).on('click','.btn_delete',function(){
 		data:{function2call: 'saveEventID', id:id},
 		dataType:"text",
 		success:function(data){
-			//alert(data);
 			fetch_data();
 			fetch_balance();
                      }  

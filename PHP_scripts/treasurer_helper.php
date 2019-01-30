@@ -152,10 +152,6 @@ if ((isset($_POST['function2call'])))
 		students_balances_list();
 		break;
 	
-	/*case 'student_class_acc_payment_details':
-		student_class_acc_payment_details();
-		break;
-		*/
 	case 'payForEventTmp':
 		payForEventTmp();
 		break;
@@ -185,61 +181,6 @@ function importXML()
 {
 	session_start();
 
-	// UPLOAD PLIKU na SERWER
-	/*
-	$target_dir = "\uploadsXML\\";
-	$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-	$target_file =  basename($_FILES["myFile"]["name"]);
-	$imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-	$uploadOk = 1;
-
-	// Check if file already exists
-
-	if (file_exists($target_file))
-	{
-		echo "Sorry, file already exists.";
-		$uploadOk = 0;
-	}
-
-	// Check file size
-
-	if ($_FILES["myFile"]["size"] > 500000)
-	{
-		echo "Sorry, your file is too large.";
-		$uploadOk = 0;
-	}
-
-	// Allow certain file formats
-
-	if ($imageFileType != "xml")
-	{
-		echo "Sorry, only xml files are allowed.";
-		$uploadOk = 0;
-	}
-
-	// Check if $uploadOk is set to 0 by an error
-
-	if ($uploadOk == 0)
-	{
-		echo "Sorry, your file was not uploaded.";
-		// if everything is ok, try to upload file
-	}
-	else
-	{
-		define('SITE_ROOT', realpath(dirname(__FILE__)));
-		if (move_uploaded_file($_FILES["myFile"]["name"], SITE_ROOT . $target_file))
-		{
-			echo "The file " . basename($_FILES["myFile"]["name"]) . " has been uploaded.";
-		}
-		else
-		{
-			echo "Sorry, there was an error uploading your file.";
-		}
-	}
-	*/
-
-	/////////////////////////
-
 	require_once "connection.php";
 	$conn = new MyDB();
 
@@ -254,16 +195,9 @@ function importXML()
 	$currentClassBalance = $dom->getElementsByTagName('classBalance')[0]->nodeValue;
 	$currentClassCash= $dom->getElementsByTagName('classCash')[0]->nodeValue;
 
-	//TODO change class_id as class with treasuererID
 	$resultClassAccount = $conn->query(sprintf("UPDATE class_account SET balance = " . $currentClassBalance . ", cash =" . $currentClassCash . " WHERE class_id = " . $classID));
 
 	$currentChildID = $dom->getElementsByTagName('childID');
-	//$currentChildBalance = $dom->getElementsByTagName('balance');
-	//$currentChildCash = $dom->getElementsByTagName('cash');
-
-	// echo $currentClassID, PHP_EOL;
-	// echo $currentClassBalance, PHP_EOL;
-	// echo $currentClassCash, PHP_EOL;
 
 	foreach ($currentChildID as $id) {
 		//doubled nextSibling - white characters
@@ -271,7 +205,6 @@ function importXML()
 		$balance = $id->nextSibling->nextSibling->nodeValue;
 		$cash = $id->nextSibling->nextSibling->nextSibling->nextSibling->nodeValue;
 
-		//TODO child_id have to agree with class of treasurer
 		$resultAccountUpdate = $conn->query(sprintf("UPDATE account JOIN child ON account.child_id = child.id SET account.balance = " . $balance . ", account.cash = " . $cash . " WHERE account.child_id = " . $childID . " AND child.class_id = " . $classID));
 	}
 
@@ -396,7 +329,6 @@ function add_transfer(){
 		}
 	}
 
-	//echo $type .' '. $amount .' '. $account_type;
 	header('Location: treasuer_menu/transfer.php');
 }
 
@@ -593,95 +525,7 @@ function payForEvent()
 	header('Location: treasuer_menu/eventDetails.php');
 	
 } 
-/*
-function student_class_acc_payment_details()
-{
-	session_start();
-	require_once "connection.php";
 
-	$conn = new MyDB();
-	$output = '';
-	$sum = $conn->query(sprintf("SELECT SUM(amount) as s FROM class_account_payment WHERE child_id = " . $_POST['id']));
-	$r = $sum->fetch_assoc();
-	$amount_of_paid_money = $r["s"];
-	$monthly_f = $conn->query(sprintf("SELECT monthly_fee as m FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_POST['id'] . ")"));
-	$x = $monthly_f->fetch_assoc();
-	$monthly_fee = $x["m"];
-	$output.= '
-<h3> Opłacone miesiące </h3>	
-      <div class="table-responsive">
-           <table class="table table-striped table-bordered">
-		     <thead class="thead-dark"> 
-                <tr>  
-                     <th width="50%">Miesiąc</th> 
-					 <th width="50%">Wpłacona kwota</th>
-                </tr>
-			<thead>';
-	if ($amount_of_paid_money > 0)
-	{
-		$months = array(
-			'wrzesień',
-			'październik',
-			'listopad',
-			'grudzień',
-			'styczeń',
-			'luty',
-			'marzec',
-			'kwiecień',
-			'maj',
-			'czerwiec'
-		);
-		$topay = 0;
-		$fild_color = '#66ff66';
-		$fully_paid_months = floor($amount_of_paid_money / $monthly_fee);
-		for ($i = 0; $i < 10; $i++)
-		{
-			if ($i < $fully_paid_months)
-			{
-				$topay = $monthly_fee;
-			}
-			else
-			{
-				if ($i == $fully_paid_months)
-				{
-					$topay = - (($i) * $monthly_fee) + $amount_of_paid_money;
-					$fild_color = '#FF5050';
-				}
-				else
-				{
-					$topay = 0;
-				}
-			}
-
-			$output.= ' <tbody> 
-						<tr>  
-							<td bgcolor=' . $fild_color . ' >' . $months[$i] . '</td> 
-							<td bgcolor=' . $fild_color . '  >' . $topay . '</td> 
-						</tr>  
-				  <tbody> ';
-		}
-	}
-	else
-	{
-		$output.= '<tr>  
-								  <td colspan="4">Nie znaleziono wpłat</td>  
-							 </tr>';
-	}
-
-	$surcharge = $amount_of_paid_money - 10* $monthly_fee;
-	if($surcharge<0){
-		$surcharge=0;
-	}
-	$output.= '</table>  
-			  </div>
-			  <h3> Informacje o koncie</h3>
-			  Na koncie klasowym dziecka po opłaceniu składek miesięcznych pozostało: '.$surcharge;
-			  
-	
-	
-	echo $output;
-}
-*/
 
 
 
@@ -713,7 +557,7 @@ function students_balances_list()
 			$class_account_balance = mysqli_fetch_array($class_account_balanceTMP);
 			$account_balanceTMP = $conn->query(sprintf("SELECT cash,balance  FROM account WHERE child_id = ".$row["id"] ));
 			$account_balance = mysqli_fetch_array($account_balanceTMP);
-			//TODO
+			
 			$current_my_q = $conn->query(sprintf("select month(curdate()) as m , year(curdate()) as y from dual"));
 			$current_my = mysqli_fetch_array($current_my_q);
 			$current_month = intval($current_my['m']);
@@ -776,7 +620,7 @@ function makePayment2()
 		if(isset($_POST['payment_type'])){
 			$type = $_POST["payment_type"];
 		}else{
-			$type="cash"; //TODO domysle ustawienia w skarbniku
+			$type="cash";
 		}
 		$child = $_SESSION['childWhoMakePayment'];
 
@@ -789,7 +633,6 @@ function makePayment2()
 		$currentCash = $res_cash["c"];
 	
 		if($type=="cash" && $_POST['childBalance'] > 0)
-		//if($_POST['childCash'] > 0)
 		{
 			$newBalance = $currentCash + $_POST['childBalance'];
 			$conn->query(sprintf("INSERT INTO payment (account_id,amount,type) VALUES (" . $accountID . "," . $_POST['childBalance'] . ",'gotowka')"));
@@ -861,7 +704,7 @@ function addExpense()
 	if(isset($_POST['payment_type'])){
 		$type = $_POST["payment_type"];
 	}else{
-		$type="cash"; //TODO domysle ustawienia w skarbniku
+		$type="cash";
 	}
 	if(($type == "cash") && ($cash> $price)){
 		$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $price . ", " . $class_account_id . ", 'gotowka')"));
@@ -869,7 +712,7 @@ function addExpense()
 		$conn->query(sprintf("UPDATE class_account SET cash=" . $cash . " , balance = " . $balance . " WHERE id= " . $class_account_id ));
 	}
 	else if(($type=="bank") && ($balance>= $price)){
-//bank
+		//bank
 		$conn->query(sprintf("INSERT INTO expense (name,price, class_account_id,type) VALUES ('" . $_POST["expenseName"] . "'," . $price . ", " . $class_account_id . ", 'konto')"));
 		$balance = $balance - $price; 
 		$conn->query(sprintf("UPDATE class_account SET cash=" . $cash . " , balance = " . $balance . " WHERE id= " . $class_account_id ));
@@ -1078,11 +921,6 @@ function endEvent()
 function editEvent()
 {
 	session_start();
-	//if (empty($_POST['newEventName']) && empty($_POST['newEventPrice']) && empty($_POST['newEventDate']))
-	//{
-		//header('Location: treasuer_menu/class_event_list.php');
-		//exit();
-	//}
 
 	require_once "connection.php";
 

@@ -12,4 +12,3 @@ function validate(formularz){
 	}
 }
 
-//tu bedzie reszta funkcji np do sprwdzania czy email jest ok

@@ -176,57 +176,30 @@ function fetch_students_list()
     fetch_students_list();  
     
     
-
-//delete
-   /* $(document).on('click','.btn_deleteStudent',function(){
-    var id=$(this).data("id3");
-    if(confirm("Czy jestes pewny, ze chcesz usunąć ucznia z tej klasy?"))  
-           {
-    $.ajax({
-        url:"../treasurer_helper.php",
-        method:"POST",
-        data:{function2call: 'deleteStudent', id:id},
-        dataType:"text",
-        success:function(data){
-            alert(data);
-            fetch_students_list();
-            
-                     }  
-                });  
-           }  
-      });
-	  */
-	  $(document).on('click','.btn_deleteStudent',function(){
-	var id=$(this).data("id3");
-	$.ajax({
-		url:"../treasurer_helper.php",
-		method:"POST",
-		data:{function2call: 'saveStudentID', id:id },
-		dataType:"text",
-		success:function(data){
-			//alert(data);
-			//alert(id);
-	
-			
-                     }  
-                });  
-             
-      }); 
+	$(document).on('click','.btn_deleteStudent',function(){
+		var id=$(this).data("id3");
+		$.ajax({
+			url:"../treasurer_helper.php",
+			method:"POST",
+			data:{function2call: 'saveStudentID', id:id },
+			dataType:"text",
+			success:function(data){	
+			}  
+		});    
+    }); 
       
       //save which parent mail i want to change
-      $(document).on('click','.btn_pMailChange',function(){
-    var id=$(this).data("id3");
+    $(document).on('click','.btn_pMailChange',function(){
+    	var id=$(this).data("id3");
         $.ajax({
             url:"../treasurer_helper.php",
             method:"POST",
             data:{function2call: 'btn_pMailChange', id:id},
             dataType:"text",
-                success:function(data){
-                     }                          
-                });
-    
-          
-      });
+            success:function(data){
+            }                          
+        });
+    });
 	  
  }); 
   

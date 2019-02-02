@@ -263,11 +263,11 @@ function fetch_class_account_data()
 	$class_acc_id = $conn->query(sprintf("SELECT id FROM class_account WHERE class_id = (SELECT class_id FROM child WHERE id =" . $_SESSION['choosenChild'] . ")"));
 	$ress = $class_acc_id->fetch_assoc();
 	$class_account_id = $ress["id"];
-	$curr_class_balance = $conn->query(sprintf("SELECT balance FROM class_account WHERE id =" . $class_account_id));
+	$curr_class_balance = $conn->query(sprintf("SELECT * FROM class_account WHERE id =" . $class_account_id));
 	$res = mysqli_fetch_array($curr_class_balance);
-	$current_class_balance = $res["balance"];
-	$output = '<p  class="text-center">Ilość pieniędzy wpłaconych na konto klasowe dziecka: ' . $amount_of_paid_money . ' zł</p>
-			<p  class="text-center">Suma pieniędzy na koncie klasowym całej klasy: ' . $current_class_balance . ' zł</p>';
+	$current_class_balance = $res["balance"] + $res["cash"];
+	$output = '<p  class="text-center">Ilość pieniędzy wpłaconych na konto klasowe dziecka: ' . number_format($amount_of_paid_money, 2, ".", "") . ' zł</p>
+			<p  class="text-center">Suma pieniędzy na koncie klasowym całej klasy: ' . number_format($current_class_balance, 2, ".", "")  . ' zł</p>';
 	echo $output;
 }
 
@@ -683,9 +683,9 @@ function fetch_balance()
 
 		$conn = new MyDB();
 		$output = '';
-		$result = $conn->query(sprintf("SELECT balance FROM account WHERE child_id =" . $_SESSION['choosenChild']));
+		$result = $conn->query(sprintf("SELECT * FROM account WHERE child_id =" . $_SESSION['choosenChild']));
 		$res = mysqli_fetch_array($result);
-		$output.='<h5 class="text-center">Stan konta dziecka: ' . number_format($res["balance"], 2, ".", "") . ' zł' . '</h5>';
+		$output.='<h5 class="text-center">Stan konta dziecka: ' . number_format($res["balance"] + $res["cash"], 2, ".", "") . ' zł' . '</h5>';
 		
 		$result = $conn->query(sprintf("SELECT email from parent WHERE id IN 
 		(SELECT parent_id FROM class WHERE school_year_id = " . $_SESSION["school_year_id"] . " AND id IN 

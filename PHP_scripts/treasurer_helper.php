@@ -379,7 +379,7 @@ function fetch_transfer_list(){
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="3">Nie wykonano jeszcze transferów w tej klasie</td>
+                          <td colspan="4">Nie wykonano jeszcze transferów w tej klasie</td>
                      </tr>';
 	}
 

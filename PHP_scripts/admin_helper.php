@@ -871,7 +871,7 @@ function fetch()
 	else
 	{
 		$output.= '<tr>  
-                          <td colspan="7">Nie dodano jeszcze żadnych klas</td>  
+                          <td colspan="8">Nie dodano jeszcze żadnych klas</td>
                      </tr>';
 	}
 
